@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Google.Common.Geometry
+﻿namespace OpenSky.S2Geometry
 {
+    using System;
+
     public struct S1Angle : IEquatable<S1Angle>, IComparable<S1Angle>
     {
-        private readonly double _radians;
+        private readonly double radians;
 
         private S1Angle(double radians)
         {
-            _radians = radians;
+            this.radians = radians;
         }
 
 
@@ -25,39 +21,39 @@ namespace Google.Common.Geometry
         /// <param name="y"></param>
         public S1Angle(S2Point x, S2Point y)
         {
-            _radians = x.Angle(y);
+            this.radians = x.Angle(y);
         }
 
         public double Radians
         {
-            get { return _radians; }
+            get { return this.radians; }
         }
 
         public double Degrees
         {
-            get { return _radians*(180/Math.PI); }
+            get { return this.radians*(180/Math.PI); }
         }
 
 
         public int CompareTo(S1Angle other)
         {
-            return _radians < other._radians ? -1 : _radians > other._radians ? 1 : 0;
+            return this.radians < other.radians ? -1 : this.radians > other.radians ? 1 : 0;
         }
 
         public bool Equals(S1Angle other)
         {
-            return _radians.Equals(other._radians);
+            return this.radians.Equals(other.radians);
         }
         
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            return obj is S1Angle && Equals((S1Angle)obj);
+            return obj is S1Angle && this.Equals((S1Angle)obj);
         }
 
         public override int GetHashCode()
         {
-            return _radians.GetHashCode();
+            return this.radians.GetHashCode();
         }
 
         public static bool operator ==(S1Angle left, S1Angle right)
@@ -72,17 +68,17 @@ namespace Google.Common.Geometry
 
         public long E5()
         {
-            return (long)Math.Round(Degrees*1e5);
+            return (long)Math.Round(this.Degrees*1e5);
         }
 
         public long E6()
         {
-            return (long)Math.Round(Degrees*1e6);
+            return (long)Math.Round(this.Degrees*1e6);
         }
 
         public long E7()
         {
-            return (long)Math.Round(Degrees*1e7);
+            return (long)Math.Round(this.Degrees*1e7);
         }
 
         /**
@@ -154,7 +150,7 @@ namespace Google.Common.Geometry
 
         public override string ToString()
         {
-            return Degrees + "d";
+            return this.Degrees + "d";
         }
     }
 }

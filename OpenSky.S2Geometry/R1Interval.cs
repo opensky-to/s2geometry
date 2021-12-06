@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Google.Common.Geometry
+﻿namespace OpenSky.S2Geometry
 {
+    using System;
+
     /// <summary>
     ///     An R1Interval represents a closed, bounded interval on the real line. It is
     ///     capable of representing the empty interval (containing no points) and
@@ -18,28 +14,28 @@ namespace Google.Common.Geometry
         /// </summary>
         public static R1Interval Empty = new R1Interval(1, 0);
 
-        private readonly double _hi;
-        private readonly double _lo;
+        private readonly double hi;
+        private readonly double lo;
 
         public R1Interval(double lo, double hi)
         {
-            _lo = lo;
-            _hi = hi;
+            this.lo = lo;
+            this.hi = hi;
         }
 
         public double Lo
         {
-            get { return _lo; }
+            get { return this.lo; }
         }
 
         public double Hi
         {
-            get { return _hi; }
+            get { return this.hi; }
         }
 
         public double Center
         {
-            get { return 0.5*(Lo + Hi); }
+            get { return 0.5*(this.Lo + this.Hi); }
         }
 
         /**
@@ -49,23 +45,23 @@ namespace Google.Common.Geometry
 
         public double Length
         {
-            get { return Hi - Lo; }
+            get { return this.Hi - this.Lo; }
         }
 
         public bool IsEmpty
         {
-            get { return Lo > Hi; }
+            get { return this.Lo > this.Hi; }
         }
 
         public bool Equals(R1Interval other)
         {
-            return (_hi.Equals(other._hi) && _lo.Equals(other._lo)) || (IsEmpty && other.IsEmpty);
+            return (this.hi.Equals(other.hi) && this.lo.Equals(other.lo)) || (this.IsEmpty && other.IsEmpty);
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            return obj is R1Interval && Equals((R1Interval)obj);
+            return obj is R1Interval && this.Equals((R1Interval)obj);
         }
 
 
@@ -73,7 +69,7 @@ namespace Google.Common.Geometry
         {
             unchecked
             {
-                return (_hi.GetHashCode()*397) ^ _lo.GetHashCode();
+                return (this.hi.GetHashCode()*397) ^ this.lo.GetHashCode();
             }
         }
 
@@ -126,12 +122,12 @@ namespace Google.Common.Geometry
 
         public bool Contains(double p)
         {
-            return p >= Lo && p <= Hi;
+            return p >= this.Lo && p <= this.Hi;
         }
 
         public bool InteriorContains(double p)
         {
-            return p > Lo && p < Hi;
+            return p > this.Lo && p < this.Hi;
         }
 
         /** Return true if this interval contains the interval 'y'. */
@@ -142,7 +138,7 @@ namespace Google.Common.Geometry
             {
                 return true;
             }
-            return y.Lo >= Lo && y.Hi <= Hi;
+            return y.Lo >= this.Lo && y.Hi <= this.Hi;
         }
 
         /**
@@ -156,7 +152,7 @@ namespace Google.Common.Geometry
             {
                 return true;
             }
-            return y.Lo > Lo && y.Hi < Hi;
+            return y.Lo > this.Lo && y.Hi < this.Hi;
         }
 
         /**
@@ -166,13 +162,13 @@ namespace Google.Common.Geometry
 
         public bool Intersects(R1Interval y)
         {
-            if (Lo <= y.Lo)
+            if (this.Lo <= y.Lo)
             {
-                return y.Lo <= Hi && y.Lo <= y.Hi;
+                return y.Lo <= this.Hi && y.Lo <= y.Hi;
             }
             else
             {
-                return Lo <= y.Hi && Lo <= Hi;
+                return this.Lo <= y.Hi && this.Lo <= this.Hi;
             }
         }
 
@@ -183,28 +179,28 @@ namespace Google.Common.Geometry
 
         public bool InteriorIntersects(R1Interval y)
         {
-            return y.Lo < Hi && Lo < y.Hi && Lo < Hi && y.Lo <= y.Hi;
+            return y.Lo < this.Hi && this.Lo < y.Hi && this.Lo < this.Hi && y.Lo <= y.Hi;
         }
 
         /** Expand the interval so that it contains the given point "p". */
 
         public R1Interval AddPoint(double p)
         {
-            if (IsEmpty)
+            if (this.IsEmpty)
             {
                 return FromPoint(p);
             }
-            else if (p < Lo)
+            else if (p < this.Lo)
             {
-                return new R1Interval(p, Hi);
+                return new R1Interval(p, this.Hi);
             }
-            else if (p > Hi)
+            else if (p > this.Hi)
             {
-                return new R1Interval(Lo, p);
+                return new R1Interval(this.Lo, p);
             }
             else
             {
-                return new R1Interval(Lo, Hi);
+                return new R1Interval(this.Lo, this.Hi);
             }
         }
 
@@ -217,11 +213,11 @@ namespace Google.Common.Geometry
         public R1Interval Expanded(double radius)
         {
             // assert (radius >= 0);
-            if (IsEmpty)
+            if (this.IsEmpty)
             {
                 return this;
             }
-            return new R1Interval(Lo - radius, Hi + radius);
+            return new R1Interval(this.Lo - radius, this.Hi + radius);
         }
 
         /**
@@ -231,7 +227,7 @@ namespace Google.Common.Geometry
 
         public R1Interval Union(R1Interval y)
         {
-            if (IsEmpty)
+            if (this.IsEmpty)
             {
                 return y;
             }
@@ -239,7 +235,7 @@ namespace Google.Common.Geometry
             {
                 return this;
             }
-            return new R1Interval(Math.Min(Lo, y.Lo), Math.Max(Hi, y.Hi));
+            return new R1Interval(Math.Min(this.Lo, y.Lo), Math.Max(this.Hi, y.Hi));
         }
 
         /**
@@ -249,12 +245,12 @@ namespace Google.Common.Geometry
 
         public R1Interval Intersection(R1Interval y)
         {
-            return new R1Interval(Math.Max(Lo, y.Lo), Math.Min(Hi, y.Hi));
+            return new R1Interval(Math.Max(this.Lo, y.Lo), Math.Min(this.Hi, y.Hi));
         }
 
         public bool ApproxEquals(R1Interval y)
         {
-            return ApproxEquals(y, 1e-15);
+            return this.ApproxEquals(y, 1e-15);
         }
 
         /**
@@ -265,20 +261,20 @@ namespace Google.Common.Geometry
 
         public bool ApproxEquals(R1Interval y, double maxError)
         {
-            if (IsEmpty)
+            if (this.IsEmpty)
             {
                 return y.Length <= maxError;
             }
             if (y.IsEmpty)
             {
-                return Length <= maxError;
+                return this.Length <= maxError;
             }
-            return Math.Abs(y.Lo - Lo) + Math.Abs(y.Hi - Hi) <= maxError;
+            return Math.Abs(y.Lo - this.Lo) + Math.Abs(y.Hi - this.Hi) <= maxError;
         }
 
         public override string ToString()
         {
-            return "[" + Lo + ", " + Hi + "]";
+            return "[" + this.Lo + ", " + this.Hi + "]";
         }
     }
 }

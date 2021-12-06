@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace System.Collections.Generic
+﻿namespace OpenSky.S2Geometry.Datastructures
 {
+    using System.Collections.Generic;
+
     internal interface IMultiMap<TKey, TValue>
     {
         void Add(TKey key, IEnumerable<TValue> valueList);

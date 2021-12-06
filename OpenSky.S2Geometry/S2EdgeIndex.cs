@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Google.Common.Geometry
+﻿namespace OpenSky.S2Geometry
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public abstract class S2EdgeIndex
     {
         /**
@@ -25,13 +23,13 @@ namespace Google.Common.Geometry
    * The cell containing each edge, as given in the parallel array
    * <code>edges</code>.
    */
-        private ulong[] _cells;
+        private ulong[] cells;
 
         /**
    * The edge contained by each cell, as given in the parallel array
    * <code>cells</code>.
    */
-        private int[] _edges;
+        private int[] edges;
 
         /**
    * No cell strictly below this level appears in mapping. Initially leaf level,
@@ -41,13 +39,13 @@ namespace Google.Common.Geometry
         /**
    * Has the index been computed already?
    */
-        private bool _indexComputed;
-        private int _minimumS2LevelUsed;
+        private bool indexComputed;
+        private int minimumS2LevelUsed;
 
         /**
    * Number of queries so far
    */
-        private int _queryCount;
+        private int queryCount;
 
         /**
    * Empties the index in case it already contained something.
@@ -55,11 +53,11 @@ namespace Google.Common.Geometry
 
         public void Reset()
         {
-            _minimumS2LevelUsed = S2CellId.MaxLevel;
-            _indexComputed = false;
-            _queryCount = 0;
-            _cells = null;
-            _edges = null;
+            this.minimumS2LevelUsed = S2CellId.MaxLevel;
+            this.indexComputed = false;
+            this.queryCount = 0;
+            this.cells = null;
+            this.edges = null;
         }
 
         /**
@@ -97,34 +95,34 @@ namespace Google.Common.Geometry
 
         public void ComputeIndex()
         {
-            if (_indexComputed)
+            if (this.indexComputed)
             {
                 return;
             }
             var cellList = new List<ulong>();
             var edgeList = new List<int>();
-            for (var i = 0; i < NumEdges; ++i)
+            for (var i = 0; i < this.NumEdges; ++i)
             {
-                var from = EdgeFrom(i);
-                var to = EdgeTo(i);
+                var from = this.EdgeFrom(i);
+                var to = this.EdgeTo(i);
                 var cover = new List<S2CellId>();
-                var level = GetCovering(from, to, true, cover);
-                _minimumS2LevelUsed = Math.Min(_minimumS2LevelUsed, level);
+                var level = this.GetCovering(from, to, true, cover);
+                this.minimumS2LevelUsed = Math.Min(this.minimumS2LevelUsed, level);
                 foreach (var cellId in cover)
                 {
                     cellList.Add(cellId.Id);
                     edgeList.Add(i);
                 }
             }
-            _cells = new ulong[cellList.Count];
-            _edges = new int[edgeList.Count];
-            for (var i = 0; i < _cells.Length; i++)
+            this.cells = new ulong[cellList.Count];
+            this.edges = new int[edgeList.Count];
+            for (var i = 0; i < this.cells.Length; i++)
             {
-                _cells[i] = cellList[i];
-                _edges[i] = edgeList[i];
+                this.cells[i] = cellList[i];
+                this.edges[i] = edgeList[i];
             }
-            SortIndex();
-            _indexComputed = true;
+            this.SortIndex();
+            this.indexComputed = true;
         }
 
         /** Sorts the parallel <code>cells</code> and <code>edges</code> arrays. */
@@ -133,31 +131,31 @@ namespace Google.Common.Geometry
         {
             // create an array of indices and sort based on the values in the parallel
             // arrays at each index
-            var indices = new int[_cells.Length];
+            var indices = new int[this.cells.Length];
             for (var i = 0; i < indices.Length; i++)
             {
                 indices[i] = i;
             }
 
-            Array.Sort(indices, (index1, index2) => Compare(_cells[index1], _edges[index1], _cells[index2], _edges[index2]));
+            Array.Sort(indices, (index1, index2) => Compare(this.cells[index1], this.edges[index1], this.cells[index2], this.edges[index2]));
 
 
             // copy the cells and edges in the order given by the sorted list of indices
-            var newCells = new ulong[_cells.Length];
-            var newEdges = new int[_edges.Length];
+            var newCells = new ulong[this.cells.Length];
+            var newEdges = new int[this.edges.Length];
             for (var i = 0; i < indices.Length; i++)
             {
-                newCells[i] = _cells[indices[i]];
-                newEdges[i] = _edges[indices[i]];
+                newCells[i] = this.cells[indices[i]];
+                newEdges[i] = this.edges[indices[i]];
             }
             // replace the cells and edges with the sorted arrays
-            _cells = newCells;
-            _edges = newEdges;
+            this.cells = newCells;
+            this.edges = newEdges;
         }
 
         public bool IsIndexComputed
         {
-            get { return _indexComputed; }
+            get { return this.indexComputed; }
         }
 
         /**
@@ -167,7 +165,7 @@ namespace Google.Common.Geometry
 
         protected void IncrementQueryCount()
         {
-            ++_queryCount;
+            ++this.queryCount;
         }
 
         /**
@@ -209,13 +207,13 @@ namespace Google.Common.Geometry
 
         public void PredictAdditionalCalls(int n)
         {
-            if (_indexComputed)
+            if (this.indexComputed)
             {
                 return;
             }
-            if (NumEdges > 100 && (_queryCount + n) > 30)
+            if (this.NumEdges > 100 && (this.queryCount + n) > 30)
             {
-                ComputeIndex();
+                this.ComputeIndex();
             }
         }
 
@@ -241,19 +239,19 @@ namespace Google.Common.Geometry
 
         protected void FindCandidateCrossings(S2Point a, S2Point b, IList<int> candidateCrossings)
         {
-            Preconditions.CheckState(_indexComputed);
+            Preconditions.CheckState(this.indexComputed);
             var cover = new List<S2CellId>();
-            GetCovering(a, b, false, cover);
+            this.GetCovering(a, b, false, cover);
 
             // Edge references are inserted into the map once for each covering cell, so
             // absorb duplicates here
             var uniqueSet = new HashSet<int>();
-            GetEdgesInParentCells(cover, uniqueSet);
+            this.GetEdgesInParentCells(cover, uniqueSet);
 
             // TODO(user): An important optimization for long query
             // edges (Contains queries): keep a bounding cap and clip the query
             // edge to the cap before starting the descent.
-            GetEdgesInChildrenCells(a, b, cover, uniqueSet);
+            this.GetEdgesInChildrenCells(a, b, cover, uniqueSet);
 
             candidateCrossings.Clear();
 
@@ -426,19 +424,19 @@ namespace Google.Common.Geometry
             // convert to N.
             return new int[]
             {
-                -1 - BinarySearch(cell1, int.MinValue),
-                -1 - BinarySearch(cell2, int.MaxValue)
+                -1 - this.BinarySearch(cell1, int.MinValue),
+                -1 - this.BinarySearch(cell2, int.MaxValue)
             };
         }
 
         private int BinarySearch(ulong cell, int edge)
         {
             var low = 0;
-            var high = _cells.Length - 1;
+            var high = this.cells.Length - 1;
             while (low <= high)
             {
                 var mid = unchecked ((low + high) >> 1);
-                var cmp = Compare(_cells[mid], _edges[mid], cell, edge);
+                var cmp = Compare(this.cells[mid], this.edges[mid], cell, edge);
                 if (cmp < 0)
                 {
                     low = mid + 1;
@@ -467,7 +465,7 @@ namespace Google.Common.Geometry
             var parentCells = new HashSet<S2CellId>();
             foreach (var coverCell in cover)
             {
-                for (var parentLevel = coverCell.Level - 1; parentLevel >= _minimumS2LevelUsed;
+                for (var parentLevel = coverCell.Level - 1; parentLevel >= this.minimumS2LevelUsed;
                      --parentLevel)
                 {
                     if (!parentCells.Add(coverCell.ParentForLevel(parentLevel)))
@@ -480,10 +478,10 @@ namespace Google.Common.Geometry
             // Put parent cell edge references into result.
             foreach (var parentCell in parentCells)
             {
-                var bounds = GetEdges(parentCell.Id, parentCell.Id);
+                var bounds = this.GetEdges(parentCell.Id, parentCell.Id);
                 for (var i = bounds[0]; i < bounds[1]; i++)
                 {
-                    candidateCrossings.Add(_edges[i]);
+                    candidateCrossings.Add(this.edges[i]);
                 }
             }
         }
@@ -558,21 +556,21 @@ namespace Google.Common.Geometry
             {
                 var cell = cover[cover.Count - 1];
                 cover.RemoveAt(cover.Count - 1);
-                var bounds = GetEdges(cell.RangeMin.Id, cell.RangeMax.Id);
+                var bounds = this.GetEdges(cell.RangeMin.Id, cell.RangeMax.Id);
                 if (bounds[1] - bounds[0] <= 16)
                 {
                     for (var i = bounds[0]; i < bounds[1]; i++)
                     {
-                        candidateCrossings.Add(_edges[i]);
+                        candidateCrossings.Add(this.edges[i]);
                     }
                 }
                 else
                 {
                     // Add cells at this level
-                    bounds = GetEdges(cell.Id, cell.Id);
+                    bounds = this.GetEdges(cell.Id, cell.Id);
                     for (var i = bounds[0]; i < bounds[1]; i++)
                     {
-                        candidateCrossings.Add(_edges[i]);
+                        candidateCrossings.Add(this.edges[i]);
                     }
                     // Recurse on the children -- hopefully some will be empty.
                     if (children == null)
@@ -630,8 +628,8 @@ namespace Google.Common.Geometry
             /**
      * The structure containing the data edges.
      */
-            private readonly List<int> _candidates;
-            private readonly S2EdgeIndex _edgeIndex;
+            private readonly List<int> candidates;
+            private readonly S2EdgeIndex edgeIndex;
 
             /**
      * Tells whether getCandidates() obtained the candidates through brute force
@@ -641,7 +639,7 @@ namespace Google.Common.Geometry
             /**
      * Index of the current edge and of the edge before the last next() call.
      */
-            private int _currentIndex;
+            private int currentIndex;
 
             /**
      * Cache of edgeIndex.getNumEdges() so that hasNext() doesn't make an extra
@@ -652,14 +650,14 @@ namespace Google.Common.Geometry
      * Index within array above. We have: currentIndex =
      * candidates.get(currentIndexInCandidates).
      */
-            private int _currentIndexInCandidates;
-            private bool _isBruteForce;
-            private int _numEdges;
+            private int currentIndexInCandidates;
+            private bool isBruteForce;
+            private int numEdges;
 
             public DataEdgeIterator(S2EdgeIndex edgeIndex)
             {
-                this._edgeIndex = edgeIndex;
-                _candidates = new List<int>();
+                this.edgeIndex = edgeIndex;
+                this.candidates = new List<int>();
             }
 
             /**
@@ -669,22 +667,22 @@ namespace Google.Common.Geometry
 
             public void GetCandidates(S2Point a, S2Point b)
             {
-                _edgeIndex.PredictAdditionalCalls(1);
-                _isBruteForce = !_edgeIndex.IsIndexComputed;
-                if (_isBruteForce)
+                this.edgeIndex.PredictAdditionalCalls(1);
+                this.isBruteForce = !this.edgeIndex.IsIndexComputed;
+                if (this.isBruteForce)
                 {
-                    _edgeIndex.IncrementQueryCount();
-                    _currentIndex = 0;
-                    _numEdges = _edgeIndex.NumEdges;
+                    this.edgeIndex.IncrementQueryCount();
+                    this.currentIndex = 0;
+                    this.numEdges = this.edgeIndex.NumEdges;
                 }
                 else
                 {
-                    _candidates.Clear();
-                    _edgeIndex.FindCandidateCrossings(a, b, _candidates);
-                    _currentIndexInCandidates = 0;
-                    if (_candidates.Any())
+                    this.candidates.Clear();
+                    this.edgeIndex.FindCandidateCrossings(a, b, this.candidates);
+                    this.currentIndexInCandidates = 0;
+                    if (this.candidates.Any())
                     {
-                        _currentIndex = _candidates[0];
+                        this.currentIndex = this.candidates[0];
                     }
                 }
 
@@ -692,20 +690,20 @@ namespace Google.Common.Geometry
 
             public IEnumerator<int> GetEnumerator()
             {
-                while (_isBruteForce ? _currentIndex < _numEdges : _currentIndexInCandidates < _candidates.Count)
+                while (this.isBruteForce ? this.currentIndex < this.numEdges : this.currentIndexInCandidates < this.candidates.Count)
                 {
-                    yield return _currentIndex;
+                    yield return this.currentIndex;
 
-                    if (_isBruteForce)
+                    if (this.isBruteForce)
                     {
-                        ++_currentIndex;
+                        ++this.currentIndex;
                     }
                     else
                     {
-                        ++_currentIndexInCandidates;
-                        if (_currentIndexInCandidates < _candidates.Count)
+                        ++this.currentIndexInCandidates;
+                        if (this.currentIndexInCandidates < this.candidates.Count)
                         {
-                            _currentIndex = _candidates[_currentIndexInCandidates];
+                            this.currentIndex = this.candidates[this.currentIndexInCandidates];
                         }
                     }
                 }
@@ -713,7 +711,7 @@ namespace Google.Common.Geometry
 
             IEnumerator IEnumerable.GetEnumerator()
             {
-                return GetEnumerator();
+                return this.GetEnumerator();
             }
         }
     }

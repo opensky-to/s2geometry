@@ -1,30 +1,27 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Google.Common.Geometry.MultiMap
+﻿namespace OpenSky.S2Geometry.Datastructures
 {
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+
     internal class SortedMultiMapEnumerable<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IEnumerator<KeyValuePair<TKey, TValue>>
     {
-        MultiMap<TKey, TValue> _map;
-        IEnumerator<TKey> _keyEnumerator;
-        IEnumerator<TValue> _valueEnumerator;
+        MultiMap<TKey, TValue> map;
+        IEnumerator<TKey> keyEnumerator;
+        IEnumerator<TValue> valueEnumerator;
 
 
         public SortedMultiMapEnumerable(MultiMap<TKey, TValue> map)
         {
-            this._map = map;
-            Reset();
+            this.map = map;
+            this.Reset();
         }
 
         object IEnumerator.Current
         {
             get
             {
-                return Current;
+                return this.Current;
             }
         }
 
@@ -32,27 +29,27 @@ namespace Google.Common.Geometry.MultiMap
         {
             get
             {
-                return new KeyValuePair<TKey, TValue>(_keyEnumerator.Current, _valueEnumerator.Current);
+                return new KeyValuePair<TKey, TValue>(this.keyEnumerator.Current, this.valueEnumerator.Current);
             }
         }
 
 
         public void Dispose()
         {
-            _keyEnumerator = null;
-            _valueEnumerator = null;
-            _map = null;
+            this.keyEnumerator = null;
+            this.valueEnumerator = null;
+            this.map = null;
         }
 
 
         public bool MoveNext()
         {
-            if (!_valueEnumerator.MoveNext())
+            if (!this.valueEnumerator.MoveNext())
             {
-                if (!_keyEnumerator.MoveNext())
+                if (!this.keyEnumerator.MoveNext())
                     return false;
-                _valueEnumerator = _map[_keyEnumerator.Current].GetEnumerator();
-                _valueEnumerator.MoveNext();
+                this.valueEnumerator = this.map[this.keyEnumerator.Current].GetEnumerator();
+                this.valueEnumerator.MoveNext();
                 return true;
             }
             return true;
@@ -60,18 +57,18 @@ namespace Google.Common.Geometry.MultiMap
 
         public void Reset()
         {
-            _keyEnumerator = _map.Keys.OrderBy(k => k).GetEnumerator();
-            _valueEnumerator = new List<TValue>().GetEnumerator();
+            this.keyEnumerator = this.map.Keys.OrderBy(k => k).GetEnumerator();
+            this.valueEnumerator = new List<TValue>().GetEnumerator();
         }
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
-            return new SortedMultiMapEnumerable<TKey, TValue>(_map);
+            return new SortedMultiMapEnumerable<TKey, TValue>(this.map);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return this.GetEnumerator();
         }
     }
 }

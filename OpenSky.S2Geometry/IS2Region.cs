@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Google.Common.Geometry
+﻿namespace OpenSky.S2Geometry
 {
     /// <summary>
     ///     An IS2Region represents a two-dimensional region over the unit sphere. It is

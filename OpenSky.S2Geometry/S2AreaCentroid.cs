@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Google.Common.Geometry
+﻿namespace OpenSky.S2Geometry
 {
     /**
  * The area of an interior, i.e. the region on the left side of an odd
@@ -18,23 +12,23 @@ namespace Google.Common.Geometry
 
     public struct S2AreaCentroid
     {
-        private readonly double _area;
-        private readonly S2Point? _centroid;
+        private readonly double area;
+        private readonly S2Point? centroid;
 
         public S2AreaCentroid(double area, S2Point? centroid = null)
         {
-            this._area = area;
-            this._centroid = centroid;
+            this.area = area;
+            this.centroid = centroid;
         }
 
         public double Area
         {
-            get { return _area; }
+            get { return this.area; }
         }
 
         public S2Point? Centroid
         {
-            get { return _centroid; }
+            get { return this.centroid; }
         }
     }
 }

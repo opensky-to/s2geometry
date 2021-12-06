@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Google.Common.Geometry
+﻿namespace OpenSky.S2Geometry
 {
+    using System;
+
     /**
  * This class contains various utility functions related to edges. It collects
  * together common code that is needed to implement polygonal geometry such as
@@ -375,12 +371,12 @@ namespace Google.Common.Geometry
 
             public double Dmin2
             {
-                get { return dmin2; }
+                get { return this.dmin2; }
             }
 
             public S2Point Vmin
             {
-                get { return vmin; }
+                get { return this.vmin; }
             }
 
             public void ReplaceIfCloser(S2Point x, S2Point y)
@@ -388,10 +384,10 @@ namespace Google.Common.Geometry
                 // If the squared distance from x to y is less than dmin2, then replace
                 // vmin by y and update dmin2 accordingly.
                 var d2 = (x - y).Norm2;
-                if (d2 < dmin2 || (d2 == dmin2 && y < vmin))
+                if (d2 < this.dmin2 || (d2 == this.dmin2 && y < this.vmin))
                 {
-                    dmin2 = d2;
-                    vmin = y;
+                    this.dmin2 = d2;
+                    this.vmin = y;
                 }
             }
         }
@@ -412,7 +408,7 @@ namespace Google.Common.Geometry
 
         public XyzPruner()
         {
-            boundSet = false;
+            this.boundSet = false;
         }
 
         /**
@@ -424,19 +420,19 @@ namespace Google.Common.Geometry
 
         public void AddEdgeToBounds(S2Point from, S2Point to)
         {
-            if (!boundSet)
+            if (!this.boundSet)
             {
-                boundSet = true;
-                xmin = xmax = @from.X;
-                ymin = ymax = @from.Y;
-                zmin = zmax = @from.Z;
+                this.boundSet = true;
+                this.xmin = this.xmax = @from.X;
+                this.ymin = this.ymax = @from.Y;
+                this.zmin = this.zmax = @from.Z;
             }
-            xmin = Math.Min(xmin, Math.Min(to.X, @from.X));
-            ymin = Math.Min(ymin, Math.Min(to.Y, @from.Y));
-            zmin = Math.Min(zmin, Math.Min(to.Z, @from.Z));
-            xmax = Math.Max(xmax, Math.Max(to.X, @from.X));
-            ymax = Math.Max(ymax, Math.Max(to.Y, @from.Y));
-            zmax = Math.Max(zmax, Math.Max(to.Z, @from.Z));
+            this.xmin = Math.Min(this.xmin, Math.Min(to.X, @from.X));
+            this.ymin = Math.Min(this.ymin, Math.Min(to.Y, @from.Y));
+            this.zmin = Math.Min(this.zmin, Math.Min(to.Z, @from.Z));
+            this.xmax = Math.Max(this.xmax, Math.Max(to.X, @from.X));
+            this.ymax = Math.Max(this.ymax, Math.Max(to.Y, @from.Y));
+            this.zmax = Math.Max(this.zmax, Math.Max(to.Z, @from.Z));
 
             // Because our arcs are really geodesics on the surface of the earth
             // an edge can have intermediate points outside the xyz bounds implicit
@@ -450,28 +446,28 @@ namespace Google.Common.Geometry
             if (approxArcLen < 0.025)
             {
                 // less than 2 degrees
-                maxDeformation = Math.Max(maxDeformation, approxArcLen*0.0025);
+                this.maxDeformation = Math.Max(this.maxDeformation, approxArcLen*0.0025);
             }
             else if (approxArcLen < 1.0)
             {
                 // less than 90 degrees
-                maxDeformation = Math.Max(maxDeformation, approxArcLen*0.11);
+                this.maxDeformation = Math.Max(this.maxDeformation, approxArcLen*0.11);
             }
             else
             {
-                maxDeformation = approxArcLen*0.5;
+                this.maxDeformation = approxArcLen*0.5;
             }
         }
 
         public void SetFirstIntersectPoint(S2Point v0)
         {
-            xmin = xmin - maxDeformation;
-            ymin = ymin - maxDeformation;
-            zmin = zmin - maxDeformation;
-            xmax = xmax + maxDeformation;
-            ymax = ymax + maxDeformation;
-            zmax = zmax + maxDeformation;
-            lastVertex = v0;
+            this.xmin = this.xmin - this.maxDeformation;
+            this.ymin = this.ymin - this.maxDeformation;
+            this.zmin = this.zmin - this.maxDeformation;
+            this.xmax = this.xmax + this.maxDeformation;
+            this.ymax = this.ymax + this.maxDeformation;
+            this.zmax = this.zmax + this.maxDeformation;
+            this.lastVertex = v0;
         }
 
         /**
@@ -485,20 +481,20 @@ namespace Google.Common.Geometry
         {
             var result = true;
 
-            if ((v1.X < xmin && lastVertex.X < xmin) || (v1.X > xmax && lastVertex.X > xmax))
+            if ((v1.X < this.xmin && this.lastVertex.X < this.xmin) || (v1.X > this.xmax && this.lastVertex.X > this.xmax))
             {
                 result = false;
             }
-            else if ((v1.Y < ymin && lastVertex.Y < ymin) || (v1.Y > ymax && lastVertex.Y > ymax))
+            else if ((v1.Y < this.ymin && this.lastVertex.Y < this.ymin) || (v1.Y > this.ymax && this.lastVertex.Y > this.ymax))
             {
                 result = false;
             }
-            else if ((v1.Z < zmin && lastVertex.Z < zmin) || (v1.Z > zmax && lastVertex.Z > zmax))
+            else if ((v1.Z < this.zmin && this.lastVertex.Z < this.zmin) || (v1.Z > this.zmax && this.lastVertex.Z > this.zmax))
             {
                 result = false;
             }
 
-            lastVertex = v1;
+            this.lastVertex = v1;
             return result;
         }
     }
@@ -637,7 +633,7 @@ namespace Google.Common.Geometry
 
         public RectBounder()
         {
-            bound = S2LatLngRect.Empty;
+            this.bound = S2LatLngRect.Empty;
         }
 
         /**
@@ -652,7 +648,7 @@ namespace Google.Common.Geometry
 
         public S2LatLngRect Bound
         {
-            get { return bound; }
+            get { return this.bound; }
         }
 
         public void AddPoint(S2Point b)
@@ -661,24 +657,24 @@ namespace Google.Common.Geometry
 
             var bLatLng = new S2LatLng(b);
 
-            if (bound.IsEmpty)
+            if (this.bound.IsEmpty)
             {
-                bound = bound.AddPoint(bLatLng);
+                this.bound = this.bound.AddPoint(bLatLng);
             }
             else
             {
                 // We can't just call bound.addPoint(bLatLng) here, since we need to
                 // ensure that all the longitudes between "a" and "b" are included.
-                bound = bound.Union(S2LatLngRect.FromPointPair(aLatLng, bLatLng));
+                this.bound = this.bound.Union(S2LatLngRect.FromPointPair(this.aLatLng, bLatLng));
 
                 // Check whether the Min/Max latitude occurs in the edge interior.
                 // We find the normal to the plane containing AB, and then a vector
                 // "dir" in this plane that also passes through the equator. We use
                 // RobustCrossProd to ensure that the edge normal is accurate even
                 // when the two points are very close together.
-                var aCrossB = S2.RobustCrossProd(a, b);
+                var aCrossB = S2.RobustCrossProd(this.a, b);
                 var dir = S2Point.CrossProd(aCrossB, new S2Point(0, 0, 1));
-                var da = dir.DotProd(a);
+                var da = dir.DotProd(this.a);
                 var db = dir.DotProd(b);
 
                 if (da*db < 0)
@@ -686,21 +682,21 @@ namespace Google.Common.Geometry
                     // Minimum/maximum latitude occurs in the edge interior. This affects
                     // the latitude bounds but not the longitude bounds.
                     var absLat = Math.Acos(Math.Abs(aCrossB[2]/aCrossB.Norm));
-                    var lat = bound.Lat;
+                    var lat = this.bound.Lat;
                     if (da < 0)
                     {
                         // It's possible that absLat < lat.lo() due to numerical errors.
-                        lat = new R1Interval(lat.Lo, Math.Max(absLat, bound.Lat.Hi));
+                        lat = new R1Interval(lat.Lo, Math.Max(absLat, this.bound.Lat.Hi));
                     }
                     else
                     {
-                        lat = new R1Interval(Math.Min(-absLat, bound.Lat.Lo), lat.Hi);
+                        lat = new R1Interval(Math.Min(-absLat, this.bound.Lat.Lo), lat.Hi);
                     }
-                    bound = new S2LatLngRect(lat, bound.Lng);
+                    this.bound = new S2LatLngRect(lat, this.bound.Lng);
                 }
             }
-            a = b;
-            aLatLng = bLatLng;
+            this.a = b;
+            this.aLatLng = bLatLng;
         }
     }
 
@@ -720,7 +716,7 @@ namespace Google.Common.Geometry
         public LongitudePruner(S1Interval interval, S2Point v0)
         {
             this.interval = interval;
-            lng0 = S2LatLng.Longitude(v0).Radians;
+            this.lng0 = S2LatLng.Longitude(v0).Radians;
         }
 
         /**
@@ -731,8 +727,8 @@ namespace Google.Common.Geometry
         public bool Intersects(S2Point v1)
         {
             var lng1 = S2LatLng.Longitude(v1).Radians;
-            var result = interval.Intersects(S1Interval.FromPointPair(lng0, lng1));
-            lng0 = lng1;
+            var result = this.interval.Intersects(S1Interval.FromPointPair(this.lng0, lng1));
+            this.lng0 = lng1;
             return result;
         }
     }
@@ -762,8 +758,8 @@ namespace Google.Common.Geometry
         {
             this.a = a;
             this.b = b;
-            aCrossB = S2Point.CrossProd(a, b);
-            RestartAt(c);
+            this.aCrossB = S2Point.CrossProd(a, b);
+            this.RestartAt(c);
         }
 
         /**
@@ -773,7 +769,7 @@ namespace Google.Common.Geometry
         public void RestartAt(S2Point c)
         {
             this.c = c;
-            acb = -S2.RobustCcw(a, b, c, aCrossB);
+            this.acb = -S2.RobustCcw(this.a, this.b, c, this.aCrossB);
         }
 
         /**
@@ -796,15 +792,15 @@ namespace Google.Common.Geometry
 
             // Recall that robustCCW is invariant with respect to rotating its
             // arguments, i.e. ABC has the same orientation as BDA.
-            var bda = S2.RobustCcw(a, b, d, aCrossB);
+            var bda = S2.RobustCcw(this.a, this.b, d, this.aCrossB);
             int result;
 
-            if (bda == -acb && bda != 0)
+            if (bda == -this.acb && bda != 0)
             {
                 // Most common case -- triangles have opposite orientations.
                 result = -1;
             }
-            else if ((bda & acb) == 0)
+            else if ((bda & this.acb) == 0)
             {
                 // At least one value is zero -- two vertices are identical.
                 result = 0;
@@ -812,13 +808,13 @@ namespace Google.Common.Geometry
             else
             {
                 // assert (bda == acb && bda != 0);
-                result = RobustCrossingInternal(d); // Slow path.
+                result = this.RobustCrossingInternal(d); // Slow path.
             }
             // Now save the current vertex D as the next vertex C, and also save the
             // orientation of the new triangle ACB (which is opposite to the current
             // triangle BDA).
-            c = d;
-            acb = -bda;
+            this.c = d;
+            this.acb = -bda;
             return result;
         }
 
@@ -832,9 +828,9 @@ namespace Google.Common.Geometry
         public bool EdgeOrVertexCrossing(S2Point d)
         {
             // We need to copy c since it is clobbered by robustCrossing().
-            var c2 = new S2Point(c[0], c[1], c[2]);
+            var c2 = new S2Point(this.c[0], this.c[1], this.c[2]);
 
-            var crossing = RobustCrossing(d);
+            var crossing = this.RobustCrossing(d);
             if (crossing < 0)
             {
                 return false;
@@ -844,7 +840,7 @@ namespace Google.Common.Geometry
                 return true;
             }
 
-            return S2EdgeUtil.VertexCrossing(a, b, c2, d);
+            return S2EdgeUtil.VertexCrossing(this.a, this.b, c2, d);
         }
 
         /**
@@ -855,15 +851,15 @@ namespace Google.Common.Geometry
         {
             // ACB and BDA have the appropriate orientations, so now we check the
             // triangles CBD and DAC.
-            var cCrossD = S2Point.CrossProd(c, d);
-            var cbd = -S2.RobustCcw(c, d, b, cCrossD);
-            if (cbd != acb)
+            var cCrossD = S2Point.CrossProd(this.c, d);
+            var cbd = -S2.RobustCcw(this.c, d, this.b, cCrossD);
+            if (cbd != this.acb)
             {
                 return -1;
             }
 
-            var dac = S2.RobustCcw(c, d, a, cCrossD);
-            return (dac == acb) ? 1 : -1;
+            var dac = S2.RobustCcw(this.c, d, this.a, cCrossD);
+            return (dac == this.acb) ? 1 : -1;
         }
     }
 

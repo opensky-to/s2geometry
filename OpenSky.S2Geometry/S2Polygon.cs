@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using Google.Common.Geometry.DataStructures;
-
-namespace Google.Common.Geometry
+﻿namespace OpenSky.S2Geometry
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Text;
+
+    using OpenSky.S2Geometry.Datastructures;
+
     /**
  * An S2Polygon is an SI2Region object that represents a polygon. A polygon
  * consists of zero or more {@link S2Loop loops} representing "shells" and
@@ -35,11 +36,11 @@ namespace Google.Common.Geometry
 
     public sealed class S2Polygon : IS2Region, IComparable<S2Polygon>
     {
-        private readonly List<S2Loop> _loops;
+        private readonly List<S2Loop> loops;
 
-        private S2LatLngRect _bound;
-        private bool _hasHoles;
-        private int _numVertices;
+        private S2LatLngRect bound;
+        private bool hasHoles;
+        private int numVertices;
 
         /**
    * Creates an empty polygon that should be initialized by calling Init().
@@ -47,10 +48,10 @@ namespace Google.Common.Geometry
 
         public S2Polygon()
         {
-            _loops = new List<S2Loop>();
-            _bound = S2LatLngRect.Empty;
-            _hasHoles = false;
-            _numVertices = 0;
+            this.loops = new List<S2Loop>();
+            this.bound = S2LatLngRect.Empty;
+            this.hasHoles = false;
+            this.numVertices = 0;
         }
 
         /**
@@ -60,10 +61,10 @@ namespace Google.Common.Geometry
 
         public S2Polygon(System.Collections.Generic.IList<S2Loop> loops)
         {
-            _loops = new List<S2Loop>();
-            _bound = S2LatLngRect.Empty;
+            this.loops = new List<S2Loop>();
+            this.bound = S2LatLngRect.Empty;
 
-            Init(loops);
+            this.Init(loops);
         }
 
         /**
@@ -72,12 +73,12 @@ namespace Google.Common.Geometry
 
         public S2Polygon(S2Loop loop)
         {
-            _loops = new List<S2Loop>();
-            _bound = loop.RectBound;
-            _hasHoles = false;
-            _numVertices = loop.NumVertices;
+            this.loops = new List<S2Loop>();
+            this.bound = loop.RectBound;
+            this.hasHoles = false;
+            this.numVertices = loop.NumVertices;
 
-            _loops.Add(loop);
+            this.loops.Add(loop);
         }
 
         /**
@@ -86,25 +87,25 @@ namespace Google.Common.Geometry
 
         public S2Polygon(S2Polygon src)
         {
-            _loops = new List<S2Loop>();
-            _bound = src.RectBound;
-            _hasHoles = src._hasHoles;
-            _numVertices = src._numVertices;
+            this.loops = new List<S2Loop>();
+            this.bound = src.RectBound;
+            this.hasHoles = src.hasHoles;
+            this.numVertices = src.numVertices;
 
             for (var i = 0; i < src.NumLoops; ++i)
             {
-                _loops.Add(new S2Loop(src.Loop(i)));
+                this.loops.Add(new S2Loop(src.Loop(i)));
             }
         }
 
         public int NumLoops
         {
-            get { return _loops.Count; }
+            get { return this.loops.Count; }
         }
 
         public S2AreaCentroid AreaAndCentroid
         {
-            get { return GetAreaCentroid(true); }
+            get { return this.GetAreaCentroid(true); }
         }
 
         /**
@@ -114,7 +115,7 @@ namespace Google.Common.Geometry
 
         public double Area
         {
-            get { return GetAreaCentroid(false).Area; }
+            get { return this.GetAreaCentroid(false).Area; }
         }
 
         /**
@@ -125,12 +126,12 @@ namespace Google.Common.Geometry
 
         public S2Point? Centroid
         {
-            get { return GetAreaCentroid(true).Centroid; }
+            get { return this.GetAreaCentroid(true).Centroid; }
         }
 
         public int NumVertices
         {
-            get { return _numVertices; }
+            get { return this.numVertices; }
         }
 
         public bool IsNormalized
@@ -141,14 +142,14 @@ namespace Google.Common.Geometry
 
 
                 S2Loop lastParent = null;
-                for (var i = 0; i < NumLoops; ++i)
+                for (var i = 0; i < this.NumLoops; ++i)
                 {
-                    var child = Loop(i);
+                    var child = this.Loop(i);
                     if (child.Depth == 0)
                     {
                         continue;
                     }
-                    var parent = Loop(GetParent(i));
+                    var parent = this.Loop(this.GetParent(i));
                     if (parent != lastParent)
                     {
                         vertices.Clear();
@@ -187,13 +188,13 @@ namespace Google.Common.Geometry
         public int CompareTo(S2Polygon other)
         {
             // If number of loops differ, use that.
-            if (NumLoops != other.NumLoops)
+            if (this.NumLoops != other.NumLoops)
             {
-                return NumLoops - other.NumLoops;
+                return this.NumLoops - other.NumLoops;
             }
-            for (var i = 0; i < NumLoops; ++i)
+            for (var i = 0; i < this.NumLoops; ++i)
             {
-                var compare = _loops[i].CompareTo(other._loops[i]);
+                var compare = this.loops[i].CompareTo(other.loops[i]);
                 if (compare != 0)
                 {
                     return compare;
@@ -204,7 +205,7 @@ namespace Google.Common.Geometry
 
         public S2Cap CapBound
         {
-            get { return _bound.CapBound; }
+            get { return this.bound.CapBound; }
         }
 
 
@@ -212,7 +213,7 @@ namespace Google.Common.Geometry
 
         public S2LatLngRect RectBound
         {
-            get { return _bound; }
+            get { return this.bound; }
         }
 
         /**
@@ -223,19 +224,19 @@ namespace Google.Common.Geometry
 
         public bool Contains(S2Cell cell)
         {
-            if (NumLoops == 1)
+            if (this.NumLoops == 1)
             {
-                return Loop(0).Contains(cell);
+                return this.Loop(0).Contains(cell);
             }
             var cellBound = cell.RectBound;
-            if (!_bound.Contains(cellBound))
+            if (!this.bound.Contains(cellBound))
             {
                 return false;
             }
 
             var cellLoop = new S2Loop(cell, cellBound);
             var cellPoly = new S2Polygon(cellLoop);
-            return Contains(cellPoly);
+            return this.Contains(cellPoly);
         }
 
         /**
@@ -246,19 +247,19 @@ namespace Google.Common.Geometry
 
         public bool MayIntersect(S2Cell cell)
         {
-            if (NumLoops == 1)
+            if (this.NumLoops == 1)
             {
-                return Loop(0).MayIntersect(cell);
+                return this.Loop(0).MayIntersect(cell);
             }
             var cellBound = cell.RectBound;
-            if (!_bound.Intersects(cellBound))
+            if (!this.bound.Intersects(cellBound))
             {
                 return false;
             }
 
             var cellLoop = new S2Loop(cell, cellBound);
             var cellPoly = new S2Polygon(cellLoop);
-            return Intersects(cellPoly);
+            return this.Intersects(cellPoly);
         }
 
         /**
@@ -285,7 +286,7 @@ namespace Google.Common.Geometry
             foreach (var loop in loops)
             {
                 InsertLoop(loop, null, loopMap);
-                _numVertices += loop.NumVertices;
+                this.numVertices += loop.NumVertices;
             }
             loops.Clear();
 
@@ -302,23 +303,23 @@ namespace Google.Common.Geometry
 
             // Reorder the loops in depth-first traversal order.
             // Starting at null == starting at the root
-            InitLoop(null, -1, loopMap);
+            this.InitLoop(null, -1, loopMap);
 
             // TODO(dbeaumont): Add tests or preconditions for these asserts (here and elesewhere).
             // forall i != j : containsChild(loop(i), loop(j), loopMap) == loop(i).containsNested(loop(j)));
 
             // Compute the bounding rectangle of the entire polygon.
-            _hasHoles = false;
-            _bound = S2LatLngRect.Empty;
-            for (var i = 0; i < NumLoops; ++i)
+            this.hasHoles = false;
+            this.bound = S2LatLngRect.Empty;
+            for (var i = 0; i < this.NumLoops; ++i)
             {
-                if (Loop(i).Sign < 0)
+                if (this.Loop(i).Sign < 0)
                 {
-                    _hasHoles = true;
+                    this.hasHoles = true;
                 }
                 else
                 {
-                    _bound = _bound.Union(Loop(i).RectBound);
+                    this.bound = this.bound.Union(this.Loop(i).RectBound);
                 }
             }
         }
@@ -330,13 +331,13 @@ namespace Google.Common.Geometry
 
         public void Release(System.Collections.Generic.IList<S2Loop> loops)
         {
-            foreach (var item in _loops)
+            foreach (var item in this.loops)
                 loops.Add(item);
 
-            _loops.Clear();
-            _bound = S2LatLngRect.Empty;
-            _hasHoles = false;
-            _numVertices = 0;
+            this.loops.Clear();
+            this.bound = S2LatLngRect.Empty;
+            this.hasHoles = false;
+            this.numVertices = 0;
         }
 
         /**
@@ -400,7 +401,7 @@ namespace Google.Common.Geometry
 
         public S2Loop Loop(int k)
         {
-            return _loops[k];
+            return this.loops[k];
         }
 
         /**
@@ -409,12 +410,12 @@ namespace Google.Common.Geometry
 
         public int GetParent(int k)
         {
-            var depth = Loop(k).Depth;
+            var depth = this.Loop(k).Depth;
             if (depth == 0)
             {
                 return -1; // Optimization.
             }
-            while (--k >= 0 && Loop(k).Depth >= depth)
+            while (--k >= 0 && this.Loop(k).Depth >= depth)
             {
                 // spin
             }
@@ -433,10 +434,10 @@ namespace Google.Common.Geometry
         {
             if (k < 0)
             {
-                return NumLoops - 1;
+                return this.NumLoops - 1;
             }
-            var depth = Loop(k).Depth;
-            while (++k < NumLoops && Loop(k).Depth > depth)
+            var depth = this.Loop(k).Depth;
+            while (++k < this.NumLoops && this.Loop(k).Depth > depth)
             {
                 // spin
             }
@@ -447,12 +448,12 @@ namespace Google.Common.Geometry
         {
             double areaSum = 0;
             var centroidSum = new S2Point(0, 0, 0);
-            for (var i = 0; i < NumLoops; ++i)
+            for (var i = 0; i < this.NumLoops; ++i)
             {
-                var areaCentroid = doCentroid ? (S2AreaCentroid?)Loop(i).AreaAndCentroid : null;
-                var loopArea = doCentroid ? areaCentroid.Value.Area : Loop(i).Area;
+                var areaCentroid = doCentroid ? (S2AreaCentroid?)this.Loop(i).AreaAndCentroid : null;
+                var loopArea = doCentroid ? areaCentroid.Value.Area : this.Loop(i).Area;
 
-                var loopSign = Loop(i).Sign;
+                var loopSign = this.Loop(i).Sign;
                 areaSum += loopSign*loopArea;
                 if (doCentroid)
                 {
@@ -486,7 +487,7 @@ namespace Google.Common.Geometry
 
         public S1Angle GetDistance(S2Point p)
         {
-            if (Contains(p))
+            if (this.Contains(p))
             {
                 return S1Angle.FromRadians(0);
             }
@@ -494,9 +495,9 @@ namespace Google.Common.Geometry
             // The furthest point from p on the sphere is its antipode, which is an
             // angle of PI radians. This is an upper bound on the angle.
             var minDistance = S1Angle.FromRadians(Math.PI);
-            for (var i = 0; i < NumLoops; i++)
+            for (var i = 0; i < this.NumLoops; i++)
             {
-                minDistance = S1Angle.Min(minDistance, Loop(i).GetDistance(p));
+                minDistance = S1Angle.Min(minDistance, this.Loop(i).GetDistance(p));
             }
 
             return minDistance;
@@ -512,29 +513,29 @@ namespace Google.Common.Geometry
         {
             // If both polygons have one loop, use the more efficient S2Loop method.
             // Note that S2Loop.contains does its own bounding rectangle check.
-            if (NumLoops == 1 && b.NumLoops == 1)
+            if (this.NumLoops == 1 && b.NumLoops == 1)
             {
-                return Loop(0).Contains(b.Loop(0));
+                return this.Loop(0).Contains(b.Loop(0));
             }
 
             // Otherwise if neither polygon has holes, we can still use the more
             // efficient S2Loop::Contains method (rather than ContainsOrCrosses),
             // but it's worthwhile to do our own bounds check first.
-            if (!_bound.Contains(b.RectBound))
+            if (!this.bound.Contains(b.RectBound))
             {
                 // If the union of the bounding boxes spans the full longitude range,
                 // it is still possible that polygon A contains B. (This is only
                 // possible if at least one polygon has multiple shells.)
-                if (!_bound.Lng.Union(b.RectBound.Lng).IsFull)
+                if (!this.bound.Lng.Union(b.RectBound.Lng).IsFull)
                 {
                     return false;
                 }
             }
-            if (!_hasHoles && !b._hasHoles)
+            if (!this.hasHoles && !b.hasHoles)
             {
                 for (var j = 0; j < b.NumLoops; ++j)
                 {
-                    if (!AnyLoopContains(b.Loop(j)))
+                    if (!this.AnyLoopContains(b.Loop(j)))
                     {
                         return false;
                     }
@@ -551,7 +552,7 @@ namespace Google.Common.Geometry
 
             // Every shell of B must be contained by an odd number of loops of A,
             // and every hole of A must be contained by an even number of loops of B.
-            return ContainsAllShells(b) && b.ExcludesAllHoles(this);
+            return this.ContainsAllShells(b) && b.ExcludesAllHoles(this);
         }
 
         /**
@@ -567,25 +568,25 @@ namespace Google.Common.Geometry
 
             // If both polygons have one loop, use the more efficient S2Loop method.
             // Note that S2Loop.intersects does its own bounding rectangle check.
-            if (NumLoops == 1 && b.NumLoops == 1)
+            if (this.NumLoops == 1 && b.NumLoops == 1)
             {
-                return Loop(0).Intersects(b.Loop(0));
+                return this.Loop(0).Intersects(b.Loop(0));
             }
 
             // Otherwise if neither polygon has holes, we can still use the more
             // efficient S2Loop.intersects method. The polygons intersect if and
             // only if some pair of loop regions intersect.
-            if (!_bound.Intersects(b.RectBound))
+            if (!this.bound.Intersects(b.RectBound))
             {
                 return false;
             }
-            if (!_hasHoles && !b._hasHoles)
+            if (!this.hasHoles && !b.hasHoles)
             {
-                for (var i = 0; i < NumLoops; ++i)
+                for (var i = 0; i < this.NumLoops; ++i)
                 {
                     for (var j = 0; j < b.NumLoops; ++j)
                     {
-                        if (Loop(i).Intersects(b.Loop(j)))
+                        if (this.Loop(i).Intersects(b.Loop(j)))
                         {
                             return true;
                         }
@@ -597,7 +598,7 @@ namespace Google.Common.Geometry
             // Otherwise if any shell of B is contained by an odd number of loops of A,
             // or any shell of A is contained by an odd number of loops of B, there is
             // an intersection.
-            return IntersectsAnyShell(b) || b.IntersectsAnyShell(this);
+            return this.IntersectsAnyShell(b) || b.IntersectsAnyShell(this);
         }
 
         /**
@@ -702,7 +703,7 @@ namespace Google.Common.Geometry
             bIndex.PredictAdditionalCalls(a.NumVertices);
 
             var intersections = new List<ParametrizedS2Point>();
-            foreach (var aLoop in a._loops)
+            foreach (var aLoop in a.loops)
             {
                 var n = aLoop.NumVertices;
                 var dir = (aLoop.IsHole ^ reverseA) ? -1 : 1;
@@ -757,14 +758,14 @@ namespace Google.Common.Geometry
 
         public void InitToIntersection(S2Polygon a, S2Polygon b)
         {
-            InitToIntersectionSloppy(a, b, S2EdgeUtil.DefaultIntersectionTolerance);
+            this.InitToIntersectionSloppy(a, b, S2EdgeUtil.DefaultIntersectionTolerance);
         }
 
         public void InitToIntersectionSloppy(
             S2Polygon a, S2Polygon b, S1Angle vertexMergeRadius)
         {
-            Preconditions.CheckState(NumLoops == 0);
-            if (!a._bound.Intersects(b._bound))
+            Preconditions.CheckState(this.NumLoops == 0);
+            if (!a.bound.Intersects(b.bound))
             {
                 return;
             }
@@ -787,12 +788,12 @@ namespace Google.Common.Geometry
 
         public void InitToUnion(S2Polygon a, S2Polygon b)
         {
-            InitToUnionSloppy(a, b, S2EdgeUtil.DefaultIntersectionTolerance);
+            this.InitToUnionSloppy(a, b, S2EdgeUtil.DefaultIntersectionTolerance);
         }
 
         public void InitToUnionSloppy(S2Polygon a, S2Polygon b, S1Angle vertexMergeRadius)
         {
-            Preconditions.CheckState(NumLoops == 0);
+            Preconditions.CheckState(this.NumLoops == 0);
 
             // We want the boundary of A clipped to the exterior of B,
             // plus the boundary of B clipped to the exterior of A,
@@ -902,20 +903,20 @@ namespace Google.Common.Geometry
 
         internal bool BoundaryApproxEquals(S2Polygon b, double maxError)
         {
-            if (NumLoops != b.NumLoops)
+            if (this.NumLoops != b.NumLoops)
             {
                 Debug.WriteLine(
-                    "!= loops: " + NumLoops + " vs. " + b.NumLoops);
+                    "!= loops: " + this.NumLoops + " vs. " + b.NumLoops);
                 return false;
             }
 
             // For now, we assume that there is at most one candidate match for each
             // loop. (So far this method is just used for testing.)
-            for (var i = 0; i < NumLoops; ++i)
+            for (var i = 0; i < this.NumLoops; ++i)
             {
-                var aLoop = Loop(i);
+                var aLoop = this.Loop(i);
                 var success = false;
-                for (var j = 0; j < NumLoops; ++j)
+                for (var j = 0; j < this.NumLoops; ++j)
                 {
                     var bLoop = b.Loop(j);
                     if (bLoop.Depth == aLoop.Depth && bLoop.BoundaryApproxEquals(aLoop, maxError))
@@ -942,19 +943,19 @@ namespace Google.Common.Geometry
 
         public bool Contains(S2Point p)
         {
-            if (NumLoops == 1)
+            if (this.NumLoops == 1)
             {
-                return Loop(0).Contains(p); // Optimization.
+                return this.Loop(0).Contains(p); // Optimization.
             }
-            if (!_bound.Contains(p))
+            if (!this.bound.Contains(p))
             {
                 return false;
             }
             var inside = false;
-            for (var i = 0; i < NumLoops; ++i)
+            for (var i = 0; i < this.NumLoops; ++i)
             {
-                inside ^= Loop(i).Contains(p);
-                if (inside && !_hasHoles)
+                inside ^= this.Loop(i).Contains(p);
+                if (inside && !this.hasHoles)
                 {
                     break; // Shells are disjoint.
                 }
@@ -1027,7 +1028,7 @@ namespace Google.Common.Geometry
             if (loop != null)
             {
                 loop.Depth = depth;
-                _loops.Add(loop);
+                this.loops.Add(loop);
             }
             List<S2Loop> children = null;
             if (loopMap.ContainsKey(loop))
@@ -1036,7 +1037,7 @@ namespace Google.Common.Geometry
             {
                 foreach (var child in children)
                 {
-                    InitLoop(child, depth + 1, loopMap);
+                    this.InitLoop(child, depth + 1, loopMap);
                 }
             }
         }
@@ -1044,9 +1045,9 @@ namespace Google.Common.Geometry
         private int ContainsOrCrosses(S2Loop b)
         {
             var inside = false;
-            for (var i = 0; i < NumLoops; ++i)
+            for (var i = 0; i < this.NumLoops; ++i)
             {
-                var result = Loop(i).ContainsOrCrosses(b);
+                var result = this.Loop(i).ContainsOrCrosses(b);
                 if (result < 0)
                 {
                     return -1; // The loop boundaries intersect.
@@ -1063,9 +1064,9 @@ namespace Google.Common.Geometry
 
         private bool AnyLoopContains(S2Loop b)
         {
-            for (var i = 0; i < NumLoops; ++i)
+            for (var i = 0; i < this.NumLoops; ++i)
             {
-                if (Loop(i).Contains(b))
+                if (this.Loop(i).Contains(b))
                 {
                     return true;
                 }
@@ -1083,7 +1084,7 @@ namespace Google.Common.Geometry
                 {
                     continue;
                 }
-                if (ContainsOrCrosses(b.Loop(j)) <= 0)
+                if (this.ContainsOrCrosses(b.Loop(j)) <= 0)
                 {
                     // Shell of B is not contained by A, or the boundaries intersect.
                     return false;
@@ -1105,7 +1106,7 @@ namespace Google.Common.Geometry
                 {
                     continue;
                 }
-                if (ContainsOrCrosses(b.Loop(j)) != 0)
+                if (this.ContainsOrCrosses(b.Loop(j)) != 0)
                 {
                     // Hole of B is contained by A, or the boundaries intersect.
                     return false;
@@ -1124,7 +1125,7 @@ namespace Google.Common.Geometry
                 {
                     continue;
                 }
-                if (ContainsOrCrosses(b.Loop(j)) != 0)
+                if (this.ContainsOrCrosses(b.Loop(j)) != 0)
                 {
                     // Shell of B is contained by A, or the boundaries intersect.
                     return true;
@@ -1140,10 +1141,10 @@ namespace Google.Common.Geometry
         public override String ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("Polygon: (").Append(NumLoops).Append(") loops:\n");
-            for (var i = 0; i < NumLoops; ++i)
+            sb.Append("Polygon: (").Append(this.NumLoops).Append(") loops:\n");
+            for (var i = 0; i < this.NumLoops; ++i)
             {
-                var s2Loop = Loop(i);
+                var s2Loop = this.Loop(i);
                 sb.Append("loop <\n");
                 for (var v = 0; v < s2Loop.NumVertices; ++v)
                 {
@@ -1158,23 +1159,23 @@ namespace Google.Common.Geometry
 
         private struct LoopVertexIndexPair
         {
-            private readonly int _loopIndex;
-            private readonly int _vertexIndex;
+            private readonly int loopIndex;
+            private readonly int vertexIndex;
 
             public LoopVertexIndexPair(int loopIndex, int vertexIndex)
             {
-                _loopIndex = loopIndex;
-                _vertexIndex = vertexIndex;
+                this.loopIndex = loopIndex;
+                this.vertexIndex = vertexIndex;
             }
 
             public int LoopIndex
             {
-                get { return _loopIndex; }
+                get { return this.loopIndex; }
             }
 
             public int VertexIndex
             {
-                get { return _vertexIndex; }
+                get { return this.vertexIndex; }
             }
         }
 
@@ -1185,46 +1186,46 @@ namespace Google.Common.Geometry
 
         private struct ParametrizedS2Point : IComparable<ParametrizedS2Point>
         {
-            private readonly S2Point _point;
-            private readonly double _time;
+            private readonly S2Point point;
+            private readonly double time;
 
             public ParametrizedS2Point(double time, S2Point point)
             {
-                _time = time;
-                _point = point;
+                this.time = time;
+                this.point = point;
             }
 
             public double Time
             {
-                get { return _time; }
+                get { return this.time; }
             }
 
             public S2Point Point
             {
-                get { return _point; }
+                get { return this.point; }
             }
 
             public int CompareTo(ParametrizedS2Point o)
             {
-                var compareTime = _time.CompareTo(o._time);
+                var compareTime = this.time.CompareTo(o.time);
                 if (compareTime != 0)
                 {
                     return compareTime;
                 }
-                return _point.CompareTo(o._point);
+                return this.point.CompareTo(o.point);
             }
         }
 
         private abstract class S2LoopSequenceIndex : S2EdgeIndex
         {
             /** Map from the unidimensional edge index to the loop this edge belongs to. */
-            private readonly int[] _indexToLoop;
+            private readonly int[] indexToLoop;
 
             /**
      * Reverse of indexToLoop: maps a loop index to the unidimensional index
      * of the first edge in the loop.
      */
-            private readonly int[] _loopToFirstIndex;
+            private readonly int[] loopToFirstIndex;
 
             /**
      * Must be called by each subclass with the array of vertices per loop. The
@@ -1240,16 +1241,16 @@ namespace Google.Common.Geometry
                 {
                     totalEdges += edges;
                 }
-                _indexToLoop = new int[totalEdges];
-                _loopToFirstIndex = new int[numVertices.Count];
+                this.indexToLoop = new int[totalEdges];
+                this.loopToFirstIndex = new int[numVertices.Count];
 
                 totalEdges = 0;
                 for (var j = 0; j < numVertices.Count; j++)
                 {
-                    _loopToFirstIndex[j] = totalEdges;
+                    this.loopToFirstIndex[j] = totalEdges;
                     for (var i = 0; i < numVertices[j]; i++)
                     {
-                        _indexToLoop[totalEdges] = j;
+                        this.indexToLoop[totalEdges] = j;
                         totalEdges++;
                     }
                 }
@@ -1257,13 +1258,13 @@ namespace Google.Common.Geometry
 
             protected override int NumEdges
             {
-                get { return _indexToLoop.Length; }
+                get { return this.indexToLoop.Length; }
             }
 
             protected LoopVertexIndexPair DecodeIndex(int index)
             {
-                var loopIndex = _indexToLoop[index];
-                var vertexInLoop = index - _loopToFirstIndex[loopIndex];
+                var loopIndex = this.indexToLoop[index];
+                var vertexInLoop = index - this.loopToFirstIndex[loopIndex];
                 return new LoopVertexIndexPair(loopIndex, vertexInLoop);
             }
 
@@ -1274,14 +1275,14 @@ namespace Google.Common.Geometry
 
             protected override S2Point EdgeFrom(int index)
             {
-                var fromTo = EdgeFromTo(index);
+                var fromTo = this.EdgeFromTo(index);
                 var from = fromTo.Start;
                 return from;
             }
 
             protected override S2Point EdgeTo(int index)
             {
-                var fromTo = EdgeFromTo(index);
+                var fromTo = this.EdgeFromTo(index);
                 var to = fromTo.End;
                 return to;
             }
@@ -1290,13 +1291,13 @@ namespace Google.Common.Geometry
         // Indexing structure for an S2Polygon.
         private sealed class S2PolygonIndex : S2LoopSequenceIndex
         {
-            private readonly S2Polygon _poly;
-            private readonly bool _reverse;
+            private readonly S2Polygon poly;
+            private readonly bool reverse;
 
             public S2PolygonIndex(S2Polygon poly, bool reverse) : base(GetVertices(poly))
             {
-                _poly = poly;
-                _reverse = reverse;
+                this.poly = poly;
+                this.reverse = reverse;
             }
 
             private static int[] GetVertices(S2Polygon poly)
@@ -1311,13 +1312,13 @@ namespace Google.Common.Geometry
 
             public override S2Edge EdgeFromTo(int index)
             {
-                var indices = DecodeIndex(index);
+                var indices = this.DecodeIndex(index);
                 var loopIndex = indices.LoopIndex;
                 var vertexInLoop = indices.VertexIndex;
-                var loop = _poly.Loop(loopIndex);
+                var loop = this.poly.Loop(loopIndex);
                 int fromIndex;
                 int toIndex;
-                if (loop.IsHole ^ _reverse)
+                if (loop.IsHole ^ this.reverse)
                 {
                     fromIndex = loop.NumVertices - 1 - vertexInLoop;
                     toIndex = 2*loop.NumVertices - 2 - vertexInLoop;
@@ -1335,42 +1336,42 @@ namespace Google.Common.Geometry
 
         private struct UndirectedEdge : IEquatable<UndirectedEdge>
         {
-            private readonly S2Point _a;
-            private readonly S2Point _b;
+            private readonly S2Point a;
+            private readonly S2Point b;
 
             public UndirectedEdge(S2Point start, S2Point end)
             {
-                _a = start;
-                _b = end;
+                this.a = start;
+                this.b = end;
             }
 
             public S2Point Start
             {
-                get { return _a; }
+                get { return this.a; }
             }
 
             public S2Point End
             {
-                get { return _b; }
+                get { return this.b; }
             }
 
             public bool Equals(UndirectedEdge other)
             {
-                return ((Start.Equals(other.Start) && End.Equals(other.End))
-                        || (Start.Equals(other.End) && End.Equals(other.Start)));
+                return ((this.Start.Equals(other.Start) && this.End.Equals(other.End))
+                        || (this.Start.Equals(other.End) && this.End.Equals(other.Start)));
             }
 
             public override bool Equals(object obj)
             {
                 if (ReferenceEquals(null, obj)) return false;
-                return obj is UndirectedEdge && Equals((UndirectedEdge)obj);
+                return obj is UndirectedEdge && this.Equals((UndirectedEdge)obj);
             }
 
             public override int GetHashCode()
             {
                 unchecked
                 {
-                    return (_a.GetHashCode()*397) ^ _b.GetHashCode();
+                    return (this.a.GetHashCode()*397) ^ this.b.GetHashCode();
                 }
             }
 
@@ -1392,7 +1393,7 @@ namespace Google.Common.Geometry
             public override String ToString()
             {
                 return String.Format("Edge: ({0} <-> {1})\n   or [{2} <-> {3}]",
-                                     _a.ToDegreesString(), _b.ToDegreesString(), _a, _b);
+                                     this.a.ToDegreesString(), this.b.ToDegreesString(), this.a, this.b);
             }
         }
     }

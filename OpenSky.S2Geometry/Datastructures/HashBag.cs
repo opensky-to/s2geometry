@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Google.Common.Geometry.DataStructures
+﻿namespace OpenSky.S2Geometry.Datastructures
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+
     // Adapted from https://github.com/sestoft/C5/blob/master/C5/hashing/HashBag.cs
     class HashBag<T> : ICollection<T>
     {
@@ -19,12 +16,12 @@ namespace Google.Common.Geometry.DataStructures
 
         public HashBag(IEqualityComparer<T> itemEqualityComparer)
         {
-            dict = new Dictionary<T, int>(itemEqualityComparer);
+            this.dict = new Dictionary<T, int>(itemEqualityComparer);
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-            foreach (var item in dict)
+            foreach (var item in this.dict)
             {
                 for (var i = 0; i < item.Value; i++)
                     yield return item.Key;
@@ -33,56 +30,71 @@ namespace Google.Common.Geometry.DataStructures
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return this.GetEnumerator();
         }
 
         public void Add(T item)
         {
-            int val;
-            if (dict.TryGetValue(item, out val))
+            if (item == null)
             {
-                dict[item] = ++val;
+                return;
+            }
+
+            int val;
+            if (this.dict.TryGetValue(item, out val))
+            {
+                this.dict[item] = ++val;
             }
             else
             {
-                dict.Add(item, 1);
+                this.dict.Add(item, 1);
             }
-            size++;
+            this.size++;
         }
 
         public void Clear()
         {
-            dict.Clear();
-            size = 0;
+            this.dict.Clear();
+            this.size = 0;
         }
 
         public bool Contains(T item)
         {
-            return dict.ContainsKey(item);
+            if (item == null)
+            {
+                return false;
+            }
+
+            return this.dict.ContainsKey(item);
         }
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            if (arrayIndex < 0 || arrayIndex + Count > array.Length)
+            if (arrayIndex < 0 || arrayIndex + this.Count > array.Length)
                 throw new ArgumentOutOfRangeException();
 
-            foreach (var p in dict)
+            foreach (var p in this.dict)
                 for (var j = 0; j < p.Value; j++)
                     array[arrayIndex++] = p.Key;
         }
 
         public bool Remove(T item)
         {
+            if (item == null)
+            {
+                return false;
+            }
+
             int val;
 
-            if (dict.TryGetValue(item, out val))
+            if (this.dict.TryGetValue(item, out val))
             {
-                size--;
+                this.size--;
                 if (val == 1)
-                    dict.Remove(item);
+                    this.dict.Remove(item);
                 else
                 {
-                    dict[item] = --val;
+                    this.dict[item] = --val;
                 }
 
                 return true;
@@ -90,7 +102,7 @@ namespace Google.Common.Geometry.DataStructures
             return false;
         }
 
-        public int Count => size;
+        public int Count => this.size;
         public bool IsReadOnly => false;
     }
 }

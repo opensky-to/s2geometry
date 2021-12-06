@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Google.Common.Geometry
+﻿namespace OpenSky.S2Geometry
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Text;
+
     /**
      * An S2CellId is a 64-bit unsigned integer that uniquely identifies a cell in
      * the S2 cell decomposition. It has the following format:
@@ -124,7 +121,7 @@ namespace Google.Common.Geometry
         /**
    * The id of the cell.
    */
-        private readonly ulong _id;
+        private readonly ulong id;
 
         static S2CellId()
         {
@@ -136,26 +133,26 @@ namespace Google.Common.Geometry
 
         public S2CellId(ulong id)
         {
-            _id = id;
+            this.id = id;
         }
 
         public ulong Id
         {
-            get { return _id; }
+            get { return this.id; }
         }
 
         /** Return true if id() represents a valid cell. */
 
         public bool IsValid
         {
-            get { return Face < NumFaces && ((LowestOnBit & 0x1555555555555555UL) != 0); }
+            get { return this.Face < NumFaces && ((this.LowestOnBit & 0x1555555555555555UL) != 0); }
         }
 
         /** Which cube face this cell belongs to, in the range 0..5. */
 
         public int Face
         {
-            get { return (int)(_id >> PosBits); }
+            get { return (int)(this.id >> PosBits); }
         }
 
         /**
@@ -165,7 +162,7 @@ namespace Google.Common.Geometry
 
         public ulong Position
         {
-            get { return (_id & (~0UL >> FaceBits)); }
+            get { return (this.id & (~0UL >> FaceBits)); }
         }
 
         /** Return the subdivision level of the cell (range 0..MAX_LEVEL). */
@@ -175,11 +172,11 @@ namespace Google.Common.Geometry
             get
             {
                 // Fast path for leaf cells.
-                if (IsLeaf)
+                if (this.IsLeaf)
                 {
                     return MaxLevel;
                 }
-                var x = (uint)(_id);
+                var x = (uint)(this.id);
                 var level = -1;
                 if (x != 0)
                 {
@@ -187,7 +184,7 @@ namespace Google.Common.Geometry
                 }
                 else
                 {
-                    x = (uint)(_id >> 32);
+                    x = (uint)(this.id >> 32);
                 }
                 // We only need to look at even-numbered bits to determine the
                 // level of a valid cell id.
@@ -221,7 +218,7 @@ namespace Google.Common.Geometry
 
         public bool IsLeaf
         {
-            get { return (_id & 1) != 0; }
+            get { return (this.id & 1) != 0; }
         }
 
         /**
@@ -231,17 +228,17 @@ namespace Google.Common.Geometry
 
         public bool IsFace
         {
-            get { return (_id & (LowestOnBitForLevel(0) - 1)) == 0; }
+            get { return (this.id & (LowestOnBitForLevel(0) - 1)) == 0; }
         }
 
         public S2CellId RangeMin
         {
-            get { return new S2CellId(_id - (LowestOnBit - 1)); }
+            get { return new S2CellId(this.id - (this.LowestOnBit - 1)); }
         }
 
         public S2CellId RangeMax
         {
-            get { return new S2CellId(_id + (LowestOnBit - 1)); }
+            get { return new S2CellId(this.id + (this.LowestOnBit - 1)); }
         }
 
         public S2CellId Parent
@@ -249,10 +246,10 @@ namespace Google.Common.Geometry
             get
             {
                 // assert (isValid() && level() > 0);
-                var newLsb = LowestOnBit << 2;
+                var newLsb = this.LowestOnBit << 2;
 
                 // cast to long so we can flip the bits
-                var i = (ulong)((long)_id & -(long)newLsb) | newLsb;
+                var i = (ulong)((long)this.id & -(long)newLsb) | newLsb;
 
                 return new S2CellId(i);
             }
@@ -263,8 +260,8 @@ namespace Google.Common.Geometry
             get
             {
                 // assert (isValid() && level() < MAX_LEVEL);
-                var oldLsb = LowestOnBit;
-                return new S2CellId(_id - oldLsb + (oldLsb >> 2));
+                var oldLsb = this.LowestOnBit;
+                return new S2CellId(this.id - oldLsb + (oldLsb >> 2));
             }
         }
 
@@ -273,14 +270,14 @@ namespace Google.Common.Geometry
             get
             {
                 // assert (isValid() && level() < MAX_LEVEL);
-                var oldLsb = LowestOnBit;
-                return new S2CellId(_id + oldLsb + (oldLsb >> 2));
+                var oldLsb = this.LowestOnBit;
+                return new S2CellId(this.id + oldLsb + (oldLsb >> 2));
             }
         }
 
         public S2CellId Next
         {
-            get { return new S2CellId(_id + (LowestOnBit << 1)); }
+            get { return new S2CellId(this.id + (this.LowestOnBit << 1)); }
         }
 
         /**
@@ -291,7 +288,7 @@ namespace Google.Common.Geometry
 
         public S2CellId Previous
         {
-            get { return new S2CellId(_id - (LowestOnBit << 1)); }
+            get { return new S2CellId(this.id - (this.LowestOnBit << 1)); }
         }
 
 
@@ -305,12 +302,12 @@ namespace Google.Common.Geometry
         {
             get
             {
-                var n = Next;
-                if (n._id < WrapOffset)
+                var n = this.Next;
+                if (n.id < WrapOffset)
                 {
                     return n;
                 }
-                return new S2CellId(n._id - WrapOffset);
+                return new S2CellId(n.id - WrapOffset);
             }
         }
 
@@ -324,39 +321,39 @@ namespace Google.Common.Geometry
         {
             get
             {
-                var p = Previous;
-                if (p._id < WrapOffset)
+                var p = this.Previous;
+                if (p.id < WrapOffset)
                 {
                     return p;
                 }
-                return new S2CellId(p._id + WrapOffset);
+                return new S2CellId(p.id + WrapOffset);
             }
         }
 
         public ulong LowestOnBit
         {
-            get { return (ulong)((long)_id & -(long)_id); }
+            get { return (ulong)((long)this.id & -(long)this.id); }
         }
 
         public int CompareTo(S2CellId other)
         {
-            return _id.CompareTo(other._id);
+            return this.id.CompareTo(other.id);
         }
 
         public bool Equals(S2CellId other)
         {
-            return _id == other._id;
+            return this.id == other.id;
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            return obj is S2CellId && Equals((S2CellId)obj);
+            return obj is S2CellId && this.Equals((S2CellId)obj);
         }
 
         public override int GetHashCode()
         {
-            return _id.GetHashCode();
+            return this.id.GetHashCode();
         }
 
         public static bool operator ==(S2CellId left, S2CellId right)
@@ -372,22 +369,22 @@ namespace Google.Common.Geometry
 
         public static bool operator >(S2CellId x, S2CellId y)
         {
-            return x._id > y._id;
+            return x.id > y.id;
         }
 
         public static bool operator <(S2CellId x, S2CellId y)
         {
-            return x._id < y._id;
+            return x.id < y.id;
         }
 
         public static bool operator <=(S2CellId x, S2CellId y)
         {
-            return x._id <= y._id;
+            return x.id <= y.id;
         }
 
         public static bool operator >=(S2CellId x, S2CellId y)
         {
-            return x._id >= y._id;
+            return x.id >= y.id;
         }
 
         /** The default constructor returns an invalid cell id. */
@@ -429,7 +426,7 @@ namespace Google.Common.Geometry
 
         public S2Point ToPoint()
         {
-            return S2Point.Normalize(ToPointRaw());
+            return S2Point.Normalize(this.ToPointRaw());
         }
 
         /**
@@ -461,9 +458,9 @@ namespace Google.Common.Geometry
             var i = 0;
             var j = 0;
             int? notUsed = null;
-            var face = ToFaceIjOrientation(ref i, ref j, ref notUsed);
+            var face = this.ToFaceIjOrientation(ref i, ref j, ref notUsed);
             // System.out.println("i= " + i.intValue() + " j = " + j.intValue());
-            var delta = IsLeaf ? 1 : (((i ^ ((int)_id) >> 2) & 1) != 0)
+            var delta = this.IsLeaf ? 1 : (((i ^ ((int)this.id) >> 2) & 1) != 0)
                                          ? 2 : 0;
             var si = (i << 1) + delta - MaxSize;
             var ti = (j << 1) + delta - MaxSize;
@@ -474,7 +471,7 @@ namespace Google.Common.Geometry
 
         public S2LatLng ToLatLng()
         {
-            return new S2LatLng(ToPointRaw());
+            return new S2LatLng(this.ToPointRaw());
         }
 
 
@@ -489,7 +486,7 @@ namespace Google.Common.Geometry
 
         public int ChildPosition(int level)
         {
-            return (int)(_id >> (2*(MaxLevel - level) + 1)) & 3;
+            return (int)(this.id >> (2*(MaxLevel - level) + 1)) & 3;
         }
 
         // Methods that return the range of cell ids that are contained
@@ -511,7 +508,7 @@ namespace Google.Common.Geometry
         public bool Contains(S2CellId other)
         {
             // assert (isValid() && other.isValid());
-            return other >= RangeMin && other <= RangeMax;
+            return other >= this.RangeMin && other <= this.RangeMax;
         }
 
         /** Return true if the given cell intersects this one. */
@@ -519,7 +516,7 @@ namespace Google.Common.Geometry
         public bool Intersects(S2CellId other)
         {
             // assert (isValid() && other.isValid());
-            return other.RangeMin <= RangeMax && other.RangeMax >= RangeMin;
+            return other.RangeMin <= this.RangeMax && other.RangeMax >= this.RangeMin;
         }
 
         /**
@@ -531,26 +528,26 @@ namespace Google.Common.Geometry
         {
             // assert (isValid() && level >= 0 && level <= this.level());
             var newLsb = LowestOnBitForLevel(level);
-            var i = (ulong)((long)_id & -(long)newLsb) | newLsb;
+            var i = (ulong)((long)this.id & -(long)newLsb) | newLsb;
             return new S2CellId(i);
         }
 
         public S2CellId Child(int position)
         {
-            var newLsb = LowestOnBit >> 2;
-            return new S2CellId(_id + (ulong)(2*position + 1 - 4)*newLsb);
+            var newLsb = this.LowestOnBit >> 2;
+            return new S2CellId(this.id + (ulong)(2*position + 1 - 4)*newLsb);
         }
 
         public S2CellId ChildBeginForLevel(int level)
         {
             // assert (isValid() && level >= this.level() && level <= MAX_LEVEL);
-            return new S2CellId(_id - LowestOnBit + LowestOnBitForLevel(level));
+            return new S2CellId(this.id - this.LowestOnBit + LowestOnBitForLevel(level));
         }
 
         public S2CellId ChildEndForLevel(int level)
         {
             // assert (isValid() && level >= this.level() && level <= MAX_LEVEL);
-            return new S2CellId(_id + LowestOnBit + LowestOnBitForLevel(level));
+            return new S2CellId(this.id + this.LowestOnBit + LowestOnBitForLevel(level));
         }
 
         // Iterator-style methods for traversing the immediate children of a cell or
@@ -656,12 +653,12 @@ namespace Google.Common.Geometry
 
         public string ToToken()
         {
-            if (_id == 0)
+            if (this.id == 0)
             {
                 return "X";
             }
 
-            var hex = _id.ToString("x", CultureInfo.InvariantCulture);
+            var hex = this.id.ToString("x", CultureInfo.InvariantCulture);
             var sb = new StringBuilder(16);
             for (var i = hex.Length; i < 16; i++)
             {
@@ -722,9 +719,9 @@ namespace Google.Common.Geometry
             var j = 0;
             int? notUsed = null;
 
-            var level = Level;
+            var level = this.Level;
             var size = 1 << (MaxLevel - level);
-            var face = ToFaceIjOrientation(ref i, ref j, ref notUsed);
+            var face = this.ToFaceIjOrientation(ref i, ref j, ref notUsed);
 
             // Edges 0, 1, 2, 3 are in the S, E, N, W directions.
             neighbors[0] = FromFaceIjSame(face, i, j - size,
@@ -757,7 +754,7 @@ namespace Google.Common.Geometry
             var i = 0;
             var j = 0;
             int? notUsed = null;
-            var face = ToFaceIjOrientation(ref i, ref j, ref notUsed);
+            var face = this.ToFaceIjOrientation(ref i, ref j, ref notUsed);
 
             // Determine the i- and j-offsets to the closest neighboring cell in each
             // direction. This involves looking at the next bit of "i" and "j" to
@@ -787,7 +784,7 @@ namespace Google.Common.Geometry
                 jsame = (j - size) >= 0;
             }
 
-            output.Add(ParentForLevel(level));
+            output.Add(this.ParentForLevel(level));
             output
                 .Add(FromFaceIjSame(face, i + ioffset, j, isame)
                          .ParentForLevel(level));
@@ -818,12 +815,12 @@ namespace Google.Common.Geometry
             var i = 0;
             var j = 0;
             int? notUsed = null;
-            var face = ToFaceIjOrientation(ref i, ref j, ref notUsed);
+            var face = this.ToFaceIjOrientation(ref i, ref j, ref notUsed);
 
             // Find the coordinates of the lower left-hand leaf cell. We need to
             // normalize (i,j) to a known position within the cell because nbr_level
             // may be larger than this cell's level.
-            var size = 1 << (MaxLevel - Level);
+            var size = 1 << (MaxLevel - this.Level);
             i = (i & -size);
             j = (j & -size);
 
@@ -948,7 +945,7 @@ namespace Google.Common.Geometry
                                        ref int? orientation)
         {
             // System.out.println("Entering toFaceIjorientation");
-            var face = Face;
+            var face = this.Face;
             var bits = (face & SwapMask);
 
             // System.out.println("face = " + face + " bits = " + bits);
@@ -963,7 +960,7 @@ namespace Google.Common.Geometry
             // representing the cube face.
             for (var k = 7; k >= 0; --k)
             {
-                bits = GetBits1(ref pi, ref pj, k, bits);
+                bits = this.GetBits1(ref pi, ref pj, k, bits);
                 // System.out.println("pi = " + pi + " pj= " + pj + " bits = " + bits);
             }
 
@@ -978,7 +975,7 @@ namespace Google.Common.Geometry
                 // the kSwapMask bit.
                 // assert (S2.POS_TO_ORIENTATION[2] == 0);
                 // assert (S2.POS_TO_ORIENTATION[0] == S2.SWAP_MASK);
-                if ((LowestOnBit & 0x1111111111111110L) != 0)
+                if ((this.LowestOnBit & 0x1111111111111110L) != 0)
                 {
                     bits ^= S2.SwapMask;
                 }
@@ -991,7 +988,7 @@ namespace Google.Common.Geometry
         {
             var nbits = (k == 7) ? (MaxLevel - 7*LookupBits) : LookupBits;
 
-            bits += unchecked ((((int)(_id >> (k*2*LookupBits + 1)) &
+            bits += unchecked ((((int)(this.id >> (k*2*LookupBits + 1)) &
                                  ((1 << (2*nbits)) - 1))) << 2);
             /*
      * System.out.println("id is: " + id_); System.out.println("bits is " +
@@ -1103,8 +1100,8 @@ namespace Google.Common.Geometry
 
         public override string ToString()
         {
-            return "(face=" + Face + ", pos=" + Position.ToString("x") + ", level="
-                   + Level + ")";
+            return "(face=" + this.Face + ", pos=" + this.Position.ToString("x") + ", level="
+                   + this.Level + ")";
         }
 
         private static void InitLookupCell(int level, int i, int j,
