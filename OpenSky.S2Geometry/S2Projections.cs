@@ -69,19 +69,14 @@
         // and the maximum is at most MAX_AREA.GetValue(k). The average area of all
         // cells at level k is exactly AVG_AREA.GetValue(k).
         public static readonly S2CellMetric MinArea = new S2CellMetric(2,
-                                                         Projection == Projections.Linear ? 1/(3*Math.Sqrt(3)) : // 0.192
-                                                             Projection == Projections.Tan ? (S2.Pi*S2.Pi)
-                                                                                                              /(16*S2.Sqrt2) : // 0.436
-                                                                 Projection == Projections.Quadratic
-                                                                     ? 2*S2.Sqrt2/9 : // 0.314
-                                                                     0);
+                                                                 
+                                                                      2*S2.Sqrt2/9  // 0.314
+                                                                     );
 
         public static readonly S2CellMetric MaxArea = new S2CellMetric(2,
-                                                         Projection == Projections.Linear ? 1 : // 1.000
-                                                             Projection == Projections.Tan ? S2.Pi*S2.Pi/16 : // 0.617
-                                                                 Projection == Projections.Quadratic
-                                                                     ? 0.65894981424079037 : // 0.659
-                                                                     0);
+                                                         
+                                                                      0.65894981424079037  // 0.659
+                                                                     );
 
         public static readonly S2CellMetric AvgArea = new S2CellMetric(2, S2.Pi/6); // 0.524)
 
@@ -94,17 +89,12 @@
         // level k is MAX_ANGLE_SPAN.GetValue(k), and the average angle span for all
         // cells at level k is approximately AVG_ANGLE_SPAN.GetValue(k).
         public static readonly S2CellMetric MinAngleSpan = new S2CellMetric(1,
-                                                               Projection == Projections.Linear ? 0.5 : // 0.500
-                                                                   Projection == Projections.Tan ? S2.Pi/4 : // 0.785
-                                                                       Projection == Projections.Quadratic ? 2.0/3 : // 0.667
-                                                                           0);
+                                                                2.0/3  // 0.667
+                                                                           );
 
         public static readonly S2CellMetric MaxAngleSpan = new S2CellMetric(1,
-                                                               Projection == Projections.Linear ? 1 : // 1.000
-                                                                   Projection == Projections.Tan ? S2.Pi/4 : // 0.785
-                                                                       Projection == Projections.Quadratic
-                                                                           ? 0.85244858959960922 : // 0.852
-                                                                           0);
+                                                                0.85244858959960922  // 0.852
+                                                                           );
 
         public static readonly S2CellMetric AvgAngleSpan = new S2CellMetric(1, S2.Pi / 4); // 0.785
 
@@ -128,19 +118,14 @@
         // point on one edge of a cell to the closest point on the opposite edge.
         // For example, this is useful when "growing" regions by a fixed distance.
         public static readonly S2CellMetric MinWidth = new S2CellMetric(1,
-                                                          (Projection == Projections.Linear ? 1/Math.Sqrt(6) : // 0.408
-                                                               Projection == Projections.Tan ? S2.Pi/(4*S2.Sqrt2) : // 0.555
-                                                                   Projection == Projections.Quadratic ? S2.Sqrt2/3 : // 0.471
-                                                                       0));
+                                                          ( S2.Sqrt2/3  // 0.471
+                                                                       ));
 
         public static readonly S2CellMetric MaxWidth = new S2CellMetric(1, MaxAngleSpan.Deriv());
 
         public static readonly S2CellMetric AvgWidth = new S2CellMetric(1,
-                                                          Projection == Projections.Linear ? 0.70572967292222848 : // 0.706
-                                                              Projection == Projections.Tan ? 0.71865931946258044 : // 0.719
-                                                                  Projection == Projections.Quadratic
-                                                                      ? 0.71726183644304969 : // 0.717
-                                                                      0);
+                                                          0.71726183644304969  // 0.717
+                                                                      );
 
         // The minimum edge length of any cell at level k is at least
         // MIN_EDGE.GetValue(k), and the maximum is at most MAX_EDGE.GetValue(k).
@@ -152,19 +137,14 @@
         // between adjacent cell centers along the space-filling Hilbert curve for
         // cells at any given level.
         public static readonly S2CellMetric MinEdge = new S2CellMetric(1,
-                                                         Projection == Projections.Linear ? S2.Sqrt2/3 : // 0.471
-                                                             Projection == Projections.Tan ? S2.Pi/(4*S2.Sqrt2) : // 0.555
-                                                                 Projection == Projections.Quadratic ? S2.Sqrt2/3 : // 0.471
-                                                                     0);
+                                                         S2.Sqrt2/3  // 0.471
+                                                                     );
 
         public static readonly S2CellMetric MaxEdge = new S2CellMetric(1, MaxAngleSpan.Deriv());
 
         public static readonly S2CellMetric AvgEdge = new S2CellMetric(1,
-                                                         Projection == Projections.Linear ? 0.72001709647780182 : // 0.720
-                                                             Projection == Projections.Tan ? 0.73083351627336963 : // 0.731
-                                                                 Projection == Projections.Quadratic
-                                                                     ? 0.72960687319305303 : // 0.730
-                                                                     0);
+                                                         0.72960687319305303  // 0.730
+                                                                     );
 
 
         // The minimum diagonal length of any cell at level k is at least
@@ -176,34 +156,23 @@
         // example, the distance from an arbitrary point to the closest cell center
         // at a given level is at most half the maximum diagonal length.
         public static readonly S2CellMetric MinDiag = new S2CellMetric(1,
-                                                         Projection == Projections.Linear ? S2.Sqrt2/3 : // 0.471
-                                                             Projection == Projections.Tan ? S2.Pi/(3*S2.Sqrt2) : // 0.740
-                                                                 Projection == Projections.Quadratic
-                                                                     ? 4*S2.Sqrt2/9 : // 0.629
-                                                                     0);
+                                                         4*S2.Sqrt2/9  // 0.629
+                                                                     );
 
         public static readonly S2CellMetric MaxDiag = new S2CellMetric(1,
-                                                         Projection == Projections.Linear ? S2.Sqrt2 : // 1.414
-                                                             Projection == Projections.Tan ? S2.Pi/Math.Sqrt(6) : // 1.283
-                                                                 Projection == Projections.Quadratic
-                                                                     ? 1.2193272972170106 : // 1.219
-                                                                     0);
+                                                         1.2193272972170106  // 1.219
+                                                                     );
 
         public static readonly S2CellMetric AvgDiag = new S2CellMetric(1,
-                                                         Projection == Projections.Linear ? 1.0159089332094063 : // 1.016
-                                                             Projection == Projections.Tan ? 1.0318115985978178 : // 1.032
-                                                                 Projection == Projections.Quadratic
-                                                                     ? 1.03021136949923584 : // 1.030
-                                                                     0);
+                                                         1.03021136949923584  // 1.030
+                                                                     );
 
         // This is the maximum edge aspect ratio over all cells at any level, where
         // the edge aspect ratio of a cell is defined as the ratio of its longest
         // edge length to its shortest edge length.
         public static readonly double MaxEdgeAspect =
-            Projection == Projections.Linear ? S2.Sqrt2 : // 1.414
-                Projection == Projections.Tan ? S2.Sqrt2 : // 1.414
-                    Projection == Projections.Quadratic ? 1.44261527445268292 : // 1.443
-                        0;
+             1.44261527445268292  // 1.443
+                        ;
 
         // This is the maximum diagonal aspect ratio over all cells at any level,
         // where the diagonal aspect ratio of a cell is defined as the ratio of its
@@ -214,20 +183,7 @@
         {
             switch (Projection)
             {
-                case Projections.Linear:
-                    return s;
-                case Projections.Tan:
-                    // Unfortunately, tan(M_PI_4) is slightly less than 1.0. This isn't due
-                    // to
-                    // a flaw in the implementation of tan(), it's because the derivative of
-                    // tan(x) at x=pi/4 is 2, and it happens that the two adjacent floating
-                    // point numbers on either side of the infinite-precision value of pi/4
-                    // have
-                    // tangents that are slightly below and slightly above 1.0 when rounded
-                    // to
-                    // the nearest double-precision result.
-                    s = Math.Tan(S2.PiOver4*s);
-                    return s + (1.0/(1L << 53))*s;
+                
                 case Projections.Quadratic:
                     if (s >= 0)
                     {
@@ -237,8 +193,7 @@
                     {
                         return (1/3.0)*(1 - (1 - s)*(1 - s));
                     }
-                default:
-                    throw new ArgumentOutOfRangeException("Invalid value for S2_PROJECTION");
+                
             }
         }
 
@@ -246,10 +201,7 @@
         {
             switch (Projection)
             {
-                case Projections.Linear:
-                    return u;
-                case Projections.Tan:
-                    return (4*S2.InversePi)*Math.Atan(u);
+               
                 case Projections.Quadratic:
                     if (u >= 0)
                     {
@@ -259,8 +211,7 @@
                     {
                         return 1 - Math.Sqrt(1 - 3*u);
                     }
-                default:
-                    throw new ArgumentOutOfRangeException("Invalid value for S2_PROJECTION");
+                
             }
         }
 

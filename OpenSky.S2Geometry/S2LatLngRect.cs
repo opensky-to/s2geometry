@@ -248,7 +248,7 @@
         {
             unchecked
             {
-                return ((this.lat != null ? this.lat.GetHashCode() : 0)*397) ^ (this.lng != null ? this.lng.GetHashCode() : 0);
+                return ((this.lat.GetHashCode())*397) ^ (this.lng.GetHashCode());
             }
         }
 
