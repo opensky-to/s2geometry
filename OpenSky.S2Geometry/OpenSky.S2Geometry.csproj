@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0;netstandard2.1;net45;net46;net47;net48;net5.0</TargetFrameworks>
+		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageProjectUrl>opensky.to</PackageProjectUrl>
+		<Authors>OpenSky project</Authors>
+		<Company>OpenSky project</Company>
+		<Product>OpenSky</Product>
+		<Version>0.1.0</Version>
+		<Copyright>OpenSky project 2021</Copyright>
+		<RepositoryUrl>https://github.com/opensky-to/s2geometry</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<Description>OpenSky S2 Geometry library for .net projects</Description>
+		<PackageIcon>OpenSkyLogo128.png</PackageIcon>
+		<PackageIconUrl />
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\LICENSE">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+		<None Include="..\README.md">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+		<None Include="OpenSkyLogo128.png">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" />
+	</ItemGroup>
+
+</Project>

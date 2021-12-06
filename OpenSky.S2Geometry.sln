@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31829.152
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSky.S2Geometry", "OpenSky.S2Geometry\OpenSky.S2Geometry.csproj", "{6AA68C9B-F6FF-4F27-9868-A3D01D279A3F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSky.S2Geometry.Tests", "OpenSky.S2Geometry.Tests\OpenSky.S2Geometry.Tests.csproj", "{72DFD603-3CAA-4749-9B68-6ED7C053A9FA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6AA68C9B-F6FF-4F27-9868-A3D01D279A3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AA68C9B-F6FF-4F27-9868-A3D01D279A3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AA68C9B-F6FF-4F27-9868-A3D01D279A3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AA68C9B-F6FF-4F27-9868-A3D01D279A3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72DFD603-3CAA-4749-9B68-6ED7C053A9FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72DFD603-3CAA-4749-9B68-6ED7C053A9FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72DFD603-3CAA-4749-9B68-6ED7C053A9FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72DFD603-3CAA-4749-9B68-6ED7C053A9FA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3F33D385-CDBD-4FD6-B192-6F61C443AEC1}
+	EndGlobalSection
+EndGlobal
