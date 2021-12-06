@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Google.Common.Geometry.DataStructures;
-
-namespace Google.Common.Geometry
+﻿namespace OpenSky.S2Geometry
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+
+    using OpenSky.S2Geometry.Datastructures;
+
     /**
  * An S2RegionCoverer is a class that allows arbitrary regions to be
  * approximated as unions of cells (S2CellUnion). This is useful for
@@ -50,15 +49,15 @@ namespace Google.Common.Geometry
         public const int DefaultMaxCells = 8;
 
         private static readonly S2Cell[] FaceCells = new S2Cell[6];
-        private readonly PriorityQueue<QueueEntry> _candidateQueue;
-        private readonly List<S2CellId> _result;
-        private int _candidatesCreatedCounter;
-        private bool _interiorCovering;
+        private readonly PriorityQueue<QueueEntry> candidateQueue;
+        private readonly List<S2CellId> result;
+        private int candidatesCreatedCounter;
+        private bool interiorCovering;
 
-        private int _levelMod;
-        private int _maxCells;
-        private int _maxLevel;
-        private int _minLevel;
+        private int levelMod;
+        private int maxCells;
+        private int maxLevel;
+        private int minLevel;
 
         // True if we're computing an interior covering.
 
@@ -69,7 +68,7 @@ namespace Google.Common.Geometry
    * avoid passing this parameter around internally. It is only used (and only
    * valid) for the duration of a single GetCovering() call.
    */
-        private IS2Region _region;
+        private IS2Region region;
 
         static S2RegionCoverer()
         {
@@ -90,15 +89,15 @@ namespace Google.Common.Geometry
 
         public S2RegionCoverer()
         {
-            _minLevel = 0;
-            _maxLevel = S2CellId.MaxLevel;
-            _levelMod = 1;
-            _maxCells = DefaultMaxCells;
-            _region = null;
-            _result = new List<S2CellId>();
+            this.minLevel = 0;
+            this.maxLevel = S2CellId.MaxLevel;
+            this.levelMod = 1;
+            this.maxCells = DefaultMaxCells;
+            this.region = null;
+            this.result = new List<S2CellId>();
             // TODO(kirilll?): 10 is a completely random number, work out a better
             // estimate
-            _candidateQueue = new PriorityQueue<QueueEntry>();
+            this.candidateQueue = new PriorityQueue<QueueEntry>();
         }
 
         // Set the minimum and maximum cell level to be used. The default is to use
@@ -124,9 +123,9 @@ namespace Google.Common.Geometry
             set
             {
                 // assert (minLevel >= 0 && minLevel <= S2CellId.MAX_LEVEL);
-                _minLevel = Math.Max(0, Math.Min(S2CellId.MaxLevel, value));
+                this.minLevel = Math.Max(0, Math.Min(S2CellId.MaxLevel, value));
             }
-            get { return _minLevel; }
+            get { return this.minLevel; }
         }
 
         /**
@@ -138,9 +137,9 @@ namespace Google.Common.Geometry
             set
             {
                 // assert (maxLevel >= 0 && maxLevel <= S2CellId.MAX_LEVEL);
-                _maxLevel = Math.Max(0, Math.Min(S2CellId.MaxLevel, value));
+                this.maxLevel = Math.Max(0, Math.Min(S2CellId.MaxLevel, value));
             }
-            get { return _maxLevel; }
+            get { return this.maxLevel; }
         }
 
         /**
@@ -176,8 +175,8 @@ namespace Google.Common.Geometry
 
         public int MaxCells
         {
-            get { return _maxCells; }
-            set { _maxCells = value; }
+            get { return this.maxCells; }
+            set { this.maxCells = value; }
         }
 
         /**
@@ -193,14 +192,14 @@ namespace Google.Common.Geometry
             set
             {
                 Debug.Assert(value >= 1 && value <= 3);
-                _levelMod = Math.Max(1, Math.Min(3, value));
+                this.levelMod = Math.Max(1, Math.Min(3, value));
             }
-            get { return _levelMod; }
+            get { return this.levelMod; }
         }
 
         private int MaxChildrenShift
         {
-            get { return 2*_levelMod; }
+            get { return 2*this.levelMod; }
         }
 
 
@@ -222,8 +221,8 @@ namespace Google.Common.Geometry
             // number of cells returned in many cases, and it is cheap compared to
             // computing the covering in the first place.
 
-            var tmp = GetCovering(region);
-            tmp.Denormalize(MinLevel, LevelMod, covering);
+            var tmp = this.GetCovering(region);
+            tmp.Denormalize(this.MinLevel, this.LevelMod, covering);
         }
 
         /**
@@ -236,8 +235,8 @@ namespace Google.Common.Geometry
 
         public void GetInteriorCovering(IS2Region region, List<S2CellId> interior)
         {
-            var tmp = GetInteriorCovering(region);
-            tmp.Denormalize(MinLevel, LevelMod, interior);
+            var tmp = this.GetInteriorCovering(region);
+            tmp.Denormalize(this.MinLevel, this.LevelMod, interior);
         }
 
         /**
@@ -252,15 +251,15 @@ namespace Google.Common.Geometry
         public S2CellUnion GetCovering(IS2Region region)
         {
             var covering = new S2CellUnion();
-            GetCovering(region, covering);
+            this.GetCovering(region, covering);
             return covering;
         }
 
         public void GetCovering(IS2Region region, S2CellUnion covering)
         {
-            _interiorCovering = false;
-            GetCoveringInternal(region);
-            covering.InitSwap(_result);
+            this.interiorCovering = false;
+            this.GetCoveringInternal(region);
+            covering.InitSwap(this.result);
         }
 
         /**
@@ -271,15 +270,15 @@ namespace Google.Common.Geometry
         public S2CellUnion GetInteriorCovering(IS2Region region)
         {
             var covering = new S2CellUnion();
-            GetInteriorCovering(region, covering);
+            this.GetInteriorCovering(region, covering);
             return covering;
         }
 
         public void GetInteriorCovering(IS2Region region, S2CellUnion covering)
         {
-            _interiorCovering = true;
-            GetCoveringInternal(region);
-            covering.InitSwap(_result);
+            this.interiorCovering = true;
+            this.GetCoveringInternal(region);
+            covering.InitSwap(this.result);
         }
 
         /**
@@ -301,28 +300,28 @@ namespace Google.Common.Geometry
 
         private Candidate NewCandidate(S2Cell cell)
         {
-            if (!_region.MayIntersect(cell))
+            if (!this.region.MayIntersect(cell))
             {
                 return null;
             }
 
             var isTerminal = false;
-            if (cell.Level >= _minLevel)
+            if (cell.Level >= this.minLevel)
             {
-                if (_interiorCovering)
+                if (this.interiorCovering)
                 {
-                    if (_region.Contains(cell))
+                    if (this.region.Contains(cell))
                     {
                         isTerminal = true;
                     }
-                    else if (cell.Level + _levelMod > _maxLevel)
+                    else if (cell.Level + this.levelMod > this.maxLevel)
                     {
                         return null;
                     }
                 }
                 else
                 {
-                    if (cell.Level + _levelMod > _maxLevel || _region.Contains(cell))
+                    if (cell.Level + this.levelMod > this.maxLevel || this.region.Contains(cell))
                     {
                         isTerminal = true;
                     }
@@ -333,9 +332,9 @@ namespace Google.Common.Geometry
             candidate.IsTerminal = isTerminal;
             if (!isTerminal)
             {
-                candidate.Children = new Candidate[1 << MaxChildrenShift];
+                candidate.Children = new Candidate[1 << this.MaxChildrenShift];
             }
-            _candidatesCreatedCounter++;
+            this.candidatesCreatedCounter++;
             return candidate;
         }
 
@@ -356,29 +355,29 @@ namespace Google.Common.Geometry
 
             if (candidate.IsTerminal)
             {
-                _result.Add(candidate.Cell.Id);
+                this.result.Add(candidate.Cell.Id);
                 return;
             }
             // assert (candidate.numChildren == 0);
 
             // Expand one level at a time until we hit min_level_ to ensure that
             // we don't skip over it.
-            var numLevels = (candidate.Cell.Level < _minLevel) ? 1 : _levelMod;
-            var numTerminals = ExpandChildren(candidate, candidate.Cell, numLevels);
+            var numLevels = (candidate.Cell.Level < this.minLevel) ? 1 : this.levelMod;
+            var numTerminals = this.ExpandChildren(candidate, candidate.Cell, numLevels);
 
             if (candidate.NumChildren == 0)
             {
                 // Do nothing
             }
-            else if (!_interiorCovering && numTerminals == 1 << MaxChildrenShift
-                     && candidate.Cell.Level >= _minLevel)
+            else if (!this.interiorCovering && numTerminals == 1 << this.MaxChildrenShift
+                                             && candidate.Cell.Level >= this.minLevel)
             {
                 // Optimization: add the parent cell rather than all of its children.
                 // We can't do this for interior coverings, since the children just
                 // intersect the region, but may not be contained by it - we need to
                 // subdivide them further.
                 candidate.IsTerminal = true;
-                AddCandidate(candidate);
+                this.AddCandidate(candidate);
             }
             else
             {
@@ -388,10 +387,10 @@ namespace Google.Common.Geometry
                 // at the same level, we prefer the cells with the smallest number of
                 // intersecting children. Finally, we prefer cells that have the smallest
                 // number of children that cannot be refined any further.
-                var priority = -((((candidate.Cell.Level << MaxChildrenShift) + candidate.NumChildren)
-                                  << MaxChildrenShift) + numTerminals);
+                var priority = -((((candidate.Cell.Level << this.MaxChildrenShift) + candidate.NumChildren)
+                                  << this.MaxChildrenShift) + numTerminals);
                 var entry = new QueueEntry(priority, candidate);
-                _candidateQueue.Enqueue(entry);
+                this.candidateQueue.Enqueue(entry);
                 // logger.info("Push: " + candidate.cell.id() + " (" + priority + ") ");
             }
         }
@@ -416,13 +415,13 @@ namespace Google.Common.Geometry
             {
                 if (numLevels > 0)
                 {
-                    if (_region.MayIntersect(childCells[i]))
+                    if (this.region.MayIntersect(childCells[i]))
                     {
-                        numTerminals += ExpandChildren(candidate, childCells[i], numLevels);
+                        numTerminals += this.ExpandChildren(candidate, childCells[i], numLevels);
                     }
                     continue;
                 }
-                var child = NewCandidate(childCells[i]);
+                var child = this.NewCandidate(childCells[i]);
                 if (child != null)
                 {
                     candidate.Children[candidate.NumChildren++] = child;
@@ -443,16 +442,16 @@ namespace Google.Common.Geometry
             // start with a 4-cell covering of the region's bounding cap. This
             // lets us skip quite a few levels of refinement when the region to
             // be covered is relatively small.
-            if (_maxCells >= 4)
+            if (this.maxCells >= 4)
             {
                 // Find the maximum level such that the bounding cap contains at most one
                 // cell vertex at that level.
-                var cap = _region.CapBound;
+                var cap = this.region.CapBound;
                 var level = Math.Min(S2Projections.MinWidth.GetMaxLevel(2*cap.Angle.Radians),
-                                     Math.Min(MaxLevel, S2CellId.MaxLevel - 1));
-                if (LevelMod > 1 && level > MinLevel)
+                                     Math.Min(this.MaxLevel, S2CellId.MaxLevel - 1));
+                if (this.LevelMod > 1 && level > this.MinLevel)
                 {
-                    level -= (level - MinLevel)%LevelMod;
+                    level -= (level - this.MinLevel)%this.LevelMod;
                 }
                 // We don't bother trying to optimize the level == 0 case, since more than
                 // four face cells may be required.
@@ -465,7 +464,7 @@ namespace Google.Common.Geometry
                     id.GetVertexNeighbors(level, @base);
                     for (var i = 0; i < @base.Count; ++i)
                     {
-                        AddCandidate(NewCandidate(new S2Cell(@base[i])));
+                        this.AddCandidate(this.NewCandidate(new S2Cell(@base[i])));
                     }
                     return;
                 }
@@ -473,7 +472,7 @@ namespace Google.Common.Geometry
             // Default: start with all six cube faces.
             for (var face = 0; face < 6; ++face)
             {
-                AddCandidate(NewCandidate(FaceCells[face]));
+                this.AddCandidate(this.NewCandidate(FaceCells[face]));
             }
         }
 
@@ -496,40 +495,40 @@ namespace Google.Common.Geometry
             // children first), and then by the number of fully contained children
             // (fewest children first).
 
-            Preconditions.CheckState(_candidateQueue.Count == 0 && _result.Count == 0);
+            Preconditions.CheckState(this.candidateQueue.Count == 0 && this.result.Count == 0);
 
-            _region = region;
-            _candidatesCreatedCounter = 0;
+            this.region = region;
+            this.candidatesCreatedCounter = 0;
 
-            GetInitialCandidates();
-            while (_candidateQueue.Count != 0 && (!_interiorCovering || _result.Count < _maxCells))
+            this.GetInitialCandidates();
+            while (this.candidateQueue.Count != 0 && (!this.interiorCovering || this.result.Count < this.maxCells))
             {
-                var qe = _candidateQueue.Dequeue();
+                var qe = this.candidateQueue.Dequeue();
                 var candidate = qe.Candidate;
                 // logger.info("Pop: " + candidate.cell.id());
-                if (candidate.Cell.Level < _minLevel || candidate.NumChildren == 1
-                    || _result.Count + (_interiorCovering ? 0 : _candidateQueue.Count) + candidate.NumChildren
-                    <= _maxCells)
+                if (candidate.Cell.Level < this.minLevel || candidate.NumChildren == 1
+                                                          || this.result.Count + (this.interiorCovering ? 0 : this.candidateQueue.Count) + candidate.NumChildren
+                                                          <= this.maxCells)
                 {
                     // Expand this candidate into its children.
                     for (var i = 0; i < candidate.NumChildren; ++i)
                     {
-                        AddCandidate(candidate.Children[i]);
+                        this.AddCandidate(candidate.Children[i]);
                     }
                 }
-                else if (_interiorCovering)
+                else if (this.interiorCovering)
                 {
                     // Do nothing
                 }
                 else
                 {
                     candidate.IsTerminal = true;
-                    AddCandidate(candidate);
+                    this.AddCandidate(candidate);
                 }
             }
 
-            _candidateQueue.Clear();
-            _region = null;
+            this.candidateQueue.Clear();
+            this.region = null;
         }
 
         /**
@@ -581,17 +580,17 @@ namespace Google.Common.Geometry
         private struct QueueEntry : IComparable<QueueEntry>
         {
             public readonly Candidate Candidate;
-            private readonly int _id;
+            private readonly int id;
 
             public QueueEntry(int id, Candidate candidate)
             {
-                _id = id;
-                Candidate = candidate;
+                this.id = id;
+                this.Candidate = candidate;
             }
 
             public int CompareTo(QueueEntry other)
             {
-                return _id < other._id ? 1 : (_id > other._id ? -1 : 0);
+                return this.id < other.id ? 1 : (this.id > other.id ? -1 : 0);
             }
         }
     }

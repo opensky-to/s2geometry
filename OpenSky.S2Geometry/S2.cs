@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("OpenSky.S2Geometry.Tests")]
 
-namespace Google.Common.Geometry
+namespace OpenSky.S2Geometry
 {
+    using System;
 
     public static class S2
     {
@@ -48,6 +44,7 @@ namespace Google.Common.Geometry
 
         /** Mapping Hilbert traversal order to orientation adjustment mask. */
 
+        // ReSharper disable once InconsistentNaming
         private static readonly int[] _PosToOrientation =
         {SwapMask, 0, 0, InvertMask + SwapMask};
 
@@ -66,6 +63,7 @@ namespace Google.Common.Geometry
 
         /** Mapping from cell orientation + Hilbert traversal to IJ-index. */
 
+        // ReSharper disable once InconsistentNaming
         private static readonly int[][] _PosToIj = new int[][]
         {
             // 0 1 2 3
@@ -89,6 +87,7 @@ namespace Google.Common.Geometry
 
         /** Mapping from Hilbert traversal order + cell orientation to IJ-index. */
 
+        // ReSharper disable once InconsistentNaming
         private static readonly int[][] _IjToPos = new int[][]
         {
             // (0,0) (0,1) (1,0) (1,1)
@@ -790,8 +789,8 @@ namespace Google.Common.Geometry
 
     public struct S2CellMetric
     {
-        private readonly double _deriv;
-        private readonly int _dim;
+        private readonly double deriv;
+        private readonly int dim;
 
         /**
      * Defines a cell metric of the given dimension (1 == length, 2 == area).
@@ -799,8 +798,8 @@ namespace Google.Common.Geometry
 
         public S2CellMetric(int dim, double deriv)
         {
-            _deriv = deriv;
-            _dim = dim;
+            this.deriv = deriv;
+            this.dim = dim;
         }
 
         /**
@@ -810,14 +809,14 @@ namespace Google.Common.Geometry
 
         public double Deriv()
         {
-            return _deriv;
+            return this.deriv;
         }
 
         /** Return the value of a metric for cells at the given level. */
 
         public double GetValue(int level)
         {
-            return FpUtils.Scalb(_deriv, _dim*(1 - level));
+            return FpUtils.Scalb(this.deriv, this.dim*(1 - level));
         }
 
         /**
@@ -829,7 +828,7 @@ namespace Google.Common.Geometry
 
         public int GetClosestLevel(double value)
         {
-            return GetMinLevel(S2.Sqrt2*value);
+            return this.GetMinLevel(S2.Sqrt2*value);
         }
 
         /**
@@ -849,9 +848,9 @@ namespace Google.Common.Geometry
 
             // This code is equivalent to computing a floating-point "level"
             // value and rounding up.
-            var exponent = S2.Exp(value/((1 << _dim)*_deriv));
+            var exponent = S2.Exp(value/((1 << this.dim)*this.deriv));
             var level = Math.Max(0,
-                                 Math.Min(S2CellId.MaxLevel, -((exponent - 1) >> (_dim - 1))));
+                                 Math.Min(S2CellId.MaxLevel, -((exponent - 1) >> (this.dim - 1))));
             // assert (level == S2CellId.MAX_LEVEL || getValue(level) <= value);
             // assert (level == 0 || getValue(level - 1) > value);
             return level;
@@ -874,9 +873,9 @@ namespace Google.Common.Geometry
 
             // This code is equivalent to computing a floating-point "level"
             // value and rounding down.
-            var exponent = S2.Exp((1 << _dim)*_deriv/value);
+            var exponent = S2.Exp((1 << this.dim)*this.deriv/value);
             var level = Math.Max(0,
-                                 Math.Min(S2CellId.MaxLevel, ((exponent - 1) >> (_dim - 1))));
+                                 Math.Min(S2CellId.MaxLevel, ((exponent - 1) >> (this.dim - 1))));
             // assert (level == 0 || getValue(level) >= value);
             // assert (level == S2CellId.MAX_LEVEL || getValue(level + 1) < value);
             return level;

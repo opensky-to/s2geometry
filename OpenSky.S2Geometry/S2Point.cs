@@ -1,56 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Google.Common.Geometry
+﻿namespace OpenSky.S2Geometry
 {
+    using System;
+
     public struct S2Point : IEquatable<S2Point>, IComparable<S2Point>
     {
 // coordinates of the points
-        private readonly double _x;
-        private readonly double _y;
-        private readonly double _z;
+        private readonly double x;
+        private readonly double y;
+        private readonly double z;
 
 
         public S2Point(double x, double y, double z)
         {
-            _x = x;
-            _y = y;
-            _z = z;
+            this.x = x;
+            this.y = y;
+            this.z = z;
         }
 
         public double X
         {
-            get { return _x; }
+            get { return this.x; }
         }
 
         public double Y
         {
-            get { return _y; }
+            get { return this.y; }
         }
 
         public double Z
         {
-            get { return _z; }
+            get { return this.z; }
         }
 
         public double Norm2
         {
-            get { return _x*_x + _y*_y + _z*_z; }
+            get { return this.x*this.x + this.y*this.y + this.z*this.z; }
         }
 
         public double Norm
         {
-            get { return Math.Sqrt(Norm2); }
+            get { return Math.Sqrt(this.Norm2); }
         }
 
         public S2Point Ortho
         {
             get
             {
-                var k = LargestAbsComponent;
+                var k = this.LargestAbsComponent;
                 S2Point temp;
                 if (k == 1)
                 {
@@ -75,9 +71,9 @@ namespace Google.Common.Geometry
             get
             {
                 var temp = Fabs(this);
-                if (temp._x > temp._y)
+                if (temp.x > temp.y)
                 {
-                    if (temp._x > temp._z)
+                    if (temp.x > temp.z)
                     {
                         return 0;
                     }
@@ -88,7 +84,7 @@ namespace Google.Common.Geometry
                 }
                 else
                 {
-                    if (temp._y > temp._z)
+                    if (temp.y > temp.z)
                     {
                         return 1;
                     }
@@ -102,23 +98,23 @@ namespace Google.Common.Geometry
 
         public double this[int axis]
         {
-            get { return (axis == 0) ? _x : (axis == 1) ? _y : _z; }
+            get { return (axis == 0) ? this.x : (axis == 1) ? this.y : this.z; }
         }
 
         public int CompareTo(S2Point other)
         {
-            return this < other ? -1 : (Equals(other) ? 0 : 1);
+            return this < other ? -1 : (this.Equals(other) ? 0 : 1);
         }
 
         public bool Equals(S2Point other)
         {
-            return _x.Equals(other._x) && _y.Equals(other._y) && _z.Equals(other._z);
+            return this.x.Equals(other.x) && this.y.Equals(other.y) && this.z.Equals(other.z);
         }
 
         public override bool Equals(object obj)
         {
-            if (obj.GetType() != GetType()) return false;
-            return Equals((S2Point)obj);
+            if (obj.GetType() != this.GetType()) return false;
+            return this.Equals((S2Point)obj);
         }
 
         /**
@@ -130,9 +126,9 @@ namespace Google.Common.Geometry
         {
             unchecked
             {
-                var hashCode = Math.Abs(_x).GetHashCode();
-                hashCode = (hashCode*397) ^ Math.Abs(_y).GetHashCode();
-                hashCode = (hashCode*397) ^ Math.Abs(_z).GetHashCode();
+                var hashCode = Math.Abs(this.x).GetHashCode();
+                hashCode = (hashCode*397) ^ Math.Abs(this.y).GetHashCode();
+                hashCode = (hashCode*397) ^ Math.Abs(this.z).GetHashCode();
                 return hashCode;
             }
         }
@@ -149,38 +145,38 @@ namespace Google.Common.Geometry
 
         public static S2Point operator -(S2Point p1, S2Point p2)
         {
-            return new S2Point(p1._x - p2._x, p1._y - p2._y, p1._z - p2._z);
+            return new S2Point(p1.x - p2.x, p1.y - p2.y, p1.z - p2.z);
         }
 
         public static S2Point operator -(S2Point p)
         {
-            return new S2Point(-p._x, -p._y, -p._z);
+            return new S2Point(-p.x, -p.y, -p.z);
         }
 
         public static S2Point CrossProd(S2Point p1, S2Point p2)
         {
             return new S2Point(
-                p1._y*p2._z - p1._z*p2._y, p1._z*p2._x - p1._x*p2._z, p1._x*p2._y - p1._y*p2._x);
+                p1.y*p2.z - p1.z*p2.y, p1.z*p2.x - p1.x*p2.z, p1.x*p2.y - p1.y*p2.x);
         }
 
         public static S2Point operator +(S2Point p1, S2Point p2)
         {
-            return new S2Point(p1._x + p2._x, p1._y + p2._y, p1._z + p2._z);
+            return new S2Point(p1.x + p2.x, p1.y + p2.y, p1.z + p2.z);
         }
 
         public double DotProd(S2Point that)
         {
-            return _x*that._x + _y*that._y + _z*that._z;
+            return this.x*that.x + this.y*that.y + this.z*that.z;
         }
 
         public static S2Point operator *(S2Point p, double m)
         {
-            return new S2Point(m*p._x, m*p._y, m*p._z);
+            return new S2Point(m*p.x, m*p.y, m*p.z);
         }
 
         public static S2Point operator /(S2Point p, double m)
         {
-            return new S2Point(p._x/m, p._y/m, p._z/m);
+            return new S2Point(p.x/m, p.y/m, p.z/m);
         }
 
 
@@ -188,7 +184,7 @@ namespace Google.Common.Geometry
 
         public static S2Point Fabs(S2Point p)
         {
-            return new S2Point(Math.Abs(p._x), Math.Abs(p._y), Math.Abs(p._z));
+            return new S2Point(Math.Abs(p.x), Math.Abs(p.y), Math.Abs(p.z));
         }
 
         public static S2Point Normalize(S2Point p)
@@ -206,7 +202,7 @@ namespace Google.Common.Geometry
 
         public double Angle(S2Point va)
         {
-            return Math.Atan2(CrossProd(this, va).Norm, DotProd(va));
+            return Math.Atan2(CrossProd(this, va).Norm, this.DotProd(va));
         }
 
         /**
@@ -216,30 +212,30 @@ namespace Google.Common.Geometry
 
         public bool ApproxEquals(S2Point that, double margin)
         {
-            return (Math.Abs(_x - that._x) < margin) && (Math.Abs(_y - that._y) < margin)
-                   && (Math.Abs(_z - that._z) < margin);
+            return (Math.Abs(this.x - that.x) < margin) && (Math.Abs(this.y - that.y) < margin)
+                                                          && (Math.Abs(this.z - that.z) < margin);
         }
 
 
         public static bool operator <(S2Point x, S2Point y)
         {
-            if (x._x < y._x)
+            if (x.x < y.x)
             {
                 return true;
             }
-            if (y._x < x._x)
+            if (y.x < x.x)
             {
                 return false;
             }
-            if (x._y < y._y)
+            if (x.y < y.y)
             {
                 return true;
             }
-            if (y._y < x._y)
+            if (y.y < x.y)
             {
                 return false;
             }
-            if (x._z < y._z)
+            if (x.z < y.z)
             {
                 return true;
             }
@@ -248,23 +244,23 @@ namespace Google.Common.Geometry
 
         public static bool operator >(S2Point x, S2Point y)
         {
-            if (x._x > y._x)
+            if (x.x > y.x)
             {
                 return true;
             }
-            if (y._x > x._x)
+            if (y.x > x.x)
             {
                 return false;
             }
-            if (x._y > y._y)
+            if (x.y > y.y)
             {
                 return true;
             }
-            if (y._y > x._y)
+            if (y.y > x.y)
             {
                 return false;
             }
-            if (x._z > y._z)
+            if (x.z > y.z)
             {
                 return true;
             }
@@ -274,7 +270,7 @@ namespace Google.Common.Geometry
 
         public override string ToString()
         {
-            return "(" + _x + ", " + _y + ", " + _z + ")";
+            return "(" + this.x + ", " + this.y + ", " + this.z + ")";
         }
 
         public string ToDegreesString()

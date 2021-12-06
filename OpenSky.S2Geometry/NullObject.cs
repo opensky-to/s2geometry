@@ -1,8 +1,7 @@
-﻿using System;
-using System.ComponentModel;
-
-namespace Google.Common.Geometry
+﻿namespace OpenSky.S2Geometry
 {
+    using System;
+
     internal struct NullObject<T> : IEquatable<T> where T : class
     {
         private bool isNotNull;// default property initializers are not supported for structs
@@ -46,7 +45,7 @@ namespace Google.Common.Geometry
 
         public override string ToString()
         {
-            return (Item != null) ? Item.ToString() : "NULL";
+            return (this.Item != null) ? this.Item.ToString() : "NULL";
         }
 
         public override int GetHashCode()
@@ -56,7 +55,7 @@ namespace Google.Common.Geometry
                 if (this.IsNull())
                     return 0;
 
-                var result = Item.GetHashCode();
+                var result = this.Item.GetHashCode();
 
                 if (result >= 0)
                     result++;
@@ -70,8 +69,8 @@ namespace Google.Common.Geometry
             if (obj == null)
                 return this.IsNull();
 
-            if (!(obj is T))
-                return false;
+            //if (!(obj is T))
+            //    return false;
 
             var no = (NullObject<T>)obj;
 

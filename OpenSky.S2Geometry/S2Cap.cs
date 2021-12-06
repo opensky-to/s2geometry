@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Google.Common.Geometry
+﻿namespace OpenSky.S2Geometry
 {
+    using System;
+    using System.Collections.Generic;
+
     /**
  * This class represents a spherical cap, i.e. a portion of a sphere cut off by
  * a plane. The cap is defined by its axis and height. This representation has
@@ -35,8 +32,8 @@ namespace Google.Common.Geometry
 
         public static readonly S2Cap Full = new S2Cap(new S2Point(1, 0, 0), 2);
 
-        private readonly S2Point _axis;
-        private readonly double _height;
+        private readonly S2Point axis;
+        private readonly double height;
 
         // Caps may be constructed from either an axis and a height, or an axis and
         // an angle. To avoid ambiguity, there are no public constructors
@@ -48,24 +45,24 @@ namespace Google.Common.Geometry
 
         private S2Cap(S2Point axis, double height)
         {
-            _axis = axis;
-            _height = height;
+            this.axis = axis;
+            this.height = height;
             // assert (isValid());
         }
 
         public S2Point Axis
         {
-            get { return _axis; }
+            get { return this.axis; }
         }
 
         public double Height
         {
-            get { return _height; }
+            get { return this.height; }
         }
 
         public double Area
         {
-            get { return 2*S2.Pi*Math.Max(0.0, _height); }
+            get { return 2*S2.Pi*Math.Max(0.0, this.height); }
         }
 
         /**
@@ -80,11 +77,11 @@ namespace Google.Common.Geometry
                 // This could also be computed as acos(1 - height_), but the following
                 // formula is much more accurate when the cap height is small. It
                 // follows from the relationship h = 1 - cos(theta) = 2 sin^2(theta/2).
-                if (IsEmpty)
+                if (this.IsEmpty)
                 {
                     return S1Angle.FromRadians(-1);
                 }
-                return S1Angle.FromRadians(2*Math.Asin(Math.Sqrt(0.5*_height)));
+                return S1Angle.FromRadians(2*Math.Asin(Math.Sqrt(0.5*this.height)));
             }
         }
 
@@ -95,21 +92,21 @@ namespace Google.Common.Geometry
 
         public bool IsValid
         {
-            get { return S2.IsUnitLength(_axis) && _height <= 2; }
+            get { return S2.IsUnitLength(this.axis) && this.height <= 2; }
         }
 
         /** Return true if the cap is empty, i.e. it contains no points. */
 
         public bool IsEmpty
         {
-            get { return _height < 0; }
+            get { return this.height < 0; }
         }
 
         /** Return true if the cap is full, i.e. it contains all points. */
 
         public bool IsFull
         {
-            get { return _height >= 2; }
+            get { return this.height >= 2; }
         }
 
         /**
@@ -125,15 +122,15 @@ namespace Google.Common.Geometry
             {
                 // The complement of a full cap is an empty cap, not a singleton.
                 // Also make sure that the complement of an empty cap has height 2.
-                var cHeight = IsFull ? -1 : 2 - Math.Max(_height, 0.0);
-                return FromAxisHeight(-_axis, cHeight);
+                var cHeight = this.IsFull ? -1 : 2 - Math.Max(this.height, 0.0);
+                return FromAxisHeight(-this.axis, cHeight);
             }
         }
 
         public bool Equals(S2Cap other)
         {
-            return (_axis.Equals(other._axis) && _height.Equals(other._height))
-                   || (IsEmpty && other.IsEmpty) || (IsFull && other.IsFull);
+            return (this.axis.Equals(other.axis) && this.height.Equals(other.height))
+                   || (this.IsEmpty && other.IsEmpty) || (this.IsFull && other.IsFull);
         }
 
         public S2Cap CapBound
@@ -145,14 +142,14 @@ namespace Google.Common.Geometry
         {
             get
             {
-                if (IsEmpty)
+                if (this.IsEmpty)
                 {
                     return S2LatLngRect.Empty;
                 }
 
                 // Convert the axis to a (lat,lng) pair, and compute the cap angle.
-                var axisLatLng = new S2LatLng(_axis);
-                var capAngle = Angle.Radians;
+                var axisLatLng = new S2LatLng(this.axis);
+                var capAngle = this.Angle.Radians;
 
                 var allLongitudes = false;
                 double[] lat = new double[2], lng = new double[2];
@@ -186,7 +183,7 @@ namespace Google.Common.Geometry
                     //
                     // The formula for sin(a) follows from the relationship h = 1 - cos(a).
 
-                    var sinA = Math.Sqrt(_height*(2 - _height));
+                    var sinA = Math.Sqrt(this.height*(2 - this.height));
                     var sinC = Math.Cos(axisLatLng.Lat.Radians);
                     if (sinA <= sinC)
                     {
@@ -212,7 +209,7 @@ namespace Google.Common.Geometry
             for (var k = 0; k < 4; ++k)
             {
                 vertices[k] = cell.GetVertex(k);
-                if (!Contains(vertices[k]))
+                if (!this.Contains(vertices[k]))
                 {
                     return false;
                 }
@@ -220,7 +217,7 @@ namespace Google.Common.Geometry
             // Otherwise, return true if the complement of the cap does not intersect
             // the cell. (This test is slightly conservative, because technically we
             // want Complement().InteriorIntersects() here.)
-            return !Complement.Intersects(cell, vertices);
+            return !this.Complement.Intersects(cell, vertices);
         }
 
         public bool MayIntersect(S2Cell cell)
@@ -230,33 +227,33 @@ namespace Google.Common.Geometry
             for (var k = 0; k < 4; ++k)
             {
                 vertices[k] = cell.GetVertex(k);
-                if (Contains(vertices[k]))
+                if (this.Contains(vertices[k]))
                 {
                     return true;
                 }
             }
-            return Intersects(cell, vertices);
+            return this.Intersects(cell, vertices);
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            return obj is S2Cap && Equals((S2Cap)obj);
+            return obj is S2Cap && this.Equals((S2Cap)obj);
         }
 
         public override int GetHashCode()
         {
-            if (IsFull)
+            if (this.IsFull)
             {
                 return 17;
             }
-            else if (IsEmpty)
+            else if (this.IsEmpty)
             {
                 return 37;
             }
             unchecked
             {
-                return (_axis.GetHashCode()*397) ^ _height.GetHashCode();
+                return (this.axis.GetHashCode()*397) ^ this.height.GetHashCode();
             }
         }
 
@@ -319,11 +316,11 @@ namespace Google.Common.Geometry
 
         public bool Contains(S2Cap other)
         {
-            if (IsFull || other.IsEmpty)
+            if (this.IsFull || other.IsEmpty)
             {
                 return true;
             }
-            return Angle.Radians >= _axis.Angle(other._axis)
+            return this.Angle.Radians >= this.axis.Angle(other.axis)
                    + other.Angle.Radians;
         }
 
@@ -337,7 +334,7 @@ namespace Google.Common.Geometry
         {
             // Interior(X) intersects Y if and only if Complement(Interior(X))
             // does not contain Y.
-            return !Complement.Contains(other);
+            return !this.Complement.Contains(other);
         }
 
         /**
@@ -349,7 +346,7 @@ namespace Google.Common.Geometry
         public bool InteriorContains(S2Point p)
         {
             // assert (S2.isUnitLength(p));
-            return IsFull || (_axis - p).Norm2 < 2*_height;
+            return this.IsFull || (this.axis - p).Norm2 < 2*this.height;
         }
 
         /**
@@ -362,7 +359,7 @@ namespace Google.Common.Geometry
         {
             // Compute the squared chord length, then convert it into a height.
             // assert (S2.isUnitLength(p));
-            if (IsEmpty)
+            if (this.IsEmpty)
             {
                 return new S2Cap(p, 0);
             }
@@ -371,9 +368,9 @@ namespace Google.Common.Geometry
                 // To make sure that the resulting cap actually includes this point,
                 // we need to round up the distance calculation. That is, after
                 // calling cap.AddPoint(p), cap.Contains(p) should be true.
-                var dist2 = (_axis - p).Norm2;
-                var newHeight = Math.Max(_height, RoundUp*0.5*dist2);
-                return new S2Cap(_axis, newHeight);
+                var dist2 = (this.axis - p).Norm2;
+                var newHeight = Math.Max(this.height, RoundUp*0.5*dist2);
+                return new S2Cap(this.axis, newHeight);
             }
         }
 
@@ -381,25 +378,25 @@ namespace Google.Common.Geometry
         // cap is empty it is set to the given other cap.
         public S2Cap AddCap(S2Cap other)
         {
-            if (IsEmpty)
+            if (this.IsEmpty)
             {
-                return new S2Cap(other._axis, other._height);
+                return new S2Cap(other.axis, other.height);
             }
             else
             {
                 // See comments for FromAxisAngle() and AddPoint(). This could be
                 // optimized by doing the calculation in terms of cap heights rather
                 // than cap opening angles.
-                var angle = _axis.Angle(other._axis) + other.Angle.Radians;
+                var angle = this.axis.Angle(other.axis) + other.Angle.Radians;
                 if (angle >= S2.Pi)
                 {
-                    return new S2Cap(_axis, 2); //Full cap
+                    return new S2Cap(this.axis, 2); //Full cap
                 }
                 else
                 {
                     var d = Math.Sin(0.5*angle);
-                    var newHeight = Math.Max(_height, RoundUp*2*d*d);
-                    return new S2Cap(_axis, newHeight);
+                    var newHeight = Math.Max(this.height, RoundUp*2*d*d);
+                    return new S2Cap(this.axis, newHeight);
                 }
             }
         }
@@ -420,20 +417,20 @@ namespace Google.Common.Geometry
             // If the cap is a hemisphere or larger, the cell and the complement of the
             // cap are both convex. Therefore since no vertex of the cell is contained,
             // no other interior point of the cell is contained either.
-            if (_height >= 1)
+            if (this.height >= 1)
             {
                 return false;
             }
 
             // We need to check for empty caps due to the axis check just below.
-            if (IsEmpty)
+            if (this.IsEmpty)
             {
                 return false;
             }
 
             // Optimization: return true if the cell contains the cap axis. (This
             // allows half of the edge checks below to be skipped.)
-            if (cell.Contains(_axis))
+            if (cell.Contains(this.axis))
             {
                 return true;
             }
@@ -442,11 +439,11 @@ namespace Google.Common.Geometry
             // and the cap does not contain any cell vertex. The only way that they
             // can intersect is if the cap intersects the interior of some edge.
 
-            var sin2Angle = _height*(2 - _height); // sin^2(capAngle)
+            var sin2Angle = this.height*(2 - this.height); // sin^2(capAngle)
             for (var k = 0; k < 4; ++k)
             {
                 var edge = cell.GetEdgeRaw(k);
-                var dot = _axis.DotProd(edge);
+                var dot = this.axis.DotProd(edge);
                 if (dot > 0)
                 {
                     // The axis is in the interior half-space defined by the edge. We don't
@@ -463,7 +460,7 @@ namespace Google.Common.Geometry
                 // Otherwise, the great circle containing this edge intersects
                 // the interior of the cap. We just need to check whether the point
                 // of closest approach occurs between the two edge endpoints.
-                var dir = S2Point.CrossProd(edge, _axis);
+                var dir = S2Point.CrossProd(edge, this.axis);
                 if (dir.DotProd(vertices[k]) < 0
                     && dir.DotProd(vertices[(k + 1) & 3]) > 0)
                 {
@@ -477,7 +474,7 @@ namespace Google.Common.Geometry
         {
             // The point 'p' should be a unit-length vector.
             // assert (S2.isUnitLength(p));
-            return (_axis - p).Norm2 <= 2*_height;
+            return (this.axis - p).Norm2 <= 2*this.height;
         }
 
 
@@ -492,22 +489,22 @@ namespace Google.Common.Geometry
 
         internal bool ApproxEquals(S2Cap other, double maxError)
         {
-            return (_axis.ApproxEquals(other._axis, maxError) && Math.Abs(_height - other._height) <= maxError)
-                   || (IsEmpty && other._height <= maxError)
-                   || (other.IsEmpty && _height <= maxError)
-                   || (IsFull && other._height >= 2 - maxError)
-                   || (other.IsFull && _height >= 2 - maxError);
+            return (this.axis.ApproxEquals(other.axis, maxError) && Math.Abs(this.height - other.height) <= maxError)
+                   || (this.IsEmpty && other.height <= maxError)
+                   || (other.IsEmpty && this.height <= maxError)
+                   || (this.IsFull && other.height >= 2 - maxError)
+                   || (other.IsFull && this.height >= 2 - maxError);
         }
 
         internal bool ApproxEquals(S2Cap other)
         {
-            return ApproxEquals(other, 1e-14);
+            return this.ApproxEquals(other, 1e-14);
         }
 
 
         public override string ToString()
         {
-            return "[Point = " + _axis.ToString() + " Height = " + _height + "]";
+            return "[Point = " + this.axis.ToString() + " Height = " + this.height + "]";
         }
     }
 }

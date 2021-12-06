@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Google.Common.Geometry
+﻿namespace OpenSky.S2Geometry
 {
+    using System;
+    using System.Collections.Generic;
+
     public struct R2Vector : IEquatable<R2Vector>
     {
-        private readonly double _x;
-        private readonly double _y;
+        private readonly double x;
+        private readonly double y;
 
         public R2Vector(double x, double y)
         {
-            _x = x;
-            _y = y;
+            this.x = x;
+            this.y = y;
         }
 
         /// <summary>
@@ -27,18 +24,18 @@ namespace Google.Common.Geometry
             {
                 throw new ArgumentException("Points must have exactly 2 coordinates", "coord");
             }
-            _x = coord[0];
-            _y = coord[1];
+            this.x = coord[0];
+            this.y = coord[1];
         }
 
         public double X
         {
-            get { return _x; }
+            get { return this.x; }
         }
 
         public double Y
         {
-            get { return _y; }
+            get { return this.y; }
         }
 
         public double this[int index]
@@ -49,23 +46,23 @@ namespace Google.Common.Geometry
                 {
                     throw new ArgumentOutOfRangeException("index");
                 }
-                return index == 0 ? _x : _y;
+                return index == 0 ? this.x : this.y;
             }
         }
 
         public double Norm2
         {
-            get { return (_x*_x) + (_y*_y); }
+            get { return (this.x*this.x) + (this.y*this.y); }
         }
 
         public bool Equals(R2Vector other)
         {
-            return _y.Equals(other._y) && _x.Equals(other._x);
+            return this.y.Equals(other.y) && this.x.Equals(other.x);
         }
 
         public override bool Equals(object obj)
         {
-            return obj is R2Vector && Equals((R2Vector)obj);
+            return obj is R2Vector && this.Equals((R2Vector)obj);
         }
 
 
@@ -78,7 +75,7 @@ namespace Google.Common.Geometry
         {
             unchecked
             {
-                return (Math.Abs(_y).GetHashCode()*397) ^ Math.Abs(_x).GetHashCode();
+                return (Math.Abs(this.y).GetHashCode()*397) ^ Math.Abs(this.x).GetHashCode();
             }
         }
 
@@ -94,18 +91,18 @@ namespace Google.Common.Geometry
 
         public static R2Vector operator +(R2Vector p1, R2Vector p2)
         {
-            return new R2Vector(p1._x + p2._x, p1._y + p2._y);
+            return new R2Vector(p1.x + p2.x, p1.y + p2.y);
         }
 
 
         public static R2Vector operator *(R2Vector p, double m)
         {
-            return new R2Vector(m*p._x, m*p._y);
+            return new R2Vector(m*p.x, m*p.y);
         }
 
         public static double DotProd(R2Vector p1, R2Vector p2)
         {
-            return (p1._x*p2._x) + (p1._y*p2._y);
+            return (p1.x*p2.x) + (p1.y*p2.y);
         }
 
         public double DotProd(R2Vector that)
@@ -115,20 +112,20 @@ namespace Google.Common.Geometry
 
         public double CrossProd(R2Vector that)
         {
-            return _x*that._y - _y*that._x;
+            return this.x*that.y - this.y*that.x;
         }
 
         public static bool operator <(R2Vector x, R2Vector y)
         {
-            if (x._x < y._x)
+            if (x.x < y.x)
             {
                 return true;
             }
-            if (y._x < x._x)
+            if (y.x < x.x)
             {
                 return false;
             }
-            if (x._y < y._y)
+            if (x.y < y.y)
             {
                 return true;
             }
@@ -137,15 +134,15 @@ namespace Google.Common.Geometry
 
         public static bool operator >(R2Vector x, R2Vector y)
         {
-            if (x._x > y._x)
+            if (x.x > y.x)
             {
                 return true;
             }
-            if (y._x > x._x)
+            if (y.x > x.x)
             {
                 return false;
             }
-            if (x._y > y._y)
+            if (x.y > y.y)
             {
                 return true;
             }
@@ -154,7 +151,7 @@ namespace Google.Common.Geometry
 
         public override string ToString()
         {
-            return "(" + _x + ", " + _y + ")";
+            return "(" + this.x + ", " + this.y + ")";
         }
     }
 }

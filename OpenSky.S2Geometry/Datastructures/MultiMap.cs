@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Google.Common.Geometry.MultiMap;
-
-
-namespace System.Collections.Generic
+﻿namespace OpenSky.S2Geometry.Datastructures
 {
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+
     internal class MultiMap<TKey, TValue> : IMultiMap<TKey,TValue>, IDictionary<TKey,TValue>
     {
-        private Dictionary<TKey, List<TValue>> _interalStorage = new Dictionary<TKey, List<TValue>>();
+        private Dictionary<TKey, List<TValue>> interalStorage = new Dictionary<TKey, List<TValue>>();
 
         public MultiMap(){}
 
@@ -18,54 +14,54 @@ namespace System.Collections.Generic
         {
             foreach (var item in initialData)
             {
-                Add(item);
+                this.Add(item);
             }
         }
 
         public void Add(TKey key, TValue value)
         {
-            if (!_interalStorage.ContainsKey(key))
+            if (!this.interalStorage.ContainsKey(key))
             {
-                _interalStorage.Add(key, new List<TValue>());
+                this.interalStorage.Add(key, new List<TValue>());
             }
-            _interalStorage[key].Add(value);
+            this.interalStorage[key].Add(value);
         }
 
         public void Add(TKey key, IEnumerable<TValue> valueList)
         {
-            if (!_interalStorage.ContainsKey(key))
+            if (!this.interalStorage.ContainsKey(key))
             {
-                _interalStorage.Add(key, new List<TValue>());
+                this.interalStorage.Add(key, new List<TValue>());
             }
             foreach (TValue value in valueList)
             {
-                _interalStorage[key].Add(value);
+                this.interalStorage[key].Add(value);
             }
         }
 
         public bool ContainsKey(TKey key)
         {
-            return _interalStorage.ContainsKey(key);
+            return this.interalStorage.ContainsKey(key);
         }
 
         public ICollection<TKey> Keys
         {
-            get { return _interalStorage.Keys; }
+            get { return this.interalStorage.Keys; }
         }
 
         public bool Remove(TKey key)
         {
-            return _interalStorage.Remove(key);
+            return this.interalStorage.Remove(key);
         }
 
         bool IDictionary<TKey, TValue>.TryGetValue(TKey key, out TValue value)
         {
-            if (!_interalStorage.ContainsKey(key))
+            if (!this.interalStorage.ContainsKey(key))
             {
                 value = default(TValue);
                 return false;
             }
-            value = _interalStorage[key].Last();
+            value = this.interalStorage[key].Last();
             return true;
         }
 
@@ -74,7 +70,7 @@ namespace System.Collections.Generic
             get 
             { 
                 List<TValue> retVal = new List<TValue>();
-                foreach (var item in _interalStorage)
+                foreach (var item in this.interalStorage)
                 {
                     retVal.AddRange(item.Value);
                 }
@@ -86,32 +82,32 @@ namespace System.Collections.Generic
         {
             get
             {
-                return _interalStorage[key].LastOrDefault();
+                return this.interalStorage[key].LastOrDefault();
             }
             set
             {
-                Add(key,value);
+                this.Add(key,value);
             }
         }
 
         public void Add(KeyValuePair<TKey, TValue> item)
         {
-            if (!_interalStorage.ContainsKey(item.Key))
+            if (!this.interalStorage.ContainsKey(item.Key))
             {
-                _interalStorage.Add(item.Key, new List<TValue>());
+                this.interalStorage.Add(item.Key, new List<TValue>());
             }
-            _interalStorage[item.Key].Add(item.Value);
+            this.interalStorage[item.Key].Add(item.Value);
         }
 
         public void Clear()
         {
-            _interalStorage.Clear();
+            this.interalStorage.Clear();
         }
 
         public bool Contains(KeyValuePair<TKey, TValue> item)
         {
             List<TValue> valueList;
-            if (_interalStorage.TryGetValue(item.Key, out valueList)) 
+            if (this.interalStorage.TryGetValue(item.Key, out valueList)) 
                 return valueList.Contains(item.Value);
             return false;
         }
@@ -119,7 +115,7 @@ namespace System.Collections.Generic
         public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
         {
             int i = arrayIndex;
-            foreach (var item in _interalStorage)
+            foreach (var item in this.interalStorage)
             {
                 foreach (TValue value in item.Value)
                 {
@@ -134,7 +130,7 @@ namespace System.Collections.Generic
             get
             {
                 int count = 0;
-                foreach (var item in _interalStorage)
+                foreach (var item in this.interalStorage)
                 {
                     count += item.Value.Count;
                 }
@@ -145,7 +141,7 @@ namespace System.Collections.Generic
         public bool CountIsAtLeast(int value)
         {
             int count = 0;
-            foreach (var item in _interalStorage)
+            foreach (var item in this.interalStorage)
             {
                 count += item.Value.Count;
                 if (count >= value)
@@ -156,7 +152,7 @@ namespace System.Collections.Generic
 
         int ICollection<KeyValuePair<TKey,TValue>>.Count
         {
-	        get { return _interalStorage.Count; }
+	        get { return this.interalStorage.Count; }
         }
 
         bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly
@@ -166,12 +162,12 @@ namespace System.Collections.Generic
 
         public bool Remove(KeyValuePair<TKey, TValue> item)
         {
-            if (!ContainsKey(item.Key)) return false;
+            if (!this.ContainsKey(item.Key)) return false;
 
-            var list = _interalStorage[item.Key];
+            var list = this.interalStorage[item.Key];
             var removed = list.Remove(item.Value);
             if (list.Count == 0)
-                _interalStorage.Remove(item.Key); // clear out the dict
+                this.interalStorage.Remove(item.Key); // clear out the dict
             
             return removed;
         }
@@ -196,30 +192,30 @@ namespace System.Collections.Generic
         {
             get
             {
-                if (!_interalStorage.ContainsKey(key))
+                if (!this.interalStorage.ContainsKey(key))
                     return new List<TValue>();
-                return _interalStorage[key];
+                return this.interalStorage[key];
             }
             set
             {
-                if (!_interalStorage.ContainsKey(key)) 
-                    _interalStorage.Add(key, value);
-                else _interalStorage[key] = value;
+                if (!this.interalStorage.ContainsKey(key)) 
+                    this.interalStorage.Add(key, value);
+                else this.interalStorage[key] = value;
             }
         }
 
         public bool Remove(TKey key, TValue value)
         {
-            if (!ContainsKey(key)) return false;
-            return _interalStorage[key].Remove(value);
+            if (!this.ContainsKey(key)) return false;
+            return this.interalStorage[key].Remove(value);
         }
 
 
 
         public bool Contains(TKey key, TValue item)
         {
-           if (!_interalStorage.ContainsKey(key)) return false;
-           return _interalStorage[key].Contains(item);
+           if (!this.interalStorage.ContainsKey(key)) return false;
+           return this.interalStorage[key].Contains(item);
         }
     }
 }

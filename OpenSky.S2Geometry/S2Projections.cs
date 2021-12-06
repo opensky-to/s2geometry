@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Google.Common.Geometry
+﻿namespace OpenSky.S2Geometry
 {
+    using System;
+
     /**
  * This class specifies the details of how the cube faces are projected onto the
  * unit sphere. This includes getting the face ordering and orientation correct

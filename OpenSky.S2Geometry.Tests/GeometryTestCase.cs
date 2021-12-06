@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Google.Common.Geometry;
 
 namespace S2Geometry.Tests
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    using OpenSky.S2Geometry;
 
     [TestClass]
     public abstract class GeometryTestCase

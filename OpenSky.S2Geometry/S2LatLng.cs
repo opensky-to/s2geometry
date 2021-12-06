@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Google.Common.Geometry
+﻿namespace OpenSky.S2Geometry
 {
+    using System;
+
     /**
  * This class represents a point on the unit sphere as a pair of
  * latitude-longitude coordinates. Like the rest of the "geometry" package, the
@@ -22,13 +18,13 @@ namespace Google.Common.Geometry
         /** The center point the lat/lng coordinate system. */
         public static readonly S2LatLng Center = new S2LatLng(0.0, 0.0);
 
-        private readonly double _latRadians;
-        private readonly double _lngRadians;
+        private readonly double latRadians;
+        private readonly double lngRadians;
 
         private S2LatLng(double latRadians, double lngRadians)
         {
-            _latRadians = latRadians;
-            _lngRadians = lngRadians;
+            this.latRadians = latRadians;
+            this.lngRadians = lngRadians;
         }
 
         /**
@@ -59,42 +55,42 @@ namespace Google.Common.Geometry
 
         internal S1Angle Lat
         {
-            get { return S1Angle.FromRadians(_latRadians); }
+            get { return S1Angle.FromRadians(this.latRadians); }
         }
 
         /** Returns the latitude of this point as radians. */
 
         public double LatRadians
         {
-            get { return _latRadians; }
+            get { return this.latRadians; }
         }
 
         /** Returns the latitude of this point as degrees. */
 
         public double LatDegrees
         {
-            get { return 180.0/Math.PI*_latRadians; }
+            get { return 180.0/Math.PI*this.latRadians; }
         }
 
         /** Returns the longitude of this point as a new S1Angle. */
 
         internal S1Angle Lng
         {
-            get { return S1Angle.FromRadians(_lngRadians); }
+            get { return S1Angle.FromRadians(this.lngRadians); }
         }
 
         /** Returns the longitude of this point as radians. */
 
         public double LngRadians
         {
-            get { return _lngRadians; }
+            get { return this.lngRadians; }
         }
 
         /** Returns the longitude of this point as degrees. */
 
         public double LngDegrees
         {
-            get { return 180.0/Math.PI*_lngRadians; }
+            get { return 180.0/Math.PI*this.lngRadians; }
         }
 
         /**
@@ -104,7 +100,7 @@ namespace Google.Common.Geometry
 
         public bool IsValid
         {
-            get { return Math.Abs(Lat.Radians) <= S2.PiOver2 && Math.Abs(Lng.Radians) <= S2.Pi; }
+            get { return Math.Abs(this.Lat.Radians) <= S2.PiOver2 && Math.Abs(this.Lng.Radians) <= S2.Pi; }
         }
 
         /**
@@ -124,27 +120,27 @@ namespace Google.Common.Geometry
             {
                 // drem(x, 2 * S2.M_PI) reduces its argument to the range
                 // [-S2.M_PI, S2.M_PI] inclusive, which is what we want here.
-                return new S2LatLng(Math.Max(-S2.PiOver2, Math.Min(S2.PiOver2, Lat.Radians)),
-                                    Math.IEEERemainder(Lng.Radians, 2*S2.Pi));
+                return new S2LatLng(Math.Max(-S2.PiOver2, Math.Min(S2.PiOver2, this.Lat.Radians)),
+                                    Math.IEEERemainder(this.Lng.Radians, 2*S2.Pi));
             }
         }
 
         public bool Equals(S2LatLng other)
         {
-            return _lngRadians.Equals(other._lngRadians) && _latRadians.Equals(other._latRadians);
+            return this.lngRadians.Equals(other.lngRadians) && this.latRadians.Equals(other.latRadians);
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            return obj is S2LatLng && Equals((S2LatLng)obj);
+            return obj is S2LatLng && this.Equals((S2LatLng)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (_lngRadians.GetHashCode()*397) ^ _latRadians.GetHashCode();
+                return (this.lngRadians.GetHashCode()*397) ^ this.latRadians.GetHashCode();
             }
         }
 
@@ -213,8 +209,8 @@ namespace Google.Common.Geometry
 
         public S2Point ToPoint()
         {
-            var phi = Lat.Radians;
-            var theta = Lng.Radians;
+            var phi = this.Lat.Radians;
+            var theta = this.Lng.Radians;
             var cosphi = Math.Cos(phi);
             return new S2Point(Math.Cos(theta)*cosphi, Math.Sin(theta)*cosphi, Math.Sin(phi));
         }
@@ -236,9 +232,9 @@ namespace Google.Common.Geometry
             // distance that way (which gives about 15 digits of accuracy for all
             // distances).
 
-            var lat1 = Lat.Radians;
+            var lat1 = this.Lat.Radians;
             var lat2 = o.Lat.Radians;
-            var lng1 = Lng.Radians;
+            var lng1 = this.Lng.Radians;
             var lng2 = o.Lng.Radians;
             var dlat = Math.Sin(0.5*(lat2 - lat1));
             var dlng = Math.Sin(0.5*(lng2 - lng1));
@@ -259,7 +255,7 @@ namespace Google.Common.Geometry
         public double GetDistance(S2LatLng o, double radius)
         {
             // TODO(dbeaumont): Maybe check that radius >= 0 ?
-            return GetDistance(o).Radians*radius;
+            return this.GetDistance(o).Radians*radius;
         }
 
         /**
@@ -269,7 +265,7 @@ namespace Google.Common.Geometry
 
         public double GetEarthDistance(S2LatLng o)
         {
-            return GetDistance(o, EarthRadiusMeters);
+            return this.GetDistance(o, EarthRadiusMeters);
         }
 
         /**
@@ -279,7 +275,7 @@ namespace Google.Common.Geometry
 
         public static S2LatLng operator +(S2LatLng x, S2LatLng y)
         {
-            return new S2LatLng(x._latRadians + y._latRadians, x._lngRadians + y._lngRadians);
+            return new S2LatLng(x.latRadians + y.latRadians, x.lngRadians + y.lngRadians);
         }
 
 
@@ -290,7 +286,7 @@ namespace Google.Common.Geometry
 
         public static S2LatLng operator -(S2LatLng x, S2LatLng y)
         {
-            return new S2LatLng(x._latRadians - y._latRadians, x._lngRadians - y._lngRadians);
+            return new S2LatLng(x.latRadians - y.latRadians, x.lngRadians - y.lngRadians);
         }
 
         /**
@@ -301,7 +297,7 @@ namespace Google.Common.Geometry
         public static S2LatLng operator *(S2LatLng x, double m)
         {
             // TODO(dbeaumont): Maybe check that m >= 0 ?
-            return new S2LatLng(x._latRadians*m, x._lngRadians*m);
+            return new S2LatLng(x.latRadians*m, x.lngRadians*m);
         }
 
         /**
@@ -311,8 +307,8 @@ namespace Google.Common.Geometry
 
         public bool ApproxEquals(S2LatLng o, double maxError)
         {
-            return (Math.Abs(_latRadians - o._latRadians) < maxError)
-                   && (Math.Abs(_lngRadians - o._lngRadians) < maxError);
+            return (Math.Abs(this.latRadians - o.latRadians) < maxError)
+                   && (Math.Abs(this.lngRadians - o.lngRadians) < maxError);
         }
 
         /**
@@ -323,17 +319,17 @@ namespace Google.Common.Geometry
 
         public bool ApproxEquals(S2LatLng o)
         {
-            return ApproxEquals(o, 1e-9);
+            return this.ApproxEquals(o, 1e-9);
         }
 
         public override String ToString()
         {
-            return "(" + _latRadians + ", " + _lngRadians + ")";
+            return "(" + this.latRadians + ", " + this.lngRadians + ")";
         }
 
         public String ToStringDegrees()
         {
-            return "(" + LatDegrees + ", " + LngDegrees + ")";
+            return "(" + this.LatDegrees + ", " + this.LngDegrees + ")";
         }
     }
 }

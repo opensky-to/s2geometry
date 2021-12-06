@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Google.Common.Geometry
+﻿namespace OpenSky.S2Geometry
 {
+    using System;
+    using System.Diagnostics;
+
     // Data from here
     //http://grepcode.com/file_/repository.grepcode.com/java/root/jdk/openjdk/6-b14/sun/misc/DoubleConsts.java/?v=source
     internal static class DoubleConsts
@@ -46,8 +42,8 @@ namespace Google.Common.Geometry
     // Data from here http://grepcode.com/file_/repository.grepcode.com/java/root/jdk/openjdk/6-b14/sun/misc/FpUtils.java/?v=source
     internal static class FpUtils
     {
-        private static readonly double twoToTheDoubleScaleUp = PowerOfTwoD(512);
-        private static readonly double twoToTheDoubleScaleDown = PowerOfTwoD(-512);
+        private static readonly double TwoToTheDoubleScaleUp = PowerOfTwoD(512);
+        private static readonly double TwoToTheDoubleScaleDown = PowerOfTwoD(-512);
 
         /**
     * Returns a floating-point power of two in the normal range.
@@ -139,25 +135,24 @@ namespace Google.Common.Geometry
             // nonzero value by it would be guaranteed to over or
             // underflow; due to rounding, scaling down takes takes an
             // additional power of two which is reflected here
-            const int MAX_SCALE = DoubleConsts.MaxExponent + -DoubleConsts.MinExponent +
+            const int maxScale = DoubleConsts.MaxExponent + -DoubleConsts.MinExponent +
                                   DoubleConsts.SignificandWidth + 1;
-            var expAdjust = 0;
-            var scaleIncrement = 0;
-            var expDelta = Double.NaN;
+            int scaleIncrement;
+            double expDelta;
 
             // Make sure scaling factor is in a reasonable range
 
             if (scaleFactor < 0)
             {
-                scaleFactor = Math.Max(scaleFactor, -MAX_SCALE);
+                scaleFactor = Math.Max(scaleFactor, -maxScale);
                 scaleIncrement = -512;
-                expDelta = twoToTheDoubleScaleDown;
+                expDelta = TwoToTheDoubleScaleDown;
             }
             else
             {
-                scaleFactor = Math.Min(scaleFactor, MAX_SCALE);
+                scaleFactor = Math.Min(scaleFactor, maxScale);
                 scaleIncrement = 512;
-                expDelta = twoToTheDoubleScaleUp;
+                expDelta = TwoToTheDoubleScaleUp;
             }
 
             // Calculate (scale_factor % +/-512), 512 = 2^9, using
@@ -165,7 +160,7 @@ namespace Google.Common.Geometry
             var u = unchecked ((uint)(scaleFactor >> 9 - 1));
             u = u >> 32 - 9;
             var t = unchecked ((int)u);
-            expAdjust = ((scaleFactor + t) & (512 - 1)) - t;
+            var expAdjust = ((scaleFactor + t) & (512 - 1)) - t;
 
             d *= PowerOfTwoD(expAdjust);
             scaleFactor -= expAdjust;

@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Google.Common.Geometry
+﻿namespace OpenSky.S2Geometry
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+
     /**
   * Normalizes the cell union by discarding cells that are contained by other
   * cells, replacing groups of 4 child cells by their parent cell whenever
@@ -22,7 +20,7 @@ namespace Google.Common.Geometry
 
     public sealed class S2CellUnion : IS2Region, IEnumerable<S2CellId>, IEquatable<S2CellUnion>
     {
-        private List<S2CellId> _cellIds = new List<S2CellId>();
+        private List<S2CellId> cellIds = new List<S2CellId>();
 
         public S2CellUnion()
         {
@@ -30,12 +28,12 @@ namespace Google.Common.Geometry
 
         public int Count
         {
-            get { return _cellIds.Count; }
+            get { return this.cellIds.Count; }
         }
 
         public IList<S2CellId> CellIds
         {
-            get { return _cellIds; }
+            get { return this.cellIds; }
         }
 
         public ulong LeafCellsCovered
@@ -43,7 +41,7 @@ namespace Google.Common.Geometry
             get
             {
                 ulong numLeaves = 0;
-                foreach (var cellId in _cellIds)
+                foreach (var cellId in this.cellIds)
                 {
                     var invertedLevel = S2CellId.MaxLevel - cellId.Level;
                     numLeaves += (ulong)(1L << (invertedLevel << 1));
@@ -69,7 +67,7 @@ namespace Google.Common.Geometry
 
         public double AverageBasedArea
         {
-            get { return S2Cell.AverageArea(S2CellId.MaxLevel)*LeafCellsCovered; }
+            get { return S2Cell.AverageArea(S2CellId.MaxLevel)*this.LeafCellsCovered; }
         }
 
         /**
@@ -84,7 +82,7 @@ namespace Google.Common.Geometry
             get
             {
                 double area = 0;
-                foreach (var cellId in _cellIds)
+                foreach (var cellId in this.cellIds)
                 {
                     area += new S2Cell(cellId).ApproxArea();
                 }
@@ -104,7 +102,7 @@ namespace Google.Common.Geometry
             get
             {
                 double area = 0;
-                foreach (var cellId in _cellIds)
+                foreach (var cellId in this.cellIds)
                 {
                     area += new S2Cell(cellId).ExactArea();
                 }
@@ -114,24 +112,24 @@ namespace Google.Common.Geometry
 
         public IEnumerator<S2CellId> GetEnumerator()
         {
-            return _cellIds.GetEnumerator();
+            return this.cellIds.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return this.GetEnumerator();
         }
 
         public bool Equals(S2CellUnion other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return _cellIds.SequenceEqual(other._cellIds);
+            return this.cellIds.SequenceEqual(other.cellIds);
         }
 
         public bool Contains(S2Cell cell)
         {
-            return Contains(cell.Id);
+            return this.Contains(cell.Id);
         }
 
         public S2Cap CapBound
@@ -140,7 +138,7 @@ namespace Google.Common.Geometry
             {
                 // Compute the approximate centroid of the region. This won't produce the
                 // bounding cap of minimal area, but it should be close enough.
-                if (_cellIds.Count == 0)
+                if (this.cellIds.Count == 0)
                 {
                     return S2Cap.Empty;
                 }
@@ -190,15 +188,15 @@ namespace Google.Common.Geometry
 
         public bool MayIntersect(S2Cell cell)
         {
-            return Intersects(cell.Id);
+            return this.Intersects(cell.Id);
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((S2CellUnion)obj);
+            if (obj.GetType() != this.GetType()) return false;
+            return this.Equals((S2CellUnion)obj);
         }
 
         public override int GetHashCode()
@@ -225,8 +223,8 @@ namespace Google.Common.Geometry
 
         public void InitFromCellIds(IEnumerable<S2CellId> cellIds)
         {
-            InitRawCellIds(cellIds);
-            Normalize();
+            this.InitRawCellIds(cellIds);
+            this.Normalize();
         }
 
         /**
@@ -238,26 +236,26 @@ namespace Google.Common.Geometry
 
         public void InitFromIds(IEnumerable<ulong> cellIds)
         {
-            InitRawIds(cellIds);
-            Normalize();
+            this.InitRawIds(cellIds);
+            this.Normalize();
         }
 
         public void InitSwap(ICollection<S2CellId> cellIds)
         {
-            InitRawSwap(cellIds);
-            Normalize();
+            this.InitRawSwap(cellIds);
+            this.Normalize();
         }
 
         public void InitRawCellIds(IEnumerable<S2CellId> cellIds)
         {
-            _cellIds = new List<S2CellId>(cellIds);
+            this.cellIds = new List<S2CellId>(cellIds);
         }
 
         public void InitRawIds(IEnumerable<ulong> cellIds)
         {
-            _cellIds = cellIds
-                .Select(id => new S2CellId(id))
-                .ToList();
+            this.cellIds = cellIds
+                            .Select(id => new S2CellId(id))
+                            .ToList();
         }
 
         /**
@@ -270,7 +268,7 @@ namespace Google.Common.Geometry
 
         public void InitRawSwap(ICollection<S2CellId> cellIds)
         {
-            _cellIds = new List<S2CellId>(cellIds);
+            this.cellIds = new List<S2CellId>(cellIds);
             cellIds.Clear();
         }
 
@@ -278,7 +276,7 @@ namespace Google.Common.Geometry
 
         public S2CellId CellId(int i)
         {
-            return _cellIds[i];
+            return this.cellIds[i];
         }
 
         /** Direct access to the underlying vector for iteration . */
@@ -337,7 +335,7 @@ namespace Google.Common.Geometry
 
         public void Pack()
         {
-            _cellIds.TrimExcess();
+            this.cellIds.TrimExcess();
         }
 
 
@@ -358,16 +356,16 @@ namespace Google.Common.Geometry
             // surround the given cell id (using binary search). There is containment
             // if and only if one of these two cell ids contains this cell.
 
-            var pos = _cellIds.BinarySearch(id);
+            var pos = this.cellIds.BinarySearch(id);
             if (pos < 0)
             {
                 pos = -pos - 1;
             }
-            if (pos < _cellIds.Count && _cellIds[pos].RangeMin <= id)
+            if (pos < this.cellIds.Count && this.cellIds[pos].RangeMin <= id)
             {
                 return true;
             }
-            return pos != 0 && _cellIds[pos - 1].RangeMax >= id;
+            return pos != 0 && this.cellIds[pos - 1].RangeMax >= id;
         }
 
         /**
@@ -379,7 +377,7 @@ namespace Google.Common.Geometry
         {
             // This function requires that Normalize has been called first.
             // This is an exact test; see the comments for Contains() above.
-            var pos = _cellIds.BinarySearch(id);
+            var pos = this.cellIds.BinarySearch(id);
 
             if (pos < 0)
             {
@@ -387,11 +385,11 @@ namespace Google.Common.Geometry
             }
 
 
-            if (pos < _cellIds.Count && _cellIds[pos].RangeMin <= id.RangeMax)
+            if (pos < this.cellIds.Count && this.cellIds[pos].RangeMin <= id.RangeMax)
             {
                 return true;
             }
-            return pos != 0 && _cellIds[pos - 1].RangeMax >= id.RangeMin;
+            return pos != 0 && this.cellIds[pos - 1].RangeMax >= id.RangeMin;
         }
 
         public bool Contains(S2CellUnion that)
@@ -400,7 +398,7 @@ namespace Google.Common.Geometry
             // may be significantly faster in both the average and worst case.
             foreach (var id in that)
             {
-                if (!Contains(id))
+                if (!this.Contains(id))
                 {
                     return false;
                 }
@@ -421,7 +419,7 @@ namespace Google.Common.Geometry
             // may be significantly faster in both the average and worst case.
             foreach (var id in union)
             {
-                if (Intersects(id))
+                if (this.Intersects(id))
                 {
                     return true;
                 }
@@ -432,11 +430,11 @@ namespace Google.Common.Geometry
         public void GetUnion(S2CellUnion x, S2CellUnion y)
         {
             // assert (x != this && y != this);
-            _cellIds.Clear();
+            this.cellIds.Clear();
 
-            _cellIds.AddRange(x._cellIds);
-            _cellIds.AddRange(y._cellIds);
-            Normalize();
+            this.cellIds.AddRange(x.cellIds);
+            this.cellIds.AddRange(y.cellIds);
+            this.Normalize();
         }
 
         /**
@@ -448,14 +446,14 @@ namespace Google.Common.Geometry
         public void GetIntersection(S2CellUnion x, S2CellId id)
         {
             // assert (x != this);
-            _cellIds.Clear();
+            this.cellIds.Clear();
             if (x.Contains(id))
             {
-                _cellIds.Add(id);
+                this.cellIds.Add(id);
             }
             else
             {
-                var pos = x._cellIds.BinarySearch(id.RangeMin);
+                var pos = x.cellIds.BinarySearch(id.RangeMin);
 
                 if (pos < 0)
                 {
@@ -463,10 +461,10 @@ namespace Google.Common.Geometry
                 }
 
                 var idmax = id.RangeMax;
-                var size = x._cellIds.Count;
-                while (pos < size && x._cellIds[pos] <= idmax)
+                var size = x.cellIds.Count;
+                while (pos < size && x.cellIds[pos] <= idmax)
                 {
-                    _cellIds.Add(x._cellIds[pos++]);
+                    this.cellIds.Add(x.cellIds[pos++]);
                 }
             }
         }
@@ -484,12 +482,12 @@ namespace Google.Common.Geometry
             // over sections of both input vectors. It takes constant time if all the
             // cells of "x" come before or after all the cells of "y" in S2CellId order.
 
-            _cellIds.Clear();
+            this.cellIds.Clear();
 
             var i = 0;
             var j = 0;
 
-            while (i < x._cellIds.Count && j < y._cellIds.Count)
+            while (i < x.cellIds.Count && j < y.cellIds.Count)
             {
                 var imin = x.CellId(i).RangeMin;
                 var jmin = y.CellId(j).RangeMin;
@@ -498,12 +496,12 @@ namespace Google.Common.Geometry
                     // Either j->contains(*i) or the two cells are disjoint.
                     if (x.CellId(i) <= y.CellId(j).RangeMax)
                     {
-                        _cellIds.Add(x.CellId(i++));
+                        this.cellIds.Add(x.CellId(i++));
                     }
                     else
                     {
                         // Advance "j" to the first cell possibly contained by *i.
-                        j = IndexedBinarySearch(y._cellIds, imin, j + 1);
+                        j = IndexedBinarySearch(y.cellIds, imin, j + 1);
                         // The previous cell *(j-1) may now contain *i.
                         if (x.CellId(i) <= y.CellId(j - 1).RangeMax)
                         {
@@ -516,11 +514,11 @@ namespace Google.Common.Geometry
                     // Identical to the code above with "i" and "j" reversed.
                     if (y.CellId(j) <= x.CellId(i).RangeMax)
                     {
-                        _cellIds.Add(y.CellId(j++));
+                        this.cellIds.Add(y.CellId(j++));
                     }
                     else
                     {
-                        i = IndexedBinarySearch(x._cellIds, jmin, i + 1);
+                        i = IndexedBinarySearch(x.cellIds, jmin, i + 1);
                         if (y.CellId(j) <= x.CellId(i - 1).RangeMax)
                         {
                             --i;
@@ -532,11 +530,11 @@ namespace Google.Common.Geometry
                     // "i" and "j" have the same range_min(), so one contains the other.
                     if (x.CellId(i) < y.CellId(j))
                     {
-                        _cellIds.Add(x.CellId(i++));
+                        this.cellIds.Add(x.CellId(i++));
                     }
                     else
                     {
-                        _cellIds.Add(y.CellId(j++));
+                        this.cellIds.Add(y.CellId(j++));
                     }
                 }
             }
@@ -596,16 +594,16 @@ namespace Google.Common.Geometry
         {
             var output = new List<S2CellId>();
             var levelLsb = S2CellId.LowestOnBitForLevel(level);
-            var i = Count - 1;
+            var i = this.Count - 1;
             do
             {
-                var id = CellId(i);
+                var id = this.CellId(i);
                 if (id.LowestOnBit < levelLsb)
                 {
                     id = id.ParentForLevel(level);
                     // Optimization: skip over any cells contained by this one. This is
                     // especially important when very small regions are being expanded.
-                    while (i > 0 && id.Contains(CellId(i - 1)))
+                    while (i > 0 && id.Contains(this.CellId(i - 1)))
                     {
                         --i;
                     }
@@ -613,7 +611,7 @@ namespace Google.Common.Geometry
                 output.Add(id);
                 id.GetAllNeighbors(level, output);
             } while (--i >= 0);
-            InitSwap(output);
+            this.InitSwap(output);
         }
 
         /**
@@ -644,16 +642,16 @@ namespace Google.Common.Geometry
             {
                 // The requested expansion is greater than the width of a face cell.
                 // The easiest way to handle this is to expand twice.
-                Expand(0);
+                this.Expand(0);
             }
-            Expand(Math.Min(minLevel + maxLevelDiff, radiusLevel));
+            this.Expand(Math.Min(minLevel + maxLevelDiff, radiusLevel));
         }
 
 
         public IS2Region Clone()
         {
             var copy = new S2CellUnion();
-            copy.InitRawCellIds(_cellIds);
+            copy.InitRawCellIds(this.cellIds);
             return copy;
         }
 
@@ -664,7 +662,7 @@ namespace Google.Common.Geometry
 
         public bool Contains(S2Point p)
         {
-            return Contains(S2CellId.FromPoint(p));
+            return this.Contains(S2CellId.FromPoint(p));
         }
 
         /**
@@ -693,8 +691,8 @@ namespace Google.Common.Geometry
             // Optimize the representation by looking for cases where all subcells
             // of a parent cell are present.
 
-            var output = new List<S2CellId>(_cellIds.Count);
-            _cellIds.Sort();
+            var output = new List<S2CellId>(this.cellIds.Count);
+            this.cellIds.Sort();
 
 
             foreach (var idLoop in this)
@@ -748,9 +746,9 @@ namespace Google.Common.Geometry
                 }
                 output.Add(id);
             }
-            if (output.Count < Count)
+            if (output.Count < this.Count)
             {
-                InitRawSwap(output);
+                this.InitRawSwap(output);
                 return true;
             }
             return false;

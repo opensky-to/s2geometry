@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Google.Common.Geometry
+﻿namespace OpenSky.S2Geometry
 {
+    using System;
+    using System.Diagnostics;
+
     public struct S1Interval : IEquatable<S1Interval>
     {
         public static readonly S1Interval Empty = new S1Interval(S2.Pi, -S2.Pi, true);
 
         public static readonly S1Interval Full = new S1Interval(-S2.Pi, S2.Pi, true);
-        private readonly double _hi;
-        private readonly double _lo;
+        private readonly double hi;
+        private readonly double lo;
 
         public S1Interval(double lo, double hi) : this(lo, hi, false)
         {
@@ -39,18 +35,18 @@ namespace Google.Common.Geometry
                     newHi = S2.Pi;
                 }
             }
-            _lo = newLo;
-            _hi = newHi;
+            this.lo = newLo;
+            this.hi = newHi;
         }
 
         public double Lo
         {
-            get { return _lo; }
+            get { return this.lo; }
         }
 
         public double Hi
         {
-            get { return _hi; }
+            get { return this.hi; }
         }
 
         /**
@@ -62,8 +58,8 @@ namespace Google.Common.Geometry
         {
             get
             {
-                return (Math.Abs(Lo) <= S2.Pi && Math.Abs(Hi) <= S2.Pi
-                        && !(Lo == -S2.Pi && Hi != S2.Pi) && !(Hi == -S2.Pi && Lo != S2.Pi));
+                return (Math.Abs(this.Lo) <= S2.Pi && Math.Abs(this.Hi) <= S2.Pi
+                                                   && !(this.Lo == -S2.Pi && this.Hi != S2.Pi) && !(this.Hi == -S2.Pi && this.Lo != S2.Pi));
             }
         }
 
@@ -71,7 +67,7 @@ namespace Google.Common.Geometry
 
         public bool IsFull
         {
-            get { return Hi - Lo == 2*S2.Pi; }
+            get { return this.Hi - this.Lo == 2*S2.Pi; }
         }
 
 
@@ -79,7 +75,7 @@ namespace Google.Common.Geometry
 
         public bool IsEmpty
         {
-            get { return Lo - Hi == 2*S2.Pi; }
+            get { return this.Lo - this.Hi == 2*S2.Pi; }
         }
 
 
@@ -87,7 +83,7 @@ namespace Google.Common.Geometry
 
         public bool IsInverted
         {
-            get { return Lo > Hi; }
+            get { return this.Lo > this.Hi; }
         }
 
         /**
@@ -99,8 +95,8 @@ namespace Google.Common.Geometry
         {
             get
             {
-                var center = 0.5*(Lo + Hi);
-                if (!IsInverted)
+                var center = 0.5*(this.Lo + this.Hi);
+                if (!this.IsInverted)
                 {
                     return center;
                 }
@@ -118,7 +114,7 @@ namespace Google.Common.Geometry
         {
             get
             {
-                var length = Hi - Lo;
+                var length = this.Hi - this.Lo;
                 if (length >= 0)
                 {
                     return length;
@@ -141,11 +137,11 @@ namespace Google.Common.Geometry
         {
             get
             {
-                if (Lo == Hi)
+                if (this.Lo == this.Hi)
                 {
                     return Full; // Singleton.
                 }
-                return new S1Interval(Hi, Lo, true); // Handles
+                return new S1Interval(this.Hi, this.Lo, true); // Handles
                 // empty and
                 // full.
             }
@@ -153,19 +149,19 @@ namespace Google.Common.Geometry
 
         public bool Equals(S1Interval other)
         {
-            return _lo.Equals(other._lo) && _hi.Equals(other._hi);
+            return this.lo.Equals(other.lo) && this.hi.Equals(other.hi);
         }
 
         public override bool Equals(object obj)
         {
-            return obj is S1Interval && Equals((S1Interval)obj);
+            return obj is S1Interval && this.Equals((S1Interval)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (_lo.GetHashCode()*397) ^ _hi.GetHashCode();
+                return (this.lo.GetHashCode()*397) ^ this.hi.GetHashCode();
             }
         }
 
@@ -225,7 +221,7 @@ namespace Google.Common.Geometry
             {
                 p = S2.Pi;
             }
-            return FastContains(p);
+            return this.FastContains(p);
         }
 
         /**
@@ -236,13 +232,13 @@ namespace Google.Common.Geometry
 
         public bool FastContains(double p)
         {
-            if (IsInverted)
+            if (this.IsInverted)
             {
-                return (p >= Lo || p <= Hi) && !IsEmpty;
+                return (p >= this.Lo || p <= this.Hi) && !this.IsEmpty;
             }
             else
             {
-                return p >= Lo && p <= Hi;
+                return p >= this.Lo && p <= this.Hi;
             }
         }
 
@@ -257,13 +253,13 @@ namespace Google.Common.Geometry
                 p = S2.Pi;
             }
 
-            if (IsInverted)
+            if (this.IsInverted)
             {
-                return p > Lo || p < Hi;
+                return p > this.Lo || p < this.Hi;
             }
             else
             {
-                return (p > Lo && p < Hi) || IsFull;
+                return (p > this.Lo && p < this.Hi) || this.IsFull;
             }
         }
 
@@ -277,21 +273,21 @@ namespace Google.Common.Geometry
             // It might be helpful to compare the structure of these tests to
             // the simpler Contains(double) method above.
 
-            if (IsInverted)
+            if (this.IsInverted)
             {
                 if (y.IsInverted)
                 {
-                    return y.Lo >= Lo && y.Hi <= Hi;
+                    return y.Lo >= this.Lo && y.Hi <= this.Hi;
                 }
-                return (y.Lo >= Lo || y.Hi <= Hi) && !IsEmpty;
+                return (y.Lo >= this.Lo || y.Hi <= this.Hi) && !this.IsEmpty;
             }
             else
             {
                 if (y.IsInverted)
                 {
-                    return IsFull || y.IsEmpty;
+                    return this.IsFull || y.IsEmpty;
                 }
-                return y.Lo >= Lo && y.Hi <= Hi;
+                return y.Lo >= this.Lo && y.Hi <= this.Hi;
             }
         }
 
@@ -304,21 +300,21 @@ namespace Google.Common.Geometry
 
         public bool InteriorContains(S1Interval y)
         {
-            if (IsInverted)
+            if (this.IsInverted)
             {
                 if (!y.IsInverted)
                 {
-                    return y.Lo > Lo || y.Hi < Hi;
+                    return y.Lo > this.Lo || y.Hi < this.Hi;
                 }
-                return (y.Lo > Lo && y.Hi < Hi) || y.IsEmpty;
+                return (y.Lo > this.Lo && y.Hi < this.Hi) || y.IsEmpty;
             }
             else
             {
                 if (y.IsInverted)
                 {
-                    return IsFull || y.IsEmpty;
+                    return this.IsFull || y.IsEmpty;
                 }
-                return (y.Lo > Lo && y.Hi < Hi) || IsFull;
+                return (y.Lo > this.Lo && y.Hi < this.Hi) || this.IsFull;
             }
         }
 
@@ -330,22 +326,22 @@ namespace Google.Common.Geometry
 
         public bool Intersects(S1Interval y)
         {
-            if (IsEmpty || y.IsEmpty)
+            if (this.IsEmpty || y.IsEmpty)
             {
                 return false;
             }
-            if (IsInverted)
+            if (this.IsInverted)
             {
                 // Every non-empty inverted interval contains Pi.
-                return y.IsInverted || y.Lo <= Hi || y.Hi >= Lo;
+                return y.IsInverted || y.Lo <= this.Hi || y.Hi >= this.Lo;
             }
             else
             {
                 if (y.IsInverted)
                 {
-                    return y.Lo <= Hi || y.Hi >= Lo;
+                    return y.Lo <= this.Hi || y.Hi >= this.Lo;
                 }
-                return y.Lo <= Hi && y.Hi >= Lo;
+                return y.Lo <= this.Hi && y.Hi >= this.Lo;
             }
         }
 
@@ -357,21 +353,21 @@ namespace Google.Common.Geometry
 
         public bool InteriorIntersects(S1Interval y)
         {
-            if (IsEmpty || y.IsEmpty || Lo == Hi)
+            if (this.IsEmpty || y.IsEmpty || this.Lo == this.Hi)
             {
                 return false;
             }
-            if (IsInverted)
+            if (this.IsInverted)
             {
-                return y.IsInverted || y.Lo < Hi || y.Hi > Lo;
+                return y.IsInverted || y.Lo < this.Hi || y.Hi > this.Lo;
             }
             else
             {
                 if (y.IsInverted)
                 {
-                    return y.Lo < Hi || y.Hi > Lo;
+                    return y.Lo < this.Hi || y.Hi > this.Lo;
                 }
-                return (y.Lo < Hi && y.Hi > Lo) || IsFull;
+                return (y.Lo < this.Hi && y.Hi > this.Lo) || this.IsFull;
             }
         }
 
@@ -389,27 +385,27 @@ namespace Google.Common.Geometry
                 p = S2.Pi;
             }
 
-            if (FastContains(p))
+            if (this.FastContains(p))
             {
                 return this;
             }
 
-            if (IsEmpty)
+            if (this.IsEmpty)
             {
                 return FromPoint(p);
             }
             else
             {
                 // Compute distance from p to each endpoint.
-                var dlo = PositiveDistance(p, Lo);
-                var dhi = PositiveDistance(Hi, p);
+                var dlo = PositiveDistance(p, this.Lo);
+                var dhi = PositiveDistance(this.Hi, p);
                 if (dlo < dhi)
                 {
-                    return new S1Interval(p, Hi);
+                    return new S1Interval(p, this.Hi);
                 }
                 else
                 {
-                    return new S1Interval(Lo, p);
+                    return new S1Interval(this.Lo, p);
                 }
                 // Adding a point can never turn a non-full interval into a full one.
             }
@@ -424,21 +420,21 @@ namespace Google.Common.Geometry
         public S1Interval Expanded(double radius)
         {
             // assert (radius >= 0);
-            if (IsEmpty)
+            if (this.IsEmpty)
             {
                 return this;
             }
 
             // Check whether this interval will be full after expansion, allowing
             // for a 1-bit rounding error when computing each endpoint.
-            if (Length + 2*radius >= 2*S2.Pi - 1e-15)
+            if (this.Length + 2*radius >= 2*S2.Pi - 1e-15)
             {
                 return Full;
             }
 
             // NOTE(dbeaumont): Should this remainder be 2 * M_PI or just M_PI ??
-            var lo = Math.IEEERemainder(Lo - radius, 2*S2.Pi);
-            var hi = Math.IEEERemainder(Hi + radius, 2*S2.Pi);
+            var lo = Math.IEEERemainder(this.Lo - radius, 2*S2.Pi);
+            var hi = Math.IEEERemainder(this.Hi + radius, 2*S2.Pi);
             if (lo == -S2.Pi)
             {
                 lo = S2.Pi;
@@ -461,42 +457,42 @@ namespace Google.Common.Geometry
             {
                 return this;
             }
-            if (FastContains(y.Lo))
+            if (this.FastContains(y.Lo))
             {
-                if (FastContains(y.Hi))
+                if (this.FastContains(y.Hi))
                 {
                     // Either this interval contains y, or the union of the two
                     // intervals is the Full() interval.
-                    if (Contains(y))
+                    if (this.Contains(y))
                     {
                         return this; // is_full() code path
                     }
                     return Full;
                 }
-                return new S1Interval(Lo, y.Hi, true);
+                return new S1Interval(this.Lo, y.Hi, true);
             }
-            if (FastContains(y.Hi))
+            if (this.FastContains(y.Hi))
             {
-                return new S1Interval(y.Lo, Hi, true);
+                return new S1Interval(y.Lo, this.Hi, true);
             }
 
             // This interval contains neither endpoint of y. This means that either y
             // contains all of this interval, or the two intervals are disjoint.
-            if (IsEmpty || y.FastContains(Lo))
+            if (this.IsEmpty || y.FastContains(this.Lo))
             {
                 return y;
             }
 
             // Check which pair of endpoints are closer together.
-            var dlo = PositiveDistance(y.Hi, Lo);
-            var dhi = PositiveDistance(Hi, y.Lo);
+            var dlo = PositiveDistance(y.Hi, this.Lo);
+            var dhi = PositiveDistance(this.Hi, y.Lo);
             if (dlo < dhi)
             {
-                return new S1Interval(y.Lo, Hi, true);
+                return new S1Interval(y.Lo, this.Hi, true);
             }
             else
             {
-                return new S1Interval(Lo, y.Hi, true);
+                return new S1Interval(this.Lo, y.Hi, true);
             }
         }
 
@@ -516,30 +512,30 @@ namespace Google.Common.Geometry
             {
                 return Empty;
             }
-            if (FastContains(y.Lo))
+            if (this.FastContains(y.Lo))
             {
-                if (FastContains(y.Hi))
+                if (this.FastContains(y.Hi))
                 {
                     // Either this interval contains y, or the region of intersection
                     // consists of two disjoint subintervals. In either case, we want
                     // to return the shorter of the two original intervals.
-                    if (y.Length < Length)
+                    if (y.Length < this.Length)
                     {
                         return y; // is_full() code path
                     }
                     return this;
                 }
-                return new S1Interval(y.Lo, Hi, true);
+                return new S1Interval(y.Lo, this.Hi, true);
             }
-            if (FastContains(y.Hi))
+            if (this.FastContains(y.Hi))
             {
-                return new S1Interval(Lo, y.Hi, true);
+                return new S1Interval(this.Lo, y.Hi, true);
             }
 
             // This interval contains neither endpoint of y. This means that either y
             // contains all of this interval, or the two intervals are disjoint.
 
-            if (y.FastContains(Lo))
+            if (y.FastContains(this.Lo))
             {
                 return this; // is_empty() okay here
             }
@@ -554,27 +550,27 @@ namespace Google.Common.Geometry
 
         public bool ApproxEquals(S1Interval y, double maxError)
         {
-            if (IsEmpty)
+            if (this.IsEmpty)
             {
                 return y.Length <= maxError;
             }
             if (y.IsEmpty)
             {
-                return Length <= maxError;
+                return this.Length <= maxError;
             }
-            return (Math.Abs(Math.IEEERemainder(y.Lo - Lo, 2*S2.Pi))
-                    + Math.Abs(Math.IEEERemainder(y.Hi - Hi, 2*S2.Pi))) <= maxError;
+            return (Math.Abs(Math.IEEERemainder(y.Lo - this.Lo, 2*S2.Pi))
+                    + Math.Abs(Math.IEEERemainder(y.Hi - this.Hi, 2*S2.Pi))) <= maxError;
         }
 
         public bool ApproxEquals(S1Interval y)
         {
-            return ApproxEquals(y, 1e-9);
+            return this.ApproxEquals(y, 1e-9);
         }
 
 
         public override string ToString()
         {
-            return "[" + Lo + ", " + Hi + "]";
+            return "[" + this.Lo + ", " + this.Hi + "]";
         }
 
 

@@ -1,27 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace System.Collections.Generic
+﻿namespace OpenSky.S2Geometry.Datastructures
 {
-    internal class MultiMapEnumerator<TKey,TValue> : IEnumerator<KeyValuePair<TKey,TValue>>
+    using System.Collections;
+    using System.Collections.Generic;
+
+    internal class MultiMapEnumerator<TKey,TValue> : IEnumerator<KeyValuePair<TKey, TValue>>
     {
-        MultiMap<TKey,TValue> _map;
-        IEnumerator<TKey> _keyEnumerator;
-        IEnumerator<TValue> _valueEnumerator;
+        MultiMap<TKey,TValue> map;
+        IEnumerator<TKey> keyEnumerator;
+        IEnumerator<TValue> valueEnumerator;
 
         public MultiMapEnumerator(MultiMap<TKey,TValue> map)
         {
-            this._map = map;
-            Reset();
+            this.map = map;
+            this.Reset();
         }
 
         object IEnumerator.Current
         {
             get
             {
-                return Current;
+                return this.Current;
             }
         }
 
@@ -29,27 +27,27 @@ namespace System.Collections.Generic
         {
             get
             {
-                return new KeyValuePair<TKey, TValue>(_keyEnumerator.Current, _valueEnumerator.Current);
+                return new KeyValuePair<TKey, TValue>(this.keyEnumerator.Current, this.valueEnumerator.Current);
             }
         }
 
 
         public void Dispose()
         {
-            _keyEnumerator = null;
-            _valueEnumerator = null;
-            _map = null;
+            this.keyEnumerator = null;
+            this.valueEnumerator = null;
+            this.map = null;
         }
 
 
         public bool MoveNext()
         {
-            if (!_valueEnumerator.MoveNext())
+            if (!this.valueEnumerator.MoveNext())
             {
-                if (!_keyEnumerator.MoveNext())
+                if (!this.keyEnumerator.MoveNext())
                     return false;
-                _valueEnumerator = _map[_keyEnumerator.Current].GetEnumerator();
-                _valueEnumerator.MoveNext();
+                this.valueEnumerator = this.map[this.keyEnumerator.Current].GetEnumerator();
+                this.valueEnumerator.MoveNext();
                 return true;
             }
             return true;
@@ -57,8 +55,8 @@ namespace System.Collections.Generic
 
         public void Reset()
         {
-            _keyEnumerator = _map.Keys.GetEnumerator();
-            _valueEnumerator = new List<TValue>().GetEnumerator();
+            this.keyEnumerator = this.map.Keys.GetEnumerator();
+            this.valueEnumerator = new List<TValue>().GetEnumerator();
         }
     }
 }
