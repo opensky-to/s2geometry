@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-
-namespace S2Geometry.Tests
+﻿namespace OpenSky.S2Geometry.Tests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     using OpenSky.S2Geometry;
@@ -18,9 +18,9 @@ namespace S2Geometry.Tests
         {
             // This is how Java's nextLong works
             var bytes = new byte[4];
-            rand.NextBytes(bytes);
+            this.rand.NextBytes(bytes);
             var bytes1 = new byte[4];
-            rand.NextBytes(bytes1);
+            this.rand.NextBytes(bytes1);
 
             var i1 = BitConverter.ToInt32(bytes, 0);
             var i2 = BitConverter.ToInt32(bytes1, 0);
@@ -29,7 +29,7 @@ namespace S2Geometry.Tests
 
         public void assertDoubleNear(double a, double b)
         {
-            assertDoubleNear(a, b, 1e-9);
+            this.assertDoubleNear(a, b, 1e-9);
         }
 
         public void assertDoubleNear(double a, double b, double error)
@@ -44,9 +44,9 @@ namespace S2Geometry.Tests
         public S2Point randomPoint()
         {
             return S2Point.Normalize(new S2Point(
-                                         2*rand.NextDouble() - 1,
-                                         2*rand.NextDouble() - 1,
-                                         2*rand.NextDouble() - 1));
+                                         2*this.rand.NextDouble() - 1,
+                                         2*this.rand.NextDouble() - 1,
+                                         2*this.rand.NextDouble() - 1));
         }
 
 
@@ -57,8 +57,8 @@ namespace S2Geometry.Tests
 
         public IReadOnlyList<S2Point> getRandomFrame()
         {
-            var p0 = randomPoint();
-            var p1 = S2Point.Normalize(S2Point.CrossProd(p0, randomPoint()));
+            var p0 = this.randomPoint();
+            var p1 = S2Point.Normalize(S2Point.CrossProd(p0, this.randomPoint()));
             var p2 = S2Point.Normalize(S2Point.CrossProd(p0, p1));
             return new List<S2Point>(new[] {p0, p1, p2});
         }
@@ -71,15 +71,15 @@ namespace S2Geometry.Tests
 
         public S2CellId getRandomCellId(int level)
         {
-            var face = random(S2CellId.NumFaces);
+            var face = this.random(S2CellId.NumFaces);
 
-            var pos = (ulong)LongRandom() & ((1L << (2*S2CellId.MaxLevel)) - 1);
+            var pos = (ulong)this.LongRandom() & ((1L << (2*S2CellId.MaxLevel)) - 1);
             return S2CellId.FromFacePosLevel(face, pos, level);
         }
 
         public S2CellId getRandomCellId()
         {
-            return getRandomCellId(random(S2CellId.MaxLevel + 1));
+            return this.getRandomCellId(this.random(S2CellId.MaxLevel + 1));
         }
 
         protected int random(int n)
@@ -88,7 +88,7 @@ namespace S2Geometry.Tests
             {
                 return 0;
             }
-            return rand.Next(n);
+            return this.rand.Next(n);
         }
 
 
@@ -97,13 +97,13 @@ namespace S2Geometry.Tests
         // [0,2^maxLog-1] with bias towards smaller numbers.
         protected int skewed(int maxLog)
         {
-            var @base = Math.Abs(rand.Next())%(maxLog + 1);
+            var @base = Math.Abs(this.rand.Next())%(maxLog + 1);
             // if (!base) return 0; // if 0==base, we & with 0 below.
             //
             // this distribution differs slightly from ACMRandom's Skewed,
             // since 0 occurs approximately 3 times more than 1 here, and
             // ACMRandom's Skewed never outputs 0.
-            return rand.Next() & ((1 << @base) - 1);
+            return this.rand.Next() & ((1 << @base) - 1);
         }
 
         /**
@@ -118,7 +118,7 @@ namespace S2Geometry.Tests
             {
                 for (var face = 0; face < 6; ++face)
                 {
-                    checkCovering(region, covering, checkTight, S2CellId.FromFacePosLevel(face, 0, 0));
+                    this.checkCovering(region, covering, checkTight, S2CellId.FromFacePosLevel(face, 0, 0));
                 }
                 return;
             }
@@ -142,7 +142,7 @@ namespace S2Geometry.Tests
                 var end = id.ChildEnd;
                 for (var child = id.ChildBegin; !child.Equals(end); child = child.Next)
                 {
-                    checkCovering(region, covering, checkTight, child);
+                    this.checkCovering(region, covering, checkTight, child);
                 }
             }
         }
@@ -150,11 +150,11 @@ namespace S2Geometry.Tests
         protected S2Cap getRandomCap(double minArea, double maxArea)
         {
             var capArea = maxArea
-                          *Math.Pow(minArea/maxArea, rand.NextDouble());
+                          *Math.Pow(minArea/maxArea, this.rand.NextDouble());
             Assert.IsTrue(capArea >= minArea && capArea <= maxArea);
 
             // The surface area of a cap is 2*Pi times its height.
-            return S2Cap.FromAxisArea(randomPoint(), capArea);
+            return S2Cap.FromAxisArea(this.randomPoint(), capArea);
         }
 
         protected S2Point samplePoint(S2Cap cap)
@@ -170,8 +170,8 @@ namespace S2Geometry.Tests
             // height. First we choose a random height, and then we choose a random
             // point along the circle at that height.
 
-            var h = rand.NextDouble()*cap.Height;
-            var theta = 2*S2.Pi*rand.NextDouble();
+            var h = this.rand.NextDouble()*cap.Height;
+            var theta = 2*S2.Pi*this.rand.NextDouble();
             var r = Math.Sqrt(h*(2 - h)); // Radius of circle.
 
             // (cos(theta)*r*x + sin(theta)*r*y + (1-h)*z).Normalize()

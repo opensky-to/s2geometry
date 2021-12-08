@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace S2Geometry.Tests
+﻿namespace OpenSky.S2Geometry.Tests
 {
+    using System;
+    using System.Collections.Generic;
+
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     using OpenSky.S2Geometry;
@@ -89,12 +89,12 @@ namespace S2Geometry.Tests
             for (var i = 0; i < 100; ++i)
             {
                 // Choose a coordinate frame for the great circle.
-                var x = randomPoint();
-                var y = S2Point.Normalize(S2Point.CrossProd(x, randomPoint()));
+                var x = this.randomPoint();
+                var y = S2Point.Normalize(S2Point.CrossProd(x, this.randomPoint()));
                 var z = S2Point.Normalize(S2Point.CrossProd(x, y));
 
                 var vertices = new List<S2Point>();
-                for (double theta = 0; theta < 2*S2.Pi; theta += Math.Pow(rand.NextDouble(), 10))
+                for (double theta = 0; theta < 2*S2.Pi; theta += Math.Pow(this.rand.NextDouble(), 10))
                 {
                     var p = (x * Math.Cos(theta)) + (y * Math.Sin(theta));
                     if (vertices.Count == 0 || !p.Equals(vertices[vertices.Count - 1]))

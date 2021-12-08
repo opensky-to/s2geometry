@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace S2Geometry.Tests
+﻿namespace OpenSky.S2Geometry.Tests
 {
+    using System;
+
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     using OpenSky.S2Geometry;
@@ -38,14 +38,14 @@ namespace S2Geometry.Tests
             c = S2Point.Normalize(c);
             d = S2Point.Normalize(d);
 
-            compareResult(S2EdgeUtil.RobustCrossing(a, b, c, d), robust);
+            this.compareResult(S2EdgeUtil.RobustCrossing(a, b, c, d), robust);
             if (simple)
             {
                 assertEquals(robust > 0, S2EdgeUtil.SimpleCrossing(a, b, c, d));
             }
             var crosser = new EdgeCrosser(a, b, c);
-            compareResult(crosser.RobustCrossing(d), robust);
-            compareResult(crosser.RobustCrossing(c), robust);
+            this.compareResult(crosser.RobustCrossing(d), robust);
+            this.compareResult(crosser.RobustCrossing(c), robust);
 
             assertEquals(S2EdgeUtil.EdgeOrVertexCrossing(a, b, c, d), edgeOrVertex);
             assertEquals(edgeOrVertex, crosser.EdgeOrVertexCrossing(d));
@@ -60,14 +60,14 @@ namespace S2Geometry.Tests
                                      bool edgeOrVertex,
                                      bool simple)
         {
-            assertCrossing(a, b, c, d, robust, edgeOrVertex, simple);
-            assertCrossing(b, a, c, d, robust, edgeOrVertex, simple);
-            assertCrossing(a, b, d, c, robust, edgeOrVertex, simple);
-            assertCrossing(b, a, d, c, robust, edgeOrVertex, simple);
-            assertCrossing(a, a, c, d, DEGENERATE, false, false);
-            assertCrossing(a, b, c, c, DEGENERATE, false, false);
-            assertCrossing(a, b, a, b, 0, true, false);
-            assertCrossing(c, d, a, b, robust, (edgeOrVertex ^ (robust == 0)), simple);
+            this.assertCrossing(a, b, c, d, robust, edgeOrVertex, simple);
+            this.assertCrossing(b, a, c, d, robust, edgeOrVertex, simple);
+            this.assertCrossing(a, b, d, c, robust, edgeOrVertex, simple);
+            this.assertCrossing(b, a, d, c, robust, edgeOrVertex, simple);
+            this.assertCrossing(a, a, c, d, DEGENERATE, false, false);
+            this.assertCrossing(a, b, c, c, DEGENERATE, false, false);
+            this.assertCrossing(a, b, a, b, 0, true, false);
+            this.assertCrossing(c, d, a, b, robust, (edgeOrVertex ^ (robust == 0)), simple);
         }
 
         private S2LatLngRect getEdgeBound(double x1,
@@ -146,7 +146,7 @@ namespace S2Geometry.Tests
             // but we do a few simple tests here.
 
             // Two regular edges that cross.
-            assertCrossings(new S2Point(1, 2, 1),
+            this.assertCrossings(new S2Point(1, 2, 1),
                             new S2Point(1, -3, 0.5),
                             new S2Point(1, -0.5, -3),
                             new S2Point(0.1, 0.5, 3),
@@ -155,7 +155,7 @@ namespace S2Geometry.Tests
                             true);
 
             // Two regular edges that cross antipodal points.
-            assertCrossings(new S2Point(1, 2, 1),
+            this.assertCrossings(new S2Point(1, 2, 1),
                             new S2Point(1, -3, 0.5),
                             new S2Point(-1, 0.5, 3),
                             new S2Point(-0.1, -0.5, -3),
@@ -164,7 +164,7 @@ namespace S2Geometry.Tests
                             true);
 
             // Two edges on the same great circle.
-            assertCrossings(new S2Point(0, 0, -1),
+            this.assertCrossings(new S2Point(0, 0, -1),
                             new S2Point(0, 1, 0),
                             new S2Point(0, 1, 1),
                             new S2Point(0, 0, 1),
@@ -173,7 +173,7 @@ namespace S2Geometry.Tests
                             true);
 
             // Two edges that cross where one vertex is S2.Origin().
-            assertCrossings(new S2Point(1, 0, 0),
+            this.assertCrossings(new S2Point(1, 0, 0),
                             new S2Point(0, 1, 0),
                             new S2Point(0, 0, 1),
                             new S2Point(1, 1, -1),
@@ -182,7 +182,7 @@ namespace S2Geometry.Tests
                             true);
 
             // Two edges that cross antipodal points where one vertex is S2.Origin().
-            assertCrossings(new S2Point(1, 0, 0),
+            this.assertCrossings(new S2Point(1, 0, 0),
                             new S2Point(0, 1, 0),
                             new S2Point(0, 0, -1),
                             new S2Point(-1, -1, 1),
@@ -192,7 +192,7 @@ namespace S2Geometry.Tests
 
             // Two edges that share an endpoint. The Ortho() direction is (-4,0,2),
             // and edge CD is further CCW around (2,3,4) than AB.
-            assertCrossings(new S2Point(2, 3, 4),
+            this.assertCrossings(new S2Point(2, 3, 4),
                             new S2Point(-1, 2, 5),
                             new S2Point(7, -2, 3),
                             new S2Point(2, 3, 4),
@@ -201,7 +201,7 @@ namespace S2Geometry.Tests
                             true);
 
             // Two edges that barely cross edge other.
-            assertCrossings(new S2Point(1, 1, 1),
+            this.assertCrossings(new S2Point(1, 1, 1),
                             new S2Point(1, 1 - 1e-15, -1),
                             new S2Point(-1, -1, 0),
                             new S2Point(1, 1, 0),
@@ -306,16 +306,16 @@ namespace S2Geometry.Tests
                 // This ensures that we test both long and very short segments that
                 // intersect at both large and very small angles.
 
-                var points = getRandomFrame();
+                var points = this.getRandomFrame();
                 var p = points[0];
                 var d1 = points[1];
                 var d2 = points[2];
-                var slope = Math.Pow(1e-15, rand.NextDouble());
+                var slope = Math.Pow(1e-15, this.rand.NextDouble());
                 d2 = d1 + (d2 * slope);
-                var a = S2Point.Normalize(p + (d1 * Math.Pow(1e-15/slope, rand.NextDouble())));
-                var b = S2Point.Normalize(p - (d1 * Math.Pow(1e-15/slope, rand.NextDouble())));
-                var c = S2Point.Normalize(p + (d2 * Math.Pow(1e-15/slope, rand.NextDouble())));
-                var d = S2Point.Normalize(p - (d2 * Math.Pow(1e-15/slope, rand.NextDouble())));
+                var a = S2Point.Normalize(p + (d1 * Math.Pow(1e-15/slope, this.rand.NextDouble())));
+                var b = S2Point.Normalize(p - (d1 * Math.Pow(1e-15/slope, this.rand.NextDouble())));
+                var c = S2Point.Normalize(p + (d2 * Math.Pow(1e-15/slope, this.rand.NextDouble())));
+                var d = S2Point.Normalize(p - (d2 * Math.Pow(1e-15/slope, this.rand.NextDouble())));
                 var x = S2EdgeUtil.GetIntersection(a, b, c, d);
                 var distAb = S2EdgeUtil.GetDistance(x, a, b);
                 var distCd = S2EdgeUtil.GetDistance(x, c, d);
@@ -360,24 +360,24 @@ namespace S2Geometry.Tests
         {
             // Check cases where min/max latitude is not at a vertex.
             // Max, CW
-            assertDoubleNear(getEdgeBound(1, 1, 1, 1, -1, 1).Lat.Hi, S2.PiOver4);
+            this.assertDoubleNear(this.getEdgeBound(1, 1, 1, 1, -1, 1).Lat.Hi, S2.PiOver4);
             // Max, CCW
-            assertDoubleNear(getEdgeBound(1, -1, 1, 1, 1, 1).Lat.Hi, S2.PiOver4);
+            this.assertDoubleNear(this.getEdgeBound(1, -1, 1, 1, 1, 1).Lat.Hi, S2.PiOver4);
             // Min, CW
-            assertDoubleNear(getEdgeBound(1, -1, -1, -1, -1, -1).Lat.Lo, -S2.PiOver4);
+            this.assertDoubleNear(this.getEdgeBound(1, -1, -1, -1, -1, -1).Lat.Lo, -S2.PiOver4);
             // Min, CCW
-            assertDoubleNear(getEdgeBound(-1, 1, -1, -1, -1, -1).Lat.Lo, -S2.PiOver4);
+            this.assertDoubleNear(this.getEdgeBound(-1, 1, -1, -1, -1, -1).Lat.Lo, -S2.PiOver4);
 
             // Check cases where the edge passes through one of the poles.
-            assertDoubleNear(getEdgeBound(.3, .4, 1, -.3, -.4, 1).Lat.Hi, S2.PiOver2);
-            assertDoubleNear(getEdgeBound(.3, .4, -1, -.3, -.4, -1).Lat.Lo, -S2.PiOver2);
+            this.assertDoubleNear(this.getEdgeBound(.3, .4, 1, -.3, -.4, 1).Lat.Hi, S2.PiOver2);
+            this.assertDoubleNear(this.getEdgeBound(.3, .4, -1, -.3, -.4, -1).Lat.Lo, -S2.PiOver2);
 
             // Check cases where the min/max latitude is attained at a vertex.
             var kCubeLat = Math.Asin(Math.Sqrt(1.0/3)); // 35.26 degrees
             assertTrue(
-                getEdgeBound(1, 1, 1, 1, -1, -1).Lat.ApproxEquals(new R1Interval(-kCubeLat, kCubeLat)));
+                this.getEdgeBound(1, 1, 1, 1, -1, -1).Lat.ApproxEquals(new R1Interval(-kCubeLat, kCubeLat)));
             assertTrue(
-                getEdgeBound(1, -1, 1, 1, 1, -1).Lat.ApproxEquals(new R1Interval(-kCubeLat, kCubeLat)));
+                this.getEdgeBound(1, -1, 1, 1, 1, -1).Lat.ApproxEquals(new R1Interval(-kCubeLat, kCubeLat)));
         }
 
         [TestMethod]
@@ -388,7 +388,7 @@ namespace S2Geometry.Tests
             // implemented correctly.
 
             // Intersection in one wedge.
-            assertWedge(new S2Point(-1, 0, 10),
+            this.assertWedge(new S2Point(-1, 0, 10),
                         new S2Point(0, 0, 1),
                         new S2Point(1, 2, 10),
                         new S2Point(0, 1, 10),
@@ -397,7 +397,7 @@ namespace S2Geometry.Tests
                         true,
                         true);
             // Intersection in two wedges.
-            assertWedge(new S2Point(-1, -1, 10),
+            this.assertWedge(new S2Point(-1, -1, 10),
                         new S2Point(0, 0, 1),
                         new S2Point(1, -1, 10),
                         new S2Point(1, 0, 10),
@@ -407,7 +407,7 @@ namespace S2Geometry.Tests
                         true);
 
             // Normal containment.
-            assertWedge(new S2Point(-1, -1, 10),
+            this.assertWedge(new S2Point(-1, -1, 10),
                         new S2Point(0, 0, 1),
                         new S2Point(1, -1, 10),
                         new S2Point(-1, 0, 10),
@@ -416,7 +416,7 @@ namespace S2Geometry.Tests
                         true,
                         false);
             // Containment with equality on one side.
-            assertWedge(new S2Point(2, 1, 10),
+            this.assertWedge(new S2Point(2, 1, 10),
                         new S2Point(0, 0, 1),
                         new S2Point(-1, -1, 10),
                         new S2Point(2, 1, 10),
@@ -425,7 +425,7 @@ namespace S2Geometry.Tests
                         true,
                         false);
             // Containment with equality on the other side.
-            assertWedge(new S2Point(2, 1, 10),
+            this.assertWedge(new S2Point(2, 1, 10),
                         new S2Point(0, 0, 1),
                         new S2Point(-1, -1, 10),
                         new S2Point(1, -2, 10),
@@ -434,7 +434,7 @@ namespace S2Geometry.Tests
                         true,
                         false);
             // Containment with equality on both sides.
-            assertWedge(new S2Point(-2, 3, 10),
+            this.assertWedge(new S2Point(-2, 3, 10),
                         new S2Point(0, 0, 1),
                         new S2Point(4, -5, 10),
                         new S2Point(-2, 3, 10),
@@ -444,7 +444,7 @@ namespace S2Geometry.Tests
                         false);
 
             // Disjoint with equality on one side.
-            assertWedge(new S2Point(-2, 3, 10),
+            this.assertWedge(new S2Point(-2, 3, 10),
                         new S2Point(0, 0, 1),
                         new S2Point(4, -5, 10),
                         new S2Point(4, -5, 10),
@@ -453,7 +453,7 @@ namespace S2Geometry.Tests
                         false,
                         false);
             // Disjoint with equality on the other side.
-            assertWedge(new S2Point(-2, 3, 10),
+            this.assertWedge(new S2Point(-2, 3, 10),
                         new S2Point(0, 0, 1),
                         new S2Point(0, 5, 10),
                         new S2Point(4, -5, 10),
@@ -462,7 +462,7 @@ namespace S2Geometry.Tests
                         false,
                         false);
             // Disjoint with equality on both sides.
-            assertWedge(new S2Point(-2, 3, 10),
+            this.assertWedge(new S2Point(-2, 3, 10),
                         new S2Point(0, 0, 1),
                         new S2Point(4, -5, 10),
                         new S2Point(4, -5, 10),
@@ -472,7 +472,7 @@ namespace S2Geometry.Tests
                         false);
 
             // B contains A with equality on one side.
-            assertWedge(new S2Point(2, 1, 10),
+            this.assertWedge(new S2Point(2, 1, 10),
                         new S2Point(0, 0, 1),
                         new S2Point(1, -5, 10),
                         new S2Point(2, 1, 10),
@@ -481,7 +481,7 @@ namespace S2Geometry.Tests
                         true,
                         false);
             // B contains A with equality on the other side.
-            assertWedge(new S2Point(2, 1, 10),
+            this.assertWedge(new S2Point(2, 1, 10),
                         new S2Point(0, 0, 1),
                         new S2Point(1, -5, 10),
                         new S2Point(-2, 1, 10),
@@ -499,45 +499,45 @@ namespace S2Geometry.Tests
             // We aren't actually normalizing these points but it doesn't
             // matter too much as long as we are reasonably close to unit vectors.
             // This is a simple triangle on the equator.
-            pruner.AddEdgeToBounds(S2NP(0, 1, 0), S2NP(0.1, 1, 0));
-            pruner.AddEdgeToBounds(S2NP(0.1, 1, 0), S2NP(0.1, 1, 0.1));
-            pruner.AddEdgeToBounds(S2NP(0.1, 1, 0.1), S2NP(0, 1, 0));
+            pruner.AddEdgeToBounds(this.S2NP(0, 1, 0), this.S2NP(0.1, 1, 0));
+            pruner.AddEdgeToBounds(this.S2NP(0.1, 1, 0), this.S2NP(0.1, 1, 0.1));
+            pruner.AddEdgeToBounds(this.S2NP(0.1, 1, 0.1), this.S2NP(0, 1, 0));
 
             // try a loop around the triangle but far enough out to not overlap.
-            pruner.SetFirstIntersectPoint(S2NP(-0.1, 1.0, 0.0));
-            assertFalse(pruner.Intersects(S2NP(-0.1, 1.0, 0.2)));
-            assertFalse(pruner.Intersects(S2NP(0.0, 1.0, 0.2)));
-            assertFalse(pruner.Intersects(S2NP(0.2, 1.0, 0.2)));
-            assertFalse(pruner.Intersects(S2NP(0.2, 1.0, 0.05)));
-            assertFalse(pruner.Intersects(S2NP(0.2, 1.0, -0.1)));
-            assertFalse(pruner.Intersects(S2NP(-0.1, 1.0, -0.1)));
-            assertFalse(pruner.Intersects(S2NP(-0.1, 1.0, 0.0)));
+            pruner.SetFirstIntersectPoint(this.S2NP(-0.1, 1.0, 0.0));
+            assertFalse(pruner.Intersects(this.S2NP(-0.1, 1.0, 0.2)));
+            assertFalse(pruner.Intersects(this.S2NP(0.0, 1.0, 0.2)));
+            assertFalse(pruner.Intersects(this.S2NP(0.2, 1.0, 0.2)));
+            assertFalse(pruner.Intersects(this.S2NP(0.2, 1.0, 0.05)));
+            assertFalse(pruner.Intersects(this.S2NP(0.2, 1.0, -0.1)));
+            assertFalse(pruner.Intersects(this.S2NP(-0.1, 1.0, -0.1)));
+            assertFalse(pruner.Intersects(this.S2NP(-0.1, 1.0, 0.0)));
 
             // now we go to a point in the bounding box of the triangle but well
             // out of the loop. This will be a hit even though it really does not
             // need to be.
-            assertTrue(pruner.Intersects(S2NP(0.02, 1.0, 0.04)));
+            assertTrue(pruner.Intersects(this.S2NP(0.02, 1.0, 0.04)));
 
             // now we zoom out to do an edge *just* below the triangle. This should
             // be a hit because we are within the deformation zone.
-            assertTrue(pruner.Intersects(S2NP(-0.1, 1.0, -0.03)));
-            assertFalse(pruner.Intersects(S2NP(0.05, 1.0, -0.03))); // not close
-            assertTrue(pruner.Intersects(S2NP(0.05, 1.0, -0.01))); // close
-            assertTrue(pruner.Intersects(S2NP(0.05, 1.0, 0.13)));
-            assertFalse(pruner.Intersects(S2NP(0.13, 1.0, 0.14)));
+            assertTrue(pruner.Intersects(this.S2NP(-0.1, 1.0, -0.03)));
+            assertFalse(pruner.Intersects(this.S2NP(0.05, 1.0, -0.03))); // not close
+            assertTrue(pruner.Intersects(this.S2NP(0.05, 1.0, -0.01))); // close
+            assertTrue(pruner.Intersects(this.S2NP(0.05, 1.0, 0.13)));
+            assertFalse(pruner.Intersects(this.S2NP(0.13, 1.0, 0.14)));
 
             // Create a new pruner with very small area and correspondingly narrow
             // deformation tolerances.
             var spruner = new XyzPruner();
-            spruner.AddEdgeToBounds(S2NP(0, 1, 0.000), S2NP(0.001, 1, 0));
-            spruner.AddEdgeToBounds(S2NP(0.001, 1, 0.000), S2NP(0.001, 1, 0.001));
-            spruner.AddEdgeToBounds(S2NP(0.001, 1, 0.001), S2NP(0.000, 1, 0));
+            spruner.AddEdgeToBounds(this.S2NP(0, 1, 0.000), this.S2NP(0.001, 1, 0));
+            spruner.AddEdgeToBounds(this.S2NP(0.001, 1, 0.000), this.S2NP(0.001, 1, 0.001));
+            spruner.AddEdgeToBounds(this.S2NP(0.001, 1, 0.001), this.S2NP(0.000, 1, 0));
 
-            spruner.SetFirstIntersectPoint(S2NP(0, 1.0, -0.1));
-            assertFalse(spruner.Intersects(S2NP(0.0005, 1.0, -0.0005)));
-            assertFalse(spruner.Intersects(S2NP(0.0005, 1.0, -0.0005)));
-            assertFalse(spruner.Intersects(S2NP(0.0005, 1.0, -0.00001)));
-            assertTrue(spruner.Intersects(S2NP(0.0005, 1.0, -0.0000001)));
+            spruner.SetFirstIntersectPoint(this.S2NP(0, 1.0, -0.1));
+            assertFalse(spruner.Intersects(this.S2NP(0.0005, 1.0, -0.0005)));
+            assertFalse(spruner.Intersects(this.S2NP(0.0005, 1.0, -0.0005)));
+            assertFalse(spruner.Intersects(this.S2NP(0.0005, 1.0, -0.00001)));
+            assertTrue(spruner.Intersects(this.S2NP(0.0005, 1.0, -0.0000001)));
         }
     }
 }

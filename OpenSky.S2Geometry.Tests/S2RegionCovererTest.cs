@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace S2Geometry.Tests
+﻿namespace OpenSky.S2Geometry.Tests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     using OpenSky.S2Geometry;
@@ -53,7 +53,7 @@ namespace S2Geometry.Tests
             {
                 var cellUnion = new S2CellUnion();
                 cellUnion.InitFromCellIds(covering);
-                checkCovering(region, cellUnion, true, new S2CellId());
+                this.checkCovering(region, cellUnion, true, new S2CellId());
             }
         }
 
@@ -68,22 +68,22 @@ namespace S2Geometry.Tests
             {
                 do
                 {
-                    coverer.MinLevel = random(kMaxLevel + 1);
-                    coverer.MaxLevel = random(kMaxLevel + 1);
+                    coverer.MinLevel = this.random(kMaxLevel + 1);
+                    coverer.MaxLevel = this.random(kMaxLevel + 1);
                 } while (coverer.MinLevel > coverer.MaxLevel);
-                coverer.MaxCells = skewed(10);
-                coverer.LevelMod = 1 + random(3);
+                coverer.MaxCells = this.skewed(10);
+                coverer.LevelMod = 1 + this.random(3);
                 var maxArea = Math.Min(
                     4*S2.Pi, (3*coverer.MaxCells + 1)*S2Cell.AverageArea(coverer.MinLevel));
-                var cap = getRandomCap(0.1*S2Cell.AverageArea(kMaxLevel), maxArea);
+                var cap = this.getRandomCap(0.1*S2Cell.AverageArea(kMaxLevel), maxArea);
                 var covering = new List<S2CellId>();
                 var interior = new List<S2CellId>();
 
                 coverer.GetCovering(cap, covering);
-                checkCovering(coverer, cap, covering, false);
+                this.checkCovering(coverer, cap, covering, false);
 
                 coverer.GetInteriorCovering(cap, interior);
-                checkCovering(coverer, cap, interior, true);
+                this.checkCovering(coverer, cap, interior, true);
 
 
                 // Check that GetCovering is deterministic.
@@ -99,7 +99,7 @@ namespace S2Geometry.Tests
                 cells.InitFromCellIds(covering);
                 var denormalized = new List<S2CellId>();
                 cells.Denormalize(coverer.MinLevel, coverer.LevelMod, denormalized);
-                checkCovering(coverer, cap, denormalized, false);
+                this.checkCovering(coverer, cap, denormalized, false);
             }
         }
 
@@ -114,7 +114,7 @@ namespace S2Geometry.Tests
             // Test random cell ids at all levels.
             for (var i = 0; i < 10000; ++i)
             {
-                var id = getRandomCellId();
+                var id = this.getRandomCellId();
                 var covering = new S2CellUnion();
                 coverer.GetCovering(new S2Cell(id), covering.CellIds);
                 assertEquals(covering.Count, 1);
@@ -132,14 +132,14 @@ namespace S2Geometry.Tests
             coverer.MaxCells = int.MaxValue;
             for (var i = 0; i < 1000; ++i)
             {
-                var level = random(kMaxLevel + 1);
+                var level = this.random(kMaxLevel + 1);
                 coverer.MinLevel = level;
                 coverer.MaxLevel = level;
                 var maxArea = Math.Min(4*S2.Pi, 1000*S2Cell.AverageArea(level));
-                var cap = getRandomCap(0.1*S2Cell.AverageArea(kMaxLevel), maxArea);
+                var cap = this.getRandomCap(0.1*S2Cell.AverageArea(kMaxLevel), maxArea);
                 var covering = new List<S2CellId>();
                 S2RegionCoverer.GetSimpleCovering(cap, cap.Axis, level, covering);
-                checkCovering(coverer, cap, covering, false);
+                this.checkCovering(coverer, cap, covering, false);
             }
         }
     }

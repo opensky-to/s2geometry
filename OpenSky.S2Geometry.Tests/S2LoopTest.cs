@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace S2Geometry.Tests
+﻿namespace OpenSky.S2Geometry.Tests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     using OpenSky.S2Geometry;
@@ -64,14 +64,14 @@ namespace S2Geometry.Tests
 
         public S2LoopTest()
         {
-            southHemi = new S2Loop(northHemi);
-            southHemi.Invert();
+            this.southHemi = new S2Loop(this.northHemi);
+            this.southHemi.Invert();
 
-            eastHemi = new S2Loop(westHemi);
-            eastHemi.Invert();
+            this.eastHemi = new S2Loop(this.westHemi);
+            this.eastHemi.Invert();
 
-            farHemi = new S2Loop(nearHemi);
-            farHemi.Invert();
+            this.farHemi = new S2Loop(this.nearHemi);
+            this.farHemi.Invert();
         }
 
         private S2Loop rotate(S2Loop loop)
@@ -259,24 +259,24 @@ namespace S2Geometry.Tests
             // ensures that there are no T-vertices.
             for (var iter = 0; iter < 1000; ++iter)
             {
-                var num = (ulong)LongRandom();
+                var num = (ulong)this.LongRandom();
                 var begin = new S2CellId(num | 1);
                 if (!begin.IsValid)
                 {
                     continue;
                 }
-                begin = begin.ParentForLevel((int)Math.Round(rand.NextDouble()*S2CellId.MaxLevel));
-                var aBegin = advance(begin, skewed(6));
-                var aEnd = advance(aBegin, skewed(6) + 1);
-                var bBegin = advance(begin, skewed(6));
-                var bEnd = advance(bBegin, skewed(6) + 1);
+                begin = begin.ParentForLevel((int)Math.Round(this.rand.NextDouble()*S2CellId.MaxLevel));
+                var aBegin = this.advance(begin, this.skewed(6));
+                var aEnd = this.advance(aBegin, this.skewed(6) + 1);
+                var bBegin = this.advance(begin, this.skewed(6));
+                var bEnd = this.advance(bBegin, this.skewed(6) + 1);
                 if (!aEnd.IsValid || !bEnd.IsValid)
                 {
                     continue;
                 }
 
-                var a = makeCellLoop(aBegin, aEnd);
-                var b = makeCellLoop(bBegin, bEnd);
+                var a = this.makeCellLoop(aBegin, aEnd);
+                var b = this.makeCellLoop(bBegin, bEnd);
                 var contained = (aBegin <= bBegin && bEnd <= aEnd);
                 var intersects = (aBegin < bEnd && bBegin < aEnd);
                 Console.WriteLine(
@@ -291,8 +291,8 @@ namespace S2Geometry.Tests
         [TestMethod]
         public void testAreaCentroid()
         {
-            assertDoubleNear(northHemi.Area, 2*S2.Pi);
-            assertDoubleNear(eastHemi.Area, 2*S2.Pi);
+            this.assertDoubleNear(this.northHemi.Area, 2*S2.Pi);
+            this.assertDoubleNear(this.eastHemi.Area, 2*S2.Pi);
 
             // Construct spherical caps of random height, and approximate their boundary
             // with closely spaces vertices. Then check that the area and centroid are
@@ -301,8 +301,8 @@ namespace S2Geometry.Tests
             for (var i = 0; i < 100; ++i)
             {
                 // Choose a coordinate frame for the spherical cap.
-                var x = randomPoint();
-                var y = S2Point.Normalize(S2Point.CrossProd(x, randomPoint()));
+                var x = this.randomPoint();
+                var y = S2Point.Normalize(S2Point.CrossProd(x, this.randomPoint()));
                 var z = S2Point.Normalize(S2Point.CrossProd(x, y));
 
                 // Given two points at latitude phi and whose longitudes differ by dtheta,
@@ -314,14 +314,14 @@ namespace S2Geometry.Tests
                 // maximum distance from the boundary of the spherical cap is kMaxDist.
                 // Thus we want fabs(atan(Tan(phi) / Cos(dtheta/2)) - phi) <= kMaxDist.
                 var kMaxDist = 1e-6;
-                var height = 2*rand.NextDouble();
+                var height = 2*this.rand.NextDouble();
                 var phi = Math.Asin(1 - height);
                 var maxDtheta =
                     2*Math.Acos(Math.Tan(Math.Abs(phi))/Math.Tan(Math.Abs(phi) + kMaxDist));
                 maxDtheta = Math.Min(S2.Pi, maxDtheta); // At least 3 vertices.
 
                 var vertices = new List<S2Point>();
-                for (double theta = 0; theta < 2*S2.Pi; theta += rand.NextDouble()*maxDtheta)
+                for (double theta = 0; theta < 2*S2.Pi; theta += this.rand.NextDouble()*maxDtheta)
                 {
                     var xCosThetaCosPhi = x * (Math.Cos(theta)*Math.Cos(phi));
                     var ySinThetaCosPhi = y * (Math.Sin(theta)*Math.Cos(phi));
@@ -354,23 +354,23 @@ namespace S2Geometry.Tests
         [TestMethod]
         public void testBounds()
         {
-            assertTrue(candyCane.RectBound.Lng.IsFull);
-            assertTrue(candyCane.RectBound.LatLo.Degrees < -20);
-            assertTrue(candyCane.RectBound.LatHi.Degrees > 10);
-            assertTrue(smallNeCw.RectBound.IsFull);
-            assertEquals(arctic80.RectBound,
+            assertTrue(this.candyCane.RectBound.Lng.IsFull);
+            assertTrue(this.candyCane.RectBound.LatLo.Degrees < -20);
+            assertTrue(this.candyCane.RectBound.LatHi.Degrees > 10);
+            assertTrue(this.smallNeCw.RectBound.IsFull);
+            assertEquals(this.arctic80.RectBound,
                          new S2LatLngRect(S2LatLng.FromDegrees(80, -180), S2LatLng.FromDegrees(90, 180)));
-            assertEquals(antarctic80.RectBound,
+            assertEquals(this.antarctic80.RectBound,
                          new S2LatLngRect(S2LatLng.FromDegrees(-90, -180), S2LatLng.FromDegrees(-80, 180)));
 
-            arctic80.Invert();
+            this.arctic80.Invert();
             // The highest latitude of each edge is attained at its midpoint.
-            var mid = (arctic80.Vertex(0) + arctic80.Vertex(1)) * 0.5;
-            assertDoubleNear(arctic80.RectBound.LatHi.Radians, new S2LatLng(mid).Lat.Radians);
-            arctic80.Invert();
+            var mid = (this.arctic80.Vertex(0) + this.arctic80.Vertex(1)) * 0.5;
+            this.assertDoubleNear(this.arctic80.RectBound.LatHi.Radians, new S2LatLng(mid).Lat.Radians);
+            this.arctic80.Invert();
 
-            assertTrue(southHemi.RectBound.Lng.IsFull);
-            assertEquals(southHemi.RectBound.Lat, new R1Interval(-S2.PiOver2, 0));
+            assertTrue(this.southHemi.RectBound.Lng.IsFull);
+            assertEquals(this.southHemi.RectBound.Lat, new R1Interval(-S2.PiOver2, 0));
         }
 
         /**
@@ -406,21 +406,21 @@ namespace S2Geometry.Tests
         [TestMethod]
         public void testContains()
         {
-            assertTrue(candyCane.Contains(S2LatLng.FromDegrees(5, 71).ToPoint()));
+            assertTrue(this.candyCane.Contains(S2LatLng.FromDegrees(5, 71).ToPoint()));
             for (var i = 0; i < 4; ++i)
             {
-                assertTrue(northHemi.Contains(new S2Point(0, 0, 1)));
-                assertTrue(!northHemi.Contains(new S2Point(0, 0, -1)));
-                assertTrue(!southHemi.Contains(new S2Point(0, 0, 1)));
-                assertTrue(southHemi.Contains(new S2Point(0, 0, -1)));
-                assertTrue(!westHemi.Contains(new S2Point(0, 1, 0)));
-                assertTrue(westHemi.Contains(new S2Point(0, -1, 0)));
-                assertTrue(eastHemi.Contains(new S2Point(0, 1, 0)));
-                assertTrue(!eastHemi.Contains(new S2Point(0, -1, 0)));
-                northHemi = rotate(northHemi);
-                southHemi = rotate(southHemi);
-                eastHemi = rotate(eastHemi);
-                westHemi = rotate(westHemi);
+                assertTrue(this.northHemi.Contains(new S2Point(0, 0, 1)));
+                assertTrue(!this.northHemi.Contains(new S2Point(0, 0, -1)));
+                assertTrue(!this.southHemi.Contains(new S2Point(0, 0, 1)));
+                assertTrue(this.southHemi.Contains(new S2Point(0, 0, -1)));
+                assertTrue(!this.westHemi.Contains(new S2Point(0, 1, 0)));
+                assertTrue(this.westHemi.Contains(new S2Point(0, -1, 0)));
+                assertTrue(this.eastHemi.Contains(new S2Point(0, 1, 0)));
+                assertTrue(!this.eastHemi.Contains(new S2Point(0, -1, 0)));
+                this.northHemi = this.rotate(this.northHemi);
+                this.southHemi = this.rotate(this.southHemi);
+                this.eastHemi = this.rotate(this.eastHemi);
+                this.westHemi = this.rotate(this.westHemi);
             }
 
             // This code checks each cell vertex is contained by exactly one of
@@ -501,89 +501,89 @@ namespace S2Geometry.Tests
         [TestMethod]
         public void testIsValid()
         {
-            assertTrue(loopA.IsValid);
-            assertTrue(loopB.IsValid);
-            assertFalse(bowtie.IsValid);
+            assertTrue(this.loopA.IsValid);
+            assertTrue(this.loopB.IsValid);
+            assertFalse(this.bowtie.IsValid);
         }
 
         [TestMethod]
         public void testLoopRelations()
         {
-            assertRelation(northHemi, northHemi, 1, true, false);
-            assertRelation(northHemi, southHemi, 0, false, false);
-            assertRelation(northHemi, eastHemi, -1, true, false);
-            assertRelation(northHemi, arctic80, 1, true, true);
-            assertRelation(northHemi, antarctic80, 0, false, true);
-            assertRelation(northHemi, candyCane, -1, true, false);
+            this.assertRelation(this.northHemi, this.northHemi, 1, true, false);
+            this.assertRelation(this.northHemi, this.southHemi, 0, false, false);
+            this.assertRelation(this.northHemi, this.eastHemi, -1, true, false);
+            this.assertRelation(this.northHemi, this.arctic80, 1, true, true);
+            this.assertRelation(this.northHemi, this.antarctic80, 0, false, true);
+            this.assertRelation(this.northHemi, this.candyCane, -1, true, false);
 
             // We can't compare northHemi3 vs. northHemi or southHemi.
-            assertRelation(northHemi3, northHemi3, 1, true, false);
-            assertRelation(northHemi3, eastHemi, -1, true, false);
-            assertRelation(northHemi3, arctic80, 1, true, true);
-            assertRelation(northHemi3, antarctic80, 0, false, true);
-            assertRelation(northHemi3, candyCane, -1, true, false);
+            this.assertRelation(this.northHemi3, this.northHemi3, 1, true, false);
+            this.assertRelation(this.northHemi3, this.eastHemi, -1, true, false);
+            this.assertRelation(this.northHemi3, this.arctic80, 1, true, true);
+            this.assertRelation(this.northHemi3, this.antarctic80, 0, false, true);
+            this.assertRelation(this.northHemi3, this.candyCane, -1, true, false);
 
-            assertRelation(southHemi, northHemi, 0, false, false);
-            assertRelation(southHemi, southHemi, 1, true, false);
-            assertRelation(southHemi, farHemi, -1, true, false);
-            assertRelation(southHemi, arctic80, 0, false, true);
-            assertRelation(southHemi, antarctic80, 1, true, true);
-            assertRelation(southHemi, candyCane, -1, true, false);
+            this.assertRelation(this.southHemi, this.northHemi, 0, false, false);
+            this.assertRelation(this.southHemi, this.southHemi, 1, true, false);
+            this.assertRelation(this.southHemi, this.farHemi, -1, true, false);
+            this.assertRelation(this.southHemi, this.arctic80, 0, false, true);
+            this.assertRelation(this.southHemi, this.antarctic80, 1, true, true);
+            this.assertRelation(this.southHemi, this.candyCane, -1, true, false);
 
-            assertRelation(candyCane, northHemi, -1, true, false);
-            assertRelation(candyCane, southHemi, -1, true, false);
-            assertRelation(candyCane, arctic80, 0, false, true);
-            assertRelation(candyCane, antarctic80, 0, false, true);
-            assertRelation(candyCane, candyCane, 1, true, false);
+            this.assertRelation(this.candyCane, this.northHemi, -1, true, false);
+            this.assertRelation(this.candyCane, this.southHemi, -1, true, false);
+            this.assertRelation(this.candyCane, this.arctic80, 0, false, true);
+            this.assertRelation(this.candyCane, this.antarctic80, 0, false, true);
+            this.assertRelation(this.candyCane, this.candyCane, 1, true, false);
 
-            assertRelation(nearHemi, westHemi, -1, true, false);
+            this.assertRelation(this.nearHemi, this.westHemi, -1, true, false);
 
-            assertRelation(smallNeCw, southHemi, 1, true, false);
-            assertRelation(smallNeCw, westHemi, 1, true, false);
-            assertRelation(smallNeCw, northHemi, -2, true, false);
-            assertRelation(smallNeCw, eastHemi, -2, true, false);
+            this.assertRelation(this.smallNeCw, this.southHemi, 1, true, false);
+            this.assertRelation(this.smallNeCw, this.westHemi, 1, true, false);
+            this.assertRelation(this.smallNeCw, this.northHemi, -2, true, false);
+            this.assertRelation(this.smallNeCw, this.eastHemi, -2, true, false);
 
-            assertRelation(loopA, loopA, 1, true, false);
-            assertRelation(loopA, loopB, -1, true, false);
-            assertRelation(loopA, aIntersectB, 1, true, false);
-            assertRelation(loopA, aUnionB, 0, true, false);
-            assertRelation(loopA, aMinusB, 1, true, false);
-            assertRelation(loopA, bMinusA, 0, false, false);
+            this.assertRelation(this.loopA, this.loopA, 1, true, false);
+            this.assertRelation(this.loopA, this.loopB, -1, true, false);
+            this.assertRelation(this.loopA, this.aIntersectB, 1, true, false);
+            this.assertRelation(this.loopA, this.aUnionB, 0, true, false);
+            this.assertRelation(this.loopA, this.aMinusB, 1, true, false);
+            this.assertRelation(this.loopA, this.bMinusA, 0, false, false);
 
-            assertRelation(loopB, loopA, -1, true, false);
-            assertRelation(loopB, loopB, 1, true, false);
-            assertRelation(loopB, aIntersectB, 1, true, false);
-            assertRelation(loopB, aUnionB, 0, true, false);
-            assertRelation(loopB, aMinusB, 0, false, false);
-            assertRelation(loopB, bMinusA, 1, true, false);
+            this.assertRelation(this.loopB, this.loopA, -1, true, false);
+            this.assertRelation(this.loopB, this.loopB, 1, true, false);
+            this.assertRelation(this.loopB, this.aIntersectB, 1, true, false);
+            this.assertRelation(this.loopB, this.aUnionB, 0, true, false);
+            this.assertRelation(this.loopB, this.aMinusB, 0, false, false);
+            this.assertRelation(this.loopB, this.bMinusA, 1, true, false);
 
-            assertRelation(aIntersectB, loopA, 0, true, false);
-            assertRelation(aIntersectB, loopB, 0, true, false);
-            assertRelation(aIntersectB, aIntersectB, 1, true, false);
-            assertRelation(aIntersectB, aUnionB, 0, true, true);
-            assertRelation(aIntersectB, aMinusB, 0, false, false);
-            assertRelation(aIntersectB, bMinusA, 0, false, false);
+            this.assertRelation(this.aIntersectB, this.loopA, 0, true, false);
+            this.assertRelation(this.aIntersectB, this.loopB, 0, true, false);
+            this.assertRelation(this.aIntersectB, this.aIntersectB, 1, true, false);
+            this.assertRelation(this.aIntersectB, this.aUnionB, 0, true, true);
+            this.assertRelation(this.aIntersectB, this.aMinusB, 0, false, false);
+            this.assertRelation(this.aIntersectB, this.bMinusA, 0, false, false);
 
-            assertRelation(aUnionB, loopA, 1, true, false);
-            assertRelation(aUnionB, loopB, 1, true, false);
-            assertRelation(aUnionB, aIntersectB, 1, true, true);
-            assertRelation(aUnionB, aUnionB, 1, true, false);
-            assertRelation(aUnionB, aMinusB, 1, true, false);
-            assertRelation(aUnionB, bMinusA, 1, true, false);
+            this.assertRelation(this.aUnionB, this.loopA, 1, true, false);
+            this.assertRelation(this.aUnionB, this.loopB, 1, true, false);
+            this.assertRelation(this.aUnionB, this.aIntersectB, 1, true, true);
+            this.assertRelation(this.aUnionB, this.aUnionB, 1, true, false);
+            this.assertRelation(this.aUnionB, this.aMinusB, 1, true, false);
+            this.assertRelation(this.aUnionB, this.bMinusA, 1, true, false);
 
-            assertRelation(aMinusB, loopA, 0, true, false);
-            assertRelation(aMinusB, loopB, 0, false, false);
-            assertRelation(aMinusB, aIntersectB, 0, false, false);
-            assertRelation(aMinusB, aUnionB, 0, true, false);
-            assertRelation(aMinusB, aMinusB, 1, true, false);
-            assertRelation(aMinusB, bMinusA, 0, false, true);
+            this.assertRelation(this.aMinusB, this.loopA, 0, true, false);
+            this.assertRelation(this.aMinusB, this.loopB, 0, false, false);
+            this.assertRelation(this.aMinusB, this.aIntersectB, 0, false, false);
+            this.assertRelation(this.aMinusB, this.aUnionB, 0, true, false);
+            this.assertRelation(this.aMinusB, this.aMinusB, 1, true, false);
+            this.assertRelation(this.aMinusB, this.bMinusA, 0, false, true);
 
-            assertRelation(bMinusA, loopA, 0, false, false);
-            assertRelation(bMinusA, loopB, 0, true, false);
-            assertRelation(bMinusA, aIntersectB, 0, false, false);
-            assertRelation(bMinusA, aUnionB, 0, true, false);
-            assertRelation(bMinusA, aMinusB, 0, false, true);
-            assertRelation(bMinusA, bMinusA, 1, true, false);
+            this.assertRelation(this.bMinusA, this.loopA, 0, false, false);
+            this.assertRelation(this.bMinusA, this.loopB, 0, true, false);
+            this.assertRelation(this.bMinusA, this.aIntersectB, 0, false, false);
+            this.assertRelation(this.bMinusA, this.aUnionB, 0, true, false);
+            this.assertRelation(this.bMinusA, this.aMinusB, 0, false, true);
+            this.assertRelation(this.bMinusA, this.bMinusA, 1, true, false);
         }
 
         [TestMethod]

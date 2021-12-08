@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace S2Geometry.Tests
+﻿namespace OpenSky.S2Geometry.Tests
 {
+    using System;
+    using System.Collections.Generic;
+
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     using OpenSky.S2Geometry;
@@ -37,26 +37,26 @@ namespace S2Geometry.Tests
 
             public LevelStats()
             {
-                count = 0;
-                minArea = 100;
-                maxArea = 0;
-                avgArea = 0;
-                minWidth = 100;
-                maxWidth = 0;
-                avgWidth = 0;
-                minEdge = 100;
-                maxEdge = 0;
-                avgEdge = 0;
-                maxEdgeAspect = 0;
-                minDiag = 100;
-                maxDiag = 0;
-                avgDiag = 0;
-                maxDiagAspect = 0;
-                minAngleSpan = 100;
-                maxAngleSpan = 0;
-                avgAngleSpan = 0;
-                minApproxRatio = 100;
-                maxApproxRatio = 0;
+                this.count = 0;
+                this.minArea = 100;
+                this.maxArea = 0;
+                this.avgArea = 0;
+                this.minWidth = 100;
+                this.maxWidth = 0;
+                this.avgWidth = 0;
+                this.minEdge = 100;
+                this.maxEdge = 0;
+                this.avgEdge = 0;
+                this.maxEdgeAspect = 0;
+                this.minDiag = 100;
+                this.maxDiag = 0;
+                this.avgDiag = 0;
+                this.maxDiagAspect = 0;
+                this.minAngleSpan = 100;
+                this.maxAngleSpan = 0;
+                this.avgAngleSpan = 0;
+                this.minApproxRatio = 100;
+                this.maxApproxRatio = 0;
             }
         }
 
@@ -261,9 +261,9 @@ namespace S2Geometry.Tests
                     }
                 }
                 if (forceSubdivide || cell.Level < (DEBUG_MODE ? 5 : 6)
-                    || random(DEBUG_MODE ? 10 : 4) == 0)
+                    || this.random(DEBUG_MODE ? 10 : 4) == 0)
                 {
-                    testSubdivide(children[i]);
+                    this.testSubdivide(children[i]);
                 }
             }
 
@@ -326,7 +326,7 @@ namespace S2Geometry.Tests
             Console.WriteLine("Level: " + maxMetric.GetValue(level) + " Max " + (maxValue + tolerance));
             Assert.IsTrue(maxMetric.GetValue(level) <= maxValue + tolerance);
             Assert.IsTrue(maxMetric.GetValue(level) >= maxValue - absError);
-            assertDoubleNear(avgMetric.GetValue(level), avgValue, 10*tolerance);
+            this.assertDoubleNear(avgMetric.GetValue(level), avgValue, 10*tolerance);
         }
 
         private const int MAX_LEVEL = DEBUG_MODE ? 6 : 10;
@@ -339,7 +339,7 @@ namespace S2Geometry.Tests
             {
                 for (var pos = 0; pos < 4; ++pos)
                 {
-                    expandChildren1(children[pos]);
+                    this.expandChildren1(children[pos]);
                 }
             }
         }
@@ -352,7 +352,7 @@ namespace S2Geometry.Tests
                 var child = new S2Cell(id);
                 if (child.Level < MAX_LEVEL)
                 {
-                    expandChildren2(child);
+                    this.expandChildren2(child);
                 }
             }
         }
@@ -393,10 +393,10 @@ namespace S2Geometry.Tests
                     {
                         vertexCounts[cell.GetVertexRaw(k)] = 1;
                     }
-                    assertDoubleNear(cell.GetVertexRaw(k).DotProd(cell.GetEdgeRaw(k)), 0);
-                    assertDoubleNear(cell.GetVertexRaw((k + 1) & 3).DotProd(
+                    this.assertDoubleNear(cell.GetVertexRaw(k).DotProd(cell.GetEdgeRaw(k)), 0);
+                    this.assertDoubleNear(cell.GetVertexRaw((k + 1) & 3).DotProd(
                         cell.GetEdgeRaw(k)), 0);
-                    assertDoubleNear(S2Point.Normalize(
+                    this.assertDoubleNear(S2Point.Normalize(
                         S2Point.CrossProd(cell.GetVertexRaw(k), cell
                                                                     .GetVertexRaw((k + 1) & 3))).DotProd(cell.GetEdge(k)), 1.0);
                 }
@@ -417,7 +417,7 @@ namespace S2Geometry.Tests
         {
             for (var face = 0; face < 6; ++face)
             {
-                testSubdivide(S2Cell.FromFacePosLevel(face, (byte)0, 0));
+                this.testSubdivide(S2Cell.FromFacePosLevel(face, (byte)0, 0));
             }
 
             // The maximum edge *ratio* is the ratio of the longest edge of any cell to
@@ -468,19 +468,19 @@ namespace S2Geometry.Tests
                 // so we need to allow for this amount of discrepancy with the theoretical
                 // minimums and maximums. The area calculation is accurate to about 1e-15
                 // times the cell width.
-                testMinMaxAvg("area", i, s.count, 1e-15*s.minWidth, s.minArea,
+                this.testMinMaxAvg("area", i, s.count, 1e-15*s.minWidth, s.minArea,
                               s.maxArea, s.avgArea, S2Projections.MinArea, S2Projections.MaxArea,
                               S2Projections.AvgArea);
-                testMinMaxAvg("width", i, s.count, 1e-15, s.minWidth, s.maxWidth,
+                this.testMinMaxAvg("width", i, s.count, 1e-15, s.minWidth, s.maxWidth,
                               s.avgWidth, S2Projections.MinWidth, S2Projections.MaxWidth,
                               S2Projections.AvgWidth);
-                testMinMaxAvg("edge", i, s.count, 1e-15, s.minEdge, s.maxEdge,
+                this.testMinMaxAvg("edge", i, s.count, 1e-15, s.minEdge, s.maxEdge,
                               s.avgEdge, S2Projections.MinEdge, S2Projections.MaxEdge,
                               S2Projections.AvgEdge);
-                testMinMaxAvg("diagonal", i, s.count, 1e-15, s.minDiag, s.maxDiag,
+                this.testMinMaxAvg("diagonal", i, s.count, 1e-15, s.minDiag, s.maxDiag,
                               s.avgDiag, S2Projections.MinDiag, S2Projections.MaxDiag,
                               S2Projections.AvgDiag);
-                testMinMaxAvg("angle span", i, s.count, 1e-15, s.minAngleSpan,
+                this.testMinMaxAvg("angle span", i, s.count, 1e-15, s.minAngleSpan,
                               s.maxAngleSpan, s.avgAngleSpan, S2Projections.MinAngleSpan,
                               S2Projections.MaxAngleSpan, S2Projections.AvgAngleSpan);
 

@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace S2Geometry.Tests
+﻿namespace OpenSky.S2Geometry.Tests
 {
+    using System;
+
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     using OpenSky.S2Geometry;
@@ -62,14 +62,14 @@ namespace S2Geometry.Tests
 
             // contains(R1Interval), interiorContains(R1Interval)
             // Intersects(R1Interval), InteriorIntersects(R1Interval)
-            testIntervalOps(empty, empty, "TTFF");
-            testIntervalOps(empty, unit, "FFFF");
-            testIntervalOps(unit, half, "TTTT");
-            testIntervalOps(unit, unit, "TFTT");
-            testIntervalOps(unit, empty, "TTFF");
-            testIntervalOps(unit, negunit, "FFTF");
-            testIntervalOps(unit, new R1Interval(0, 0.5), "TFTT");
-            testIntervalOps(half, new R1Interval(0, 0.5), "FFTF");
+            this.testIntervalOps(empty, empty, "TTFF");
+            this.testIntervalOps(empty, unit, "FFFF");
+            this.testIntervalOps(unit, half, "TTTT");
+            this.testIntervalOps(unit, unit, "TFTT");
+            this.testIntervalOps(unit, empty, "TTFF");
+            this.testIntervalOps(unit, negunit, "FFTF");
+            this.testIntervalOps(unit, new R1Interval(0, 0.5), "TFTT");
+            this.testIntervalOps(half, new R1Interval(0, 0.5), "FFTF");
 
             // addPoint()
             R1Interval r;

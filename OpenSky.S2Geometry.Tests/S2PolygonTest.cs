@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace S2Geometry.Tests
+﻿namespace OpenSky.S2Geometry.Tests
 {
+    using System;
+    using System.Collections.Generic;
+
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     using OpenSky.S2Geometry;
@@ -70,22 +70,22 @@ namespace S2Geometry.Tests
         // Make sure we've set things up correctly.
         public void testInit()
         {
-            assertContains(NEAR1, NEAR0);
-            assertContains(NEAR2, NEAR1);
-            assertContains(NEAR3, NEAR2);
-            assertContains(NEAR_HEMI, NEAR3);
-            assertContains(FAR1, FAR0);
-            assertContains(FAR2, FAR1);
-            assertContains(FAR3, FAR2);
-            assertContains(FAR_HEMI, FAR3);
-            assertContains(SOUTH1, SOUTH0a);
-            assertContains(SOUTH1, SOUTH0b);
-            assertContains(SOUTH1, SOUTH0c);
-            assertContains(SOUTH_HEMI, SOUTH2);
-            assertContains(NEAR_FAR1, NEAR3);
-            assertContains(NEAR_FAR1, FAR3);
-            assertContains(NEAR_FAR2, NEAR3);
-            assertContains(NEAR_FAR2, FAR3);
+            this.assertContains(NEAR1, NEAR0);
+            this.assertContains(NEAR2, NEAR1);
+            this.assertContains(NEAR3, NEAR2);
+            this.assertContains(NEAR_HEMI, NEAR3);
+            this.assertContains(FAR1, FAR0);
+            this.assertContains(FAR2, FAR1);
+            this.assertContains(FAR3, FAR2);
+            this.assertContains(FAR_HEMI, FAR3);
+            this.assertContains(SOUTH1, SOUTH0a);
+            this.assertContains(SOUTH1, SOUTH0b);
+            this.assertContains(SOUTH1, SOUTH0c);
+            this.assertContains(SOUTH_HEMI, SOUTH2);
+            this.assertContains(NEAR_FAR1, NEAR3);
+            this.assertContains(NEAR_FAR1, FAR3);
+            this.assertContains(NEAR_FAR2, NEAR3);
+            this.assertContains(NEAR_FAR2, FAR3);
         }
 
         private readonly S2Polygon near10 = makePolygon(NEAR0 + NEAR1);
@@ -130,8 +130,8 @@ namespace S2Geometry.Tests
             S2Loop s2Loop, int vertexIndex, double lat, double lng, double error)
         {
             var latLng = new S2LatLng(s2Loop.Vertex(vertexIndex));
-            assertDoubleNear(latLng.LatDegrees, lat, error);
-            assertDoubleNear(latLng.LngDegrees, lng, error);
+            this.assertDoubleNear(latLng.LatDegrees, lat, error);
+            this.assertDoubleNear(latLng.LngDegrees, lng, error);
         }
 
         private void checkEqual(S2Polygon a, S2Polygon b)
@@ -166,7 +166,7 @@ namespace S2Geometry.Tests
             polygons.Add(new S2Polygon(b));
             var destructiveUnion = S2Polygon.DestructiveUnion(polygons);
 
-            checkEqual(union, destructiveUnion);
+            this.checkEqual(union, destructiveUnion);
         }
 
         [TestMethod]
@@ -205,17 +205,17 @@ namespace S2Geometry.Tests
         public void testDisjoint()
         {
             var builder = new S2PolygonBuilder(S2PolygonBuilderOptions.UndirectedXor);
-            builder.AddPolygon(adj0);
-            builder.AddPolygon(unAdj);
+            builder.AddPolygon(this.adj0);
+            builder.AddPolygon(this.unAdj);
             var ab = new S2Polygon();
             assertTrue(builder.AssemblePolygon(ab, null));
 
             var union = new S2Polygon();
-            union.InitToUnion(adj0, unAdj);
+            union.InitToUnion(this.adj0, this.unAdj);
             assertEquals(2, union.NumLoops);
 
-            checkEqual(ab, union);
-            tryUnion(adj0, unAdj);
+            this.checkEqual(ab, union);
+            this.tryUnion(this.adj0, this.unAdj);
         }
 
         [TestMethod]
@@ -260,58 +260,58 @@ namespace S2Geometry.Tests
         [TestMethod]
         public void testRelations()
         {
-            assertRelation(near10, near30, -1, true);
-            assertRelation(near10, near32, 0, false);
-            assertRelation(near10, near3210, -1, true);
-            assertRelation(near10, nearH3210, 0, false);
-            assertRelation(near30, near32, 1, true);
-            assertRelation(near30, near3210, 1, true);
-            assertRelation(near30, nearH3210, 0, true);
-            assertRelation(near32, near3210, -1, true);
-            assertRelation(near32, nearH3210, 0, false);
-            assertRelation(near3210, nearH3210, 0, false);
+            this.assertRelation(this.near10, this.near30, -1, true);
+            this.assertRelation(this.near10, this.near32, 0, false);
+            this.assertRelation(this.near10, this.near3210, -1, true);
+            this.assertRelation(this.near10, this.nearH3210, 0, false);
+            this.assertRelation(this.near30, this.near32, 1, true);
+            this.assertRelation(this.near30, this.near3210, 1, true);
+            this.assertRelation(this.near30, this.nearH3210, 0, true);
+            this.assertRelation(this.near32, this.near3210, -1, true);
+            this.assertRelation(this.near32, this.nearH3210, 0, false);
+            this.assertRelation(this.near3210, this.nearH3210, 0, false);
 
-            assertRelation(far10, far21, 0, false);
-            assertRelation(far10, far321, -1, true);
-            assertRelation(far10, farH20, 0, false);
-            assertRelation(far10, farH3210, 0, false);
-            assertRelation(far21, far321, 0, false);
-            assertRelation(far21, farH20, 0, false);
-            assertRelation(far21, farH3210, -1, true);
-            assertRelation(far321, farH20, 0, true);
-            assertRelation(far321, farH3210, 0, true);
-            assertRelation(farH20, farH3210, 0, true);
+            this.assertRelation(this.far10, this.far21, 0, false);
+            this.assertRelation(this.far10, this.far321, -1, true);
+            this.assertRelation(this.far10, this.farH20, 0, false);
+            this.assertRelation(this.far10, this.farH3210, 0, false);
+            this.assertRelation(this.far21, this.far321, 0, false);
+            this.assertRelation(this.far21, this.farH20, 0, false);
+            this.assertRelation(this.far21, this.farH3210, -1, true);
+            this.assertRelation(this.far321, this.farH20, 0, true);
+            this.assertRelation(this.far321, this.farH3210, 0, true);
+            this.assertRelation(this.farH20, this.farH3210, 0, true);
 
-            assertRelation(south0ab, south2, -1, true);
-            assertRelation(south0ab, south210b, 0, true);
-            assertRelation(south0ab, southH21, -1, true);
-            assertRelation(south0ab, southH20abc, -1, true);
-            assertRelation(south2, south210b, 1, true);
-            assertRelation(south2, southH21, 0, true);
-            assertRelation(south2, southH20abc, 0, true);
-            assertRelation(south210b, southH21, 0, true);
-            assertRelation(south210b, southH20abc, 0, true);
-            assertRelation(southH21, southH20abc, 1, true);
+            this.assertRelation(this.south0ab, this.south2, -1, true);
+            this.assertRelation(this.south0ab, this.south210b, 0, true);
+            this.assertRelation(this.south0ab, this.southH21, -1, true);
+            this.assertRelation(this.south0ab, this.southH20abc, -1, true);
+            this.assertRelation(this.south2, this.south210b, 1, true);
+            this.assertRelation(this.south2, this.southH21, 0, true);
+            this.assertRelation(this.south2, this.southH20abc, 0, true);
+            this.assertRelation(this.south210b, this.southH21, 0, true);
+            this.assertRelation(this.south210b, this.southH20abc, 0, true);
+            this.assertRelation(this.southH21, this.southH20abc, 1, true);
 
-            assertRelation(nf1n10f2s10abc, nf2n2f210s210ab, 0, true);
-            assertRelation(nf1n10f2s10abc, near32, 1, true);
-            assertRelation(nf1n10f2s10abc, far21, 0, false);
-            assertRelation(nf1n10f2s10abc, south0ab, 0, false);
-            assertRelation(nf1n10f2s10abc, f32n0, 1, true);
+            this.assertRelation(this.nf1n10f2s10abc, this.nf2n2f210s210ab, 0, true);
+            this.assertRelation(this.nf1n10f2s10abc, this.near32, 1, true);
+            this.assertRelation(this.nf1n10f2s10abc, this.far21, 0, false);
+            this.assertRelation(this.nf1n10f2s10abc, this.south0ab, 0, false);
+            this.assertRelation(this.nf1n10f2s10abc, this.f32n0, 1, true);
 
-            assertRelation(nf2n2f210s210ab, near10, 0, false);
-            assertRelation(nf2n2f210s210ab, far10, 1, true);
-            assertRelation(nf2n2f210s210ab, south210b, 1, true);
-            assertRelation(nf2n2f210s210ab, south0ab, 1, true);
-            assertRelation(nf2n2f210s210ab, n32s0b, 1, true);
+            this.assertRelation(this.nf2n2f210s210ab, this.near10, 0, false);
+            this.assertRelation(this.nf2n2f210s210ab, this.far10, 1, true);
+            this.assertRelation(this.nf2n2f210s210ab, this.south210b, 1, true);
+            this.assertRelation(this.nf2n2f210s210ab, this.south0ab, 1, true);
+            this.assertRelation(this.nf2n2f210s210ab, this.n32s0b, 1, true);
         }
 
         [TestMethod]
         public void testUnionSloppyFailure()
         {
             var polygons = new List<S2Polygon>();
-            polygons.Add(adj0);
-            polygons.Add(unAdj);
+            polygons.Add(this.adj0);
+            polygons.Add(this.unAdj);
             // The polygons are sufficiently far apart that this angle will not
             // bring them together:
             var union = S2Polygon.DestructiveUnionSloppy(polygons, S1Angle.FromDegrees(0.1));
@@ -323,8 +323,8 @@ namespace S2Geometry.Tests
         public void testUnionSloppySuccess()
         {
             var polygons = new List<S2Polygon>();
-            polygons.Add(adj0);
-            polygons.Add(adj1);
+            polygons.Add(this.adj0);
+            polygons.Add(this.adj1);
             var union = S2Polygon.DestructiveUnionSloppy(polygons, S1Angle.FromDegrees(0.1));
 
             assertEquals(1, union.NumLoops);
@@ -338,14 +338,14 @@ namespace S2Geometry.Tests
             {
                 return;
             }
-            assertPointApproximatelyEquals(s2Loop, 0, 2.0, 0.0, 0.01);
-            assertPointApproximatelyEquals(s2Loop, 1, 1.0, 0.0, 0.01);
-            assertPointApproximatelyEquals(s2Loop, 2, 0.0, 0.0, 0.01);
-            assertPointApproximatelyEquals(s2Loop, 3, 0.0, 1.0, 0.01);
-            assertPointApproximatelyEquals(s2Loop, 4, 0.0, 2.0, 0.01);
-            assertPointApproximatelyEquals(s2Loop, 5, 1.0, 2.0, 0.01);
-            assertPointApproximatelyEquals(s2Loop, 6, 2.0, 2.0, 0.01);
-            assertPointApproximatelyEquals(s2Loop, 7, 2.0, 1.0, 0.01);
+            this.assertPointApproximatelyEquals(s2Loop, 0, 2.0, 0.0, 0.01);
+            this.assertPointApproximatelyEquals(s2Loop, 1, 1.0, 0.0, 0.01);
+            this.assertPointApproximatelyEquals(s2Loop, 2, 0.0, 0.0, 0.01);
+            this.assertPointApproximatelyEquals(s2Loop, 3, 0.0, 1.0, 0.01);
+            this.assertPointApproximatelyEquals(s2Loop, 4, 0.0, 2.0, 0.01);
+            this.assertPointApproximatelyEquals(s2Loop, 5, 1.0, 2.0, 0.01);
+            this.assertPointApproximatelyEquals(s2Loop, 6, 2.0, 2.0, 0.01);
+            this.assertPointApproximatelyEquals(s2Loop, 7, 2.0, 1.0, 0.01);
         }
     }
 }
