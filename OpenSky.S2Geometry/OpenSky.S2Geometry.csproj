@@ -17,6 +17,8 @@
 		<PackageIcon>OpenSkyLogo128.png</PackageIcon>
 		<PackageIconUrl />
 		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<AssemblyVersion>0.2.0.0</AssemblyVersion>
+		<FileVersion>0.2.0.0</FileVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
