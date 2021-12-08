@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace S2Geometry.Tests
+﻿namespace OpenSky.S2Geometry.Tests
 {
+    using System;
+
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     using OpenSky.S2Geometry;
@@ -29,41 +29,41 @@ namespace S2Geometry.Tests
 
             // Cap that includes the south pole.
             var rect =
-                S2Cap.FromAxisAngle(getLatLngPoint(-45, 57), S1Angle.FromDegrees(50)).RectBound;
-            assertDoubleNear(rect.LatLo.Degrees, -90, kDegreeEps);
-            assertDoubleNear(rect.LatHi.Degrees, 5, kDegreeEps);
+                S2Cap.FromAxisAngle(this.getLatLngPoint(-45, 57), S1Angle.FromDegrees(50)).RectBound;
+            this.assertDoubleNear(rect.LatLo.Degrees, -90, kDegreeEps);
+            this.assertDoubleNear(rect.LatHi.Degrees, 5, kDegreeEps);
             Assert.IsTrue(rect.Lng.IsFull);
 
             // Cap that is tangent to the north pole.
             rect = S2Cap.FromAxisAngle(S2Point.Normalize(new S2Point(1, 0, 1)), S1Angle.FromRadians(S2.PiOver4)).RectBound;
-            assertDoubleNear(rect.Lat.Lo, 0);
-            assertDoubleNear(rect.Lat.Hi, S2.PiOver2);
+            this.assertDoubleNear(rect.Lat.Lo, 0);
+            this.assertDoubleNear(rect.Lat.Hi, S2.PiOver2);
             Assert.IsTrue(rect.Lng.IsFull);
 
             rect = S2Cap
                 .FromAxisAngle(S2Point.Normalize(new S2Point(1, 0, 1)), S1Angle.FromDegrees(45)).RectBound;
-            assertDoubleNear(rect.LatLo.Degrees, 0, kDegreeEps);
-            assertDoubleNear(rect.LatHi.Degrees, 90, kDegreeEps);
+            this.assertDoubleNear(rect.LatLo.Degrees, 0, kDegreeEps);
+            this.assertDoubleNear(rect.LatHi.Degrees, 90, kDegreeEps);
             Assert.IsTrue(rect.Lng.IsFull);
 
             // The eastern hemisphere.
             rect = S2Cap
                 .FromAxisAngle(new S2Point(0, 1, 0), S1Angle.FromRadians(S2.PiOver2 + 5e-16)).RectBound;
-            assertDoubleNear(rect.LatLo.Degrees, -90, kDegreeEps);
-            assertDoubleNear(rect.LatHi.Degrees, 90, kDegreeEps);
+            this.assertDoubleNear(rect.LatLo.Degrees, -90, kDegreeEps);
+            this.assertDoubleNear(rect.LatHi.Degrees, 90, kDegreeEps);
             Assert.IsTrue(rect.Lng.IsFull);
 
             // A cap centered on the equator.
-            rect = S2Cap.FromAxisAngle(getLatLngPoint(0, 50), S1Angle.FromDegrees(20)).RectBound;
-            assertDoubleNear(rect.LatLo.Degrees, -20, kDegreeEps);
-            assertDoubleNear(rect.LatHi.Degrees, 20, kDegreeEps);
-            assertDoubleNear(rect.LngLo.Degrees, 30, kDegreeEps);
-            assertDoubleNear(rect.LngHi.Degrees, 70, kDegreeEps);
+            rect = S2Cap.FromAxisAngle(this.getLatLngPoint(0, 50), S1Angle.FromDegrees(20)).RectBound;
+            this.assertDoubleNear(rect.LatLo.Degrees, -20, kDegreeEps);
+            this.assertDoubleNear(rect.LatHi.Degrees, 20, kDegreeEps);
+            this.assertDoubleNear(rect.LngLo.Degrees, 30, kDegreeEps);
+            this.assertDoubleNear(rect.LngHi.Degrees, 70, kDegreeEps);
 
             // A cap centered on the north pole.
-            rect = S2Cap.FromAxisAngle(getLatLngPoint(90, 123), S1Angle.FromDegrees(10)).RectBound;
-            assertDoubleNear(rect.LatLo.Degrees, 80, kDegreeEps);
-            assertDoubleNear(rect.LatHi.Degrees, 90, kDegreeEps);
+            rect = S2Cap.FromAxisAngle(this.getLatLngPoint(90, 123), S1Angle.FromDegrees(10)).RectBound;
+            this.assertDoubleNear(rect.LatLo.Degrees, 80, kDegreeEps);
+            this.assertDoubleNear(rect.LatHi.Degrees, 90, kDegreeEps);
             Assert.IsTrue(rect.Lng.IsFull);
         }
 
@@ -149,7 +149,7 @@ namespace S2Geometry.Tests
             Assert.IsTrue(full.IsFull);
             Assert.IsTrue(full.Complement.IsEmpty);
             JavaAssert.Equal(full.Height, 2.0);
-            assertDoubleNear(full.Angle.Degrees, 180);
+            this.assertDoubleNear(full.Angle.Degrees, 180);
 
             // Containment and intersection of empty and full caps.
             Assert.IsTrue(empty.Contains(empty));
@@ -201,11 +201,11 @@ namespace S2Geometry.Tests
             Assert.IsTrue(!hemi.InteriorContains(S2Point.Normalize(new S2Point(1, 0, -(1 + EPS)))));
 
             // A concave cap.
-            var concave = S2Cap.FromAxisAngle(getLatLngPoint(80, 10), S1Angle.FromDegrees(150));
-            Assert.IsTrue(concave.Contains(getLatLngPoint(-70*(1 - EPS), 10)));
-            Assert.IsTrue(!concave.Contains(getLatLngPoint(-70*(1 + EPS), 10)));
-            Assert.IsTrue(concave.Contains(getLatLngPoint(-50*(1 - EPS), -170)));
-            Assert.IsTrue(!concave.Contains(getLatLngPoint(-50*(1 + EPS), -170)));
+            var concave = S2Cap.FromAxisAngle(this.getLatLngPoint(80, 10), S1Angle.FromDegrees(150));
+            Assert.IsTrue(concave.Contains(this.getLatLngPoint(-70*(1 - EPS), 10)));
+            Assert.IsTrue(!concave.Contains(this.getLatLngPoint(-70*(1 + EPS), 10)));
+            Assert.IsTrue(concave.Contains(this.getLatLngPoint(-50*(1 - EPS), -170)));
+            Assert.IsTrue(!concave.Contains(this.getLatLngPoint(-50*(1 + EPS), -170)));
 
             // Cap containment tests.
             Assert.IsTrue(!empty.Contains(xaxis));

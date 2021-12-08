@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace S2Geometry.Tests
+﻿namespace OpenSky.S2Geometry.Tests
 {
+    using System;
+    using System.Collections.Generic;
+
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     using OpenSky.S2Geometry;
@@ -289,7 +289,7 @@ namespace S2Geometry.Tests
                 // (p[0]*x + p[1]*y + p[2]*z).Normalize()
                 var axis = S2Point.Normalize(((x * p.X) + (y * p.Y)) + (z * p.Z));
                 var cap = S2Cap.FromAxisAngle(axis, S1Angle.FromRadians(maxPerturbation));
-                vertices.Add(samplePoint(cap));
+                vertices.Add(this.samplePoint(cap));
             }
         }
 
@@ -329,7 +329,7 @@ namespace S2Geometry.Tests
         {
             for (var i = 0; i < candidates.Count; ++i)
             {
-                if (loopsEqual(loop, candidates[i], maxError))
+                if (this.loopsEqual(loop, candidates[i], maxError))
                 {
                     return true;
                 }
@@ -344,7 +344,7 @@ namespace S2Geometry.Tests
             var found = false;
             for (var i = 0; i < actual.Count; ++i)
             {
-                if (findLoop(actual[i], expected, maxError))
+                if (this.findLoop(actual[i], expected, maxError))
                 {
                     continue;
                 }
@@ -371,7 +371,7 @@ namespace S2Geometry.Tests
             // up to the given distance, and add it to the builder.
 
             var vertices = new List<S2Point>();
-            getVertices(chain.str, x, y, z, maxPerturbation, vertices);
+            this.getVertices(chain.str, x, y, z, maxPerturbation, vertices);
             if (chain.closed)
             {
                 vertices.Add(vertices[0]);
@@ -384,7 +384,7 @@ namespace S2Geometry.Tests
 
         private bool evalTristate(int state)
         {
-            return (state > 0) ? true : (state < 0) ? false : (rand.NextDouble() > 0.5);
+            return (state > 0) ? true : (state < 0) ? false : (this.rand.NextDouble() > 0.5);
         }
 
         private bool testBuilder(TestCase test)
@@ -394,8 +394,8 @@ namespace S2Geometry.Tests
                 // Initialize to the default options, which are changed below
                 var options = S2PolygonBuilderOptions.DirectedXor;
 
-                options.UndirectedEdges = evalTristate(test.undirectedEdges);
-                options.XorEdges = evalTristate(test.xorEdges);
+                options.UndirectedEdges = this.evalTristate(test.undirectedEdges);
+                options.XorEdges = this.evalTristate(test.xorEdges);
 
                 // Each test has a minimum and a maximum merge distance. The merge
                 // distance must be at least the given minimum to ensure that all expected
@@ -415,14 +415,14 @@ namespace S2Geometry.Tests
 
                 var minMerge = S1Angle.FromDegrees(test.minMerge).Radians;
                 var maxMerge = S1Angle.FromDegrees(test.maxMerge).Radians;
-                var r = Math.Max(0.0, 2*rand.NextDouble() - 1);
+                var r = Math.Max(0.0, 2*this.rand.NextDouble() - 1);
                 var maxPerturbation = r*0.25*(maxMerge - minMerge);
 
                 // Now we set the merge distance chosen randomly within the limits above
                 // (min + 2*p and max - 2*p). Half of the time we set the merge distance
                 // to the minimum value.
 
-                r = Math.Max(0.0, 2*rand.NextDouble() - 1);
+                r = Math.Max(0.0, 2*this.rand.NextDouble() - 1);
                 options.MergeDistance = S1Angle.FromRadians(
                     minMerge + 2*maxPerturbation + r*(maxMerge - minMerge - 4*maxPerturbation));
 
@@ -432,13 +432,13 @@ namespace S2Geometry.Tests
                 // On each iteration we randomly rotate the test case around the sphere.
                 // This causes the S2PolygonBuilder to choose different first edges when
                 // trying to build loops.
-                var x = randomPoint();
-                var y = S2Point.Normalize(S2Point.CrossProd(x, randomPoint()));
+                var x = this.randomPoint();
+                var y = S2Point.Normalize(S2Point.CrossProd(x, this.randomPoint()));
                 var z = S2Point.Normalize(S2Point.CrossProd(x, y));
 
                 foreach (var chain in test.chainsIn)
                 {
-                    addChain(chain, x, y, z, maxPerturbation, builder);
+                    this.addChain(chain, x, y, z, maxPerturbation, builder);
                 }
                 var loops = new List<S2Loop>();
                 var unusedEdges = new List<S2Edge>();
@@ -456,7 +456,7 @@ namespace S2Geometry.Tests
                 foreach (var loop in test.loopsOut)
                 {
                     var vertices = new List<S2Point>();
-                    getVertices(loop, x, y, z, 0, vertices);
+                    this.getVertices(loop, x, y, z, 0, vertices);
                     expected.Add(new S2Loop(vertices));
                 }
                 // We assume that the vertex locations in the expected output polygon
@@ -467,8 +467,8 @@ namespace S2Geometry.Tests
                 var maxError = 0.5*minMerge + maxPerturbation;
 
                 // Note single "|" below so that we print both sets of loops.
-                if (findMissingLoops(loops, expected, maxError, "Actual")
-                    | findMissingLoops(expected, loops, maxError, "Expected"))
+                if (this.findMissingLoops(loops, expected, maxError, "Actual")
+                    | this.findMissingLoops(expected, loops, maxError, "Expected"))
                 {
                     Console.Error.WriteLine(
                         "During iteration " + iter + ", undirected: " + options.UndirectedEdges + ", xor: "
@@ -489,11 +489,11 @@ namespace S2Geometry.Tests
         public void testAssembleLoops()
         {
             var success = true;
-            for (var i = 0; i < testCases.Length; ++i)
+            for (var i = 0; i < this.testCases.Length; ++i)
             {
                 Console.WriteLine("Starting test case " + i);
 
-                var caseSuccess = testBuilder(testCases[i]);
+                var caseSuccess = this.testBuilder(this.testCases[i]);
 
                 Console.WriteLine("Test case " + i + " finished: " + ((caseSuccess) ? "SUCCESS" : "FAILED"));
 

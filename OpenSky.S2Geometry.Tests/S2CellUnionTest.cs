@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace S2Geometry.Tests
+﻿namespace OpenSky.S2Geometry.Tests
 {
+    using System;
+
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     using OpenSky.S2Geometry;
@@ -36,9 +36,9 @@ namespace S2Geometry.Tests
 
             public MetricBundle(S2CellMetric Min, S2CellMetric Max, S2CellMetric avg)
             {
-                min_ = Min;
-                max_ = Max;
-                avg_ = avg;
+                this.min_ = Min;
+                this.max_ = Max;
+                this.avg_ = avg;
             }
         }
 
@@ -63,14 +63,14 @@ namespace S2Geometry.Tests
             var p045 = new S2Point(1, 1, 0);
             var p090 = new S2Point(0, 1, 0);
             var p180 = new S2Point(-1, 0, 0);
-            assertDoubleNear(S2.Angle(p000, pz, p045), S2.PiOver4);
-            assertDoubleNear(S2.Angle(p045, pz, p180), 3*S2.PiOver4);
-            assertDoubleNear(S2.Angle(p000, pz, p180), S2.Pi);
-            assertDoubleNear(S2.Angle(pz, p000, pz), 0);
-            assertDoubleNear(S2.Angle(pz, p000, p045), S2.PiOver2);
+            this.assertDoubleNear(S2.Angle(p000, pz, p045), S2.PiOver4);
+            this.assertDoubleNear(S2.Angle(p045, pz, p180), 3*S2.PiOver4);
+            this.assertDoubleNear(S2.Angle(p000, pz, p180), S2.Pi);
+            this.assertDoubleNear(S2.Angle(pz, p000, pz), 0);
+            this.assertDoubleNear(S2.Angle(pz, p000, p045), S2.PiOver2);
 
-            assertDoubleNear(S2.Area(p000, p090, pz), S2.PiOver2);
-            assertDoubleNear(S2.Area(p045, pz, p180), 3*S2.PiOver4);
+            this.assertDoubleNear(S2.Area(p000, p090, pz), S2.PiOver2);
+            this.assertDoubleNear(S2.Area(p045, pz, p180), 3*S2.PiOver4);
 
             // Make sure that area() has good *relative* accuracy even for
             // very small areas.
@@ -78,7 +78,7 @@ namespace S2Geometry.Tests
             var pepsx = new S2Point(eps, 0, 1);
             var pepsy = new S2Point(0, eps, 1);
             var expected1 = 0.5*eps*eps;
-            assertDoubleNear(S2.Area(pepsx, pepsy, pz), expected1, 1e-14*expected1);
+            this.assertDoubleNear(S2.Area(pepsx, pepsy, pz), expected1, 1e-14*expected1);
 
             // Make sure that it can handle degenerate triangles.
             var pr = new S2Point(0.257, -0.5723, 0.112);
@@ -86,15 +86,15 @@ namespace S2Geometry.Tests
             assertEquals(S2.Area(pr, pr, pr), 0.0);
             // TODO: The following test is not exact in optimized mode because the
             // compiler chooses to mix 64-bit and 80-bit intermediate results.
-            assertDoubleNear(S2.Area(pr, pq, pr), 0);
+            this.assertDoubleNear(S2.Area(pr, pq, pr), 0);
             assertEquals(S2.Area(p000, p045, p090), 0.0);
 
             double maxGirard = 0;
             for (var i = 0; i < 10000; ++i)
             {
-                var p0 = randomPoint();
-                var d1 = randomPoint();
-                var d2 = randomPoint();
+                var p0 = this.randomPoint();
+                var d1 = this.randomPoint();
+                var d2 = this.randomPoint();
                 var p1 = p0 + (d1 * 1e-15);
                 var p2 = p0 + (d2 * 1e-15);
                 // The actual displacement can be as much as 1.2e-15 due to roundoff.
@@ -107,7 +107,7 @@ namespace S2Geometry.Tests
             // Try a very long and skinny triangle.
             var p045eps = new S2Point(1, 1, eps);
             var expected2 = 5.8578643762690495119753e-11; // Mathematica.
-            assertDoubleNear(S2.Area(p000, p045eps, p090), expected2, 1e-9*expected2);
+            this.assertDoubleNear(S2.Area(p000, p045eps, p090), expected2, 1e-9*expected2);
 
             // Triangles with near-180 degree edges that sum to a quarter-sphere.
             var eps2 = 1e-10;
@@ -115,14 +115,14 @@ namespace S2Geometry.Tests
             var quarterArea1 =
                 S2.Area(p000eps2, p000, p090) + S2.Area(p000eps2, p090, p180) + S2.Area(p000eps2, p180, pz)
                 + S2.Area(p000eps2, pz, p000);
-            assertDoubleNear(quarterArea1, S2.Pi);
+            this.assertDoubleNear(quarterArea1, S2.Pi);
 
             // Four other triangles that sum to a quarter-sphere.
             var p045eps2 = new S2Point(1, 1, eps2);
             var quarterArea2 =
                 S2.Area(p045eps2, p000, p090) + S2.Area(p045eps2, p090, p180) + S2.Area(p045eps2, p180, pz)
                 + S2.Area(p045eps2, pz, p000);
-            assertDoubleNear(quarterArea2, S2.Pi);
+            this.assertDoubleNear(quarterArea2, S2.Pi);
         }
 
         [TestMethod]
@@ -201,11 +201,11 @@ namespace S2Geometry.Tests
                 new MetricBundle(S2Projections.MinArea, S2Projections.MaxArea, S2Projections.AvgArea);
 
             // First, check that Min <= avg <= Max for each metric.
-            testMinMaxAvg(angleSpan);
-            testMinMaxAvg(width);
-            testMinMaxAvg(edge);
-            testMinMaxAvg(diag);
-            testMinMaxAvg(area);
+            this.testMinMaxAvg(angleSpan);
+            this.testMinMaxAvg(width);
+            this.testMinMaxAvg(edge);
+            this.testMinMaxAvg(diag);
+            this.testMinMaxAvg(area);
 
             // Check that the maximum aspect ratio of an individual cell is consistent
             // with the global minimums and maximums.
@@ -217,9 +217,9 @@ namespace S2Geometry.Tests
                        < S2Projections.MaxDiag.Deriv()/S2Projections.MinDiag.Deriv());
 
             // Check various conditions that are provable mathematically.
-            testLessOrEqual(width, angleSpan);
-            testLessOrEqual(width, edge);
-            testLessOrEqual(edge, diag);
+            this.testLessOrEqual(width, angleSpan);
+            this.testLessOrEqual(width, edge);
+            this.testLessOrEqual(edge, diag);
 
             assertTrue(S2Projections.MinArea.Deriv()
                        >= S2Projections.MinWidth.Deriv()*S2Projections.MinEdge.Deriv() - 1e-15);
@@ -282,8 +282,8 @@ namespace S2Geometry.Tests
             // Check that UVtoST and STtoUV are inverses.
             for (double x = -1; x <= 1; x += 0.0001)
             {
-                assertDoubleNear(S2Projections.UvToSt(S2Projections.StToUv(x)), x);
-                assertDoubleNear(S2Projections.StToUv(S2Projections.UvToSt(x)), x);
+                this.assertDoubleNear(S2Projections.UvToSt(S2Projections.StToUv(x)), x);
+                this.assertDoubleNear(S2Projections.StToUv(S2Projections.UvToSt(x)), x);
             }
         }
 
@@ -335,11 +335,11 @@ namespace S2Geometry.Tests
             {
                 for (double x = -1; x <= 1; x += 1/1024.0)
                 {
-                    assertDoubleNear(
+                    this.assertDoubleNear(
                         S2Point.CrossProd(
                             S2Projections.FaceUvToXyz(face, x, -1), S2Projections.FaceUvToXyz(face, x, 1))
                                .Angle(S2Projections.GetUNorm(face, x)), 0);
-                    assertDoubleNear(
+                    this.assertDoubleNear(
                         S2Point.CrossProd(
                             S2Projections.FaceUvToXyz(face, -1, x), S2Projections.FaceUvToXyz(face, 1, x))
                                .Angle(S2Projections.GetVNorm(face, x)), 0);

@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace S2Geometry.Tests
+﻿namespace OpenSky.S2Geometry.Tests
 {
+    using System;
+
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     using OpenSky.S2Geometry;
@@ -27,14 +27,14 @@ namespace S2Geometry.Tests
             var better = bad.Normalized;
             assertTrue(better.IsValid);
             assertEquals(better.Lat, S1Angle.FromDegrees(90));
-            assertDoubleNear(better.Lng.Radians, S1Angle.FromDegrees(-160).Radians);
+            this.assertDoubleNear(better.Lng.Radians, S1Angle.FromDegrees(-160).Radians);
 
             bad = S2LatLng.FromDegrees(-100, -360);
             assertTrue(!bad.IsValid);
             better = bad.Normalized;
             assertTrue(better.IsValid);
             assertEquals(better.Lat, S1Angle.FromDegrees(-90));
-            assertDoubleNear(better.Lng.Radians, 0);
+            this.assertDoubleNear(better.Lng.Radians, 0);
 
             assertTrue((S2LatLng.FromDegrees(10, 20) + S2LatLng.FromDegrees(20, 30)).ApproxEquals(
                 S2LatLng.FromDegrees(30, 50)));
@@ -47,11 +47,11 @@ namespace S2Geometry.Tests
         public void testConversion()
         {
             // Test special cases: poles, "date line"
-            assertDoubleNear(
+            this.assertDoubleNear(
                 new S2LatLng(S2LatLng.FromDegrees(90.0, 65.0).ToPoint()).Lat.Degrees, 90.0);
             assertEquals(
                 new S2LatLng(S2LatLng.FromRadians(-S2.PiOver2, 1).ToPoint()).Lat.Radians, -S2.PiOver2);
-            assertDoubleNear(
+            this.assertDoubleNear(
                 Math.Abs(new S2LatLng(S2LatLng.FromDegrees(12.2, 180.0).ToPoint()).Lng.Degrees), 180.0);
             assertEquals(
                 Math.Abs(new S2LatLng(S2LatLng.FromRadians(0.1, -S2.Pi).ToPoint()).Lng.Radians),
@@ -60,14 +60,14 @@ namespace S2Geometry.Tests
             // Test a bunch of random points.
             for (var i = 0; i < 100000; ++i)
             {
-                var p = randomPoint();
+                var p = this.randomPoint();
                 assertTrue(S2.ApproxEquals(p, new S2LatLng(p).ToPoint()));
             }
 
             // Test generation from E5
             var test = S2LatLng.FromE5(123456, 98765);
-            assertDoubleNear(test.Lat.Degrees, 1.23456);
-            assertDoubleNear(test.Lng.Degrees, 0.98765);
+            this.assertDoubleNear(test.Lat.Degrees, 1.23456);
+            this.assertDoubleNear(test.Lng.Degrees, 0.98765);
         }
 
         [TestMethod]
@@ -75,13 +75,13 @@ namespace S2Geometry.Tests
         {
             assertEquals(
                 S2LatLng.FromDegrees(90, 0).GetDistance(S2LatLng.FromDegrees(90, 0)).Radians, 0.0);
-            assertDoubleNear(
+            this.assertDoubleNear(
                 S2LatLng.FromDegrees(-37, 25).GetDistance(S2LatLng.FromDegrees(-66, -155)).Degrees, 77,
                 1e-13);
-            assertDoubleNear(
+            this.assertDoubleNear(
                 S2LatLng.FromDegrees(0, 165).GetDistance(S2LatLng.FromDegrees(0, -80)).Degrees, 115,
                 1e-13);
-            assertDoubleNear(
+            this.assertDoubleNear(
                 S2LatLng.FromDegrees(47, -127).GetDistance(S2LatLng.FromDegrees(-47, 53)).Degrees, 180,
                 2e-6);
         }

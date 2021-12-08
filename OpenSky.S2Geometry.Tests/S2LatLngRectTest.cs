@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace S2Geometry.Tests
+﻿namespace OpenSky.S2Geometry.Tests
 {
+    using System;
+
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     using OpenSky.S2Geometry;
@@ -204,8 +204,8 @@ namespace S2Geometry.Tests
         public void testArea()
         {
             assertEquals(0.0, S2LatLngRect.Empty.Area);
-            assertDoubleNear(4*Math.PI, S2LatLngRect.Full.Area);
-            assertDoubleNear(Math.PI/2, rectFromDegrees(0, 0, 90, 90).Area);
+            this.assertDoubleNear(4*Math.PI, S2LatLngRect.Full.Area);
+            this.assertDoubleNear(Math.PI/2, rectFromDegrees(0, 0, 90, 90).Area);
         }
 
         [TestMethod]
@@ -225,10 +225,10 @@ namespace S2Geometry.Tests
 
             // assertTrue various constructors and accessor methods.
             var d1 = rectFromDegrees(-90, 0, -45, 180);
-            assertDoubleNear(d1.LatLo.Degrees, -90);
-            assertDoubleNear(d1.LatHi.Degrees, -45);
-            assertDoubleNear(d1.LngLo.Degrees, 0);
-            assertDoubleNear(d1.LngHi.Degrees, 180);
+            this.assertDoubleNear(d1.LatLo.Degrees, -90);
+            this.assertDoubleNear(d1.LatHi.Degrees, -45);
+            this.assertDoubleNear(d1.LngLo.Degrees, 0);
+            this.assertDoubleNear(d1.LngHi.Degrees, 180);
             assertTrue(d1.Lat.Equals(new R1Interval(-S2.PiOver2, -S2.PiOver4)));
             assertTrue(d1.Lng.Equals(new S1Interval(0, S2.Pi)));
 
@@ -292,29 +292,29 @@ namespace S2Geometry.Tests
             var reqM180 = new S2LatLngRect(eqM180, eqM180);
             var rNorthPole = new S2LatLngRect(northPole, northPole);
 
-            testIntervalOps(r1, r1Mid, "TTTT", r1, r1Mid);
-            testIntervalOps(r1, reqM180, "TFTF", r1, reqM180);
-            testIntervalOps(r1, rNorthPole, "TFTF", r1, rNorthPole);
+            this.testIntervalOps(r1, r1Mid, "TTTT", r1, r1Mid);
+            this.testIntervalOps(r1, reqM180, "TFTF", r1, reqM180);
+            this.testIntervalOps(r1, rNorthPole, "TFTF", r1, rNorthPole);
 
             assertTrue(r1.Equals(rectFromDegrees(0, -180, 90, 0)));
-            testIntervalOps(r1, rectFromDegrees(-10, -1, 1, 20), "FFTT", rectFromDegrees(-10, -180, 90, 20),
+            this.testIntervalOps(r1, rectFromDegrees(-10, -1, 1, 20), "FFTT", rectFromDegrees(-10, -180, 90, 20),
                             rectFromDegrees(0, -1, 1, 0));
-            testIntervalOps(r1, rectFromDegrees(-10, -1, 0, 20), "FFTF", rectFromDegrees(-10, -180, 90, 20),
+            this.testIntervalOps(r1, rectFromDegrees(-10, -1, 0, 20), "FFTF", rectFromDegrees(-10, -180, 90, 20),
                             rectFromDegrees(0, -1, 0, 0));
-            testIntervalOps(r1, rectFromDegrees(-10, 0, 1, 20), "FFTF", rectFromDegrees(-10, -180, 90, 20),
+            this.testIntervalOps(r1, rectFromDegrees(-10, 0, 1, 20), "FFTF", rectFromDegrees(-10, -180, 90, 20),
                             rectFromDegrees(0, 0, 1, 0));
 
-            testIntervalOps(rectFromDegrees(-15, -160, -15, -150), rectFromDegrees(20, 145, 25, 155),
+            this.testIntervalOps(rectFromDegrees(-15, -160, -15, -150), rectFromDegrees(20, 145, 25, 155),
                             "FFFF", rectFromDegrees(-15, 145, 25, -150), empty);
-            testIntervalOps(rectFromDegrees(70, -10, 90, -140), rectFromDegrees(60, 175, 80, 5), "FFTT",
+            this.testIntervalOps(rectFromDegrees(70, -10, 90, -140), rectFromDegrees(60, 175, 80, 5), "FFTT",
                             rectFromDegrees(60, -180, 90, 180), rectFromDegrees(70, 175, 80, 5));
 
             // assertTrue that the intersection of two rectangles that overlap in
             // latitude
             // but not longitude is valid, and vice versa.
-            testIntervalOps(rectFromDegrees(12, 30, 60, 60), rectFromDegrees(0, 0, 30, 18), "FFFF",
+            this.testIntervalOps(rectFromDegrees(12, 30, 60, 60), rectFromDegrees(0, 0, 30, 18), "FFFF",
                             rectFromDegrees(0, 0, 60, 60), empty);
-            testIntervalOps(rectFromDegrees(0, 0, 18, 42), rectFromDegrees(30, 12, 42, 60), "FFFF",
+            this.testIntervalOps(rectFromDegrees(0, 0, 18, 42), rectFromDegrees(30, 12, 42, 60), "FFFF",
                             rectFromDegrees(0, 0, 42, 60), empty);
 
             // AddPoint()
@@ -360,37 +360,37 @@ namespace S2Geometry.Tests
             // Contains(S2Cell), MayIntersect(S2Cell), Intersects(S2Cell)
 
             // Special cases.
-            testCellOps(empty, S2Cell.FromFacePosLevel(3, (byte)0, 0), 0);
-            testCellOps(full, S2Cell.FromFacePosLevel(2, (byte)0, 0), 4);
-            testCellOps(full, S2Cell.FromFacePosLevel(5, (byte)0, 25), 4);
+            this.testCellOps(empty, S2Cell.FromFacePosLevel(3, (byte)0, 0), 0);
+            this.testCellOps(full, S2Cell.FromFacePosLevel(2, (byte)0, 0), 4);
+            this.testCellOps(full, S2Cell.FromFacePosLevel(5, (byte)0, 25), 4);
 
             // This rectangle includes the first quadrant of face 0. It's expanded
             // slightly because cell bounding rectangles are slightly conservative.
             var r4 = rectFromDegrees(-45.1, -45.1, 0.1, 0.1);
-            testCellOps(r4, S2Cell.FromFacePosLevel(0, (byte)0, 0), 3);
-            testCellOps(r4, S2Cell.FromFacePosLevel(0, (byte)0, 1), 4);
-            testCellOps(r4, S2Cell.FromFacePosLevel(1, (byte)0, 1), 0);
+            this.testCellOps(r4, S2Cell.FromFacePosLevel(0, (byte)0, 0), 3);
+            this.testCellOps(r4, S2Cell.FromFacePosLevel(0, (byte)0, 1), 4);
+            this.testCellOps(r4, S2Cell.FromFacePosLevel(1, (byte)0, 1), 0);
 
             // This rectangle intersects the first quadrant of face 0.
             var r5 = rectFromDegrees(-10, -45, 10, 0);
-            testCellOps(r5, S2Cell.FromFacePosLevel(0, (byte)0, 0), 3);
-            testCellOps(r5, S2Cell.FromFacePosLevel(0, (byte)0, 1), 3);
-            testCellOps(r5, S2Cell.FromFacePosLevel(1, (byte)0, 1), 0);
+            this.testCellOps(r5, S2Cell.FromFacePosLevel(0, (byte)0, 0), 3);
+            this.testCellOps(r5, S2Cell.FromFacePosLevel(0, (byte)0, 1), 3);
+            this.testCellOps(r5, S2Cell.FromFacePosLevel(1, (byte)0, 1), 0);
 
             // Rectangle consisting of a single point.
-            testCellOps(rectFromDegrees(4, 4, 4, 4), S2Cell.FromFacePosLevel(0, (byte)0, 0), 3);
+            this.testCellOps(rectFromDegrees(4, 4, 4, 4), S2Cell.FromFacePosLevel(0, (byte)0, 0), 3);
 
             // Rectangles that intersect the bounding rectangle of a face
             // but not the face itself.
-            testCellOps(rectFromDegrees(41, -87, 42, -79), S2Cell.FromFacePosLevel(2, (byte)0, 0), 1);
-            testCellOps(rectFromDegrees(-41, 160, -40, -160), S2Cell.FromFacePosLevel(5, (byte)0, 0), 1);
+            this.testCellOps(rectFromDegrees(41, -87, 42, -79), S2Cell.FromFacePosLevel(2, (byte)0, 0), 1);
+            this.testCellOps(rectFromDegrees(-41, 160, -40, -160), S2Cell.FromFacePosLevel(5, (byte)0, 0), 1);
             {
                 // This is the leaf cell at the top right hand corner of face 0.
                 // It has two angles of 60 degrees and two of 120 degrees.
                 var cell0tr = new S2Cell(new S2Point(1 + 1e-12, 1, 1));
                 var bound0tr = cell0tr.RectBound;
                 var v0 = new S2LatLng(cell0tr.GetVertexRaw(0));
-                testCellOps(
+                this.testCellOps(
                     rectFromDegrees(v0.Lat.Degrees - 1e-8, v0.Lng.Degrees - 1e-8,
                                     v0.Lat.Degrees - 2e-10, v0.Lng.Degrees + 1e-10), cell0tr, 1);
             }
@@ -398,12 +398,12 @@ namespace S2Geometry.Tests
             // Rectangles that intersect a face but where no vertex of one region
             // is contained by the other region. The first one passes through
             // a corner of one of the face cells.
-            testCellOps(rectFromDegrees(-37, -70, -36, -20), S2Cell.FromFacePosLevel(5, (byte)0, 0), 2);
+            this.testCellOps(rectFromDegrees(-37, -70, -36, -20), S2Cell.FromFacePosLevel(5, (byte)0, 0), 2);
             {
                 // These two intersect like a diamond and a square.
                 var cell202 = S2Cell.FromFacePosLevel(2, (byte)0, 2);
                 var bound202 = cell202.RectBound;
-                testCellOps(
+                this.testCellOps(
                     rectFromDegrees(bound202.Lo.Lat.Degrees + 3, bound202.Lo.Lng.Degrees + 3,
                                     bound202.Hi.Lat.Degrees - 3, bound202.Hi.Lng.Degrees - 3), cell202, 2);
             }
@@ -413,18 +413,18 @@ namespace S2Geometry.Tests
         public void testEdgeBound()
         {
             // assertTrue cases where min/max latitude is not at a vertex.
-            assertDoubleNear(getEdgeBound(1, 1, 1, 1, -1, 1).Lat.Hi, S2.PiOver4); // Max,
+            this.assertDoubleNear(getEdgeBound(1, 1, 1, 1, -1, 1).Lat.Hi, S2.PiOver4); // Max,
             // CW
-            assertDoubleNear(getEdgeBound(1, -1, 1, 1, 1, 1).Lat.Hi, S2.PiOver4); // Max,
+            this.assertDoubleNear(getEdgeBound(1, -1, 1, 1, 1, 1).Lat.Hi, S2.PiOver4); // Max,
             // CCW
-            assertDoubleNear(getEdgeBound(1, -1, -1, -1, -1, -1).Lat.Lo, -S2.PiOver4); // Min,
+            this.assertDoubleNear(getEdgeBound(1, -1, -1, -1, -1, -1).Lat.Lo, -S2.PiOver4); // Min,
             // CW
-            assertDoubleNear(getEdgeBound(-1, 1, -1, -1, -1, -1).Lat.Lo, -S2.PiOver4); // Min,
+            this.assertDoubleNear(getEdgeBound(-1, 1, -1, -1, -1, -1).Lat.Lo, -S2.PiOver4); // Min,
             // CCW
 
             // assertTrue cases where the edge passes through one of the poles.
-            assertDoubleNear(getEdgeBound(.3, .4, 1, -.3, -.4, 1).Lat.Hi, S2.PiOver2);
-            assertDoubleNear(getEdgeBound(.3, .4, -1, -.3, -.4, -1).Lat.Lo, -S2.PiOver2);
+            this.assertDoubleNear(getEdgeBound(.3, .4, 1, -.3, -.4, 1).Lat.Hi, S2.PiOver2);
+            this.assertDoubleNear(getEdgeBound(.3, .4, -1, -.3, -.4, -1).Lat.Lo, -S2.PiOver2);
 
             // assertTrue cases where the min/max latitude is attained at a vertex.
             var kCubeLat = Math.Asin(Math.Sqrt(1.0/3)); // 35.26 degrees
@@ -460,13 +460,13 @@ namespace S2Geometry.Tests
             for (var i = 0; i < 10000; ++i)
             {
                 var a =
-                    S2LatLngRect.FromPointPair(new S2LatLng(randomPoint()), new S2LatLng(randomPoint()));
+                    S2LatLngRect.FromPointPair(new S2LatLng(this.randomPoint()), new S2LatLng(this.randomPoint()));
                 var b =
-                    S2LatLngRect.FromPointPair(new S2LatLng(randomPoint()), new S2LatLng(randomPoint()));
+                    S2LatLngRect.FromPointPair(new S2LatLng(this.randomPoint()), new S2LatLng(this.randomPoint()));
                 verifyGetDistance(a, b);
 
 
-                var c = new S2LatLng(randomPoint());
+                var c = new S2LatLng(this.randomPoint());
                 verifyGetRectPointDistance(a, c);
                 verifyGetRectPointDistance(b, c);
             }

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-
-namespace S2Geometry.Tests
+﻿namespace OpenSky.S2Geometry.Tests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     using OpenSky.S2Geometry;
@@ -24,7 +24,7 @@ namespace S2Geometry.Tests
             // Check the conversion of random leaf cells to S2LatLngs and back.
             for (var i = 0; i < 200000; ++i)
             {
-                var id = getRandomCellId(S2CellId.MaxLevel);
+                var id = this.getRandomCellId(S2CellId.MaxLevel);
                 Assert.IsTrue(id.IsLeaf && id.Level == S2CellId.MaxLevel);
                 var center = id.ToLatLng();
                 JavaAssert.Equal(S2CellId.FromLatLng(center).Id, id.Id);
@@ -60,7 +60,7 @@ namespace S2Geometry.Tests
                     childOrientation.Value, orientation.Value ^ S2.PosToOrientation(pos));
 
                 parentMap.Add(child, parent);
-                expandCell(child, cells, parentMap);
+                this.expandCell(child, cells, parentMap);
                 ++pos;
             }
         }
@@ -158,7 +158,7 @@ namespace S2Geometry.Tests
             var cells = new List<S2CellId>();
             for (var face = 0; face < 6; ++face)
             {
-                expandCell(S2CellId.FromFacePosLevel(face, 0, 0), cells, parentMap);
+                this.expandCell(S2CellId.FromFacePosLevel(face, 0, 0), cells, parentMap);
             }
             for (var i = 0; i < cells.Count; ++i)
             {
@@ -202,9 +202,9 @@ namespace S2Geometry.Tests
                 var p = id.ToPointRaw();
                 var face = S2Projections.XyzToFace(p);
                 var uv = S2Projections.ValidFaceXyzToUv(face, p);
-                assertDoubleNear(Math.IEEERemainder(
+                this.assertDoubleNear(Math.IEEERemainder(
                     S2Projections.UvToSt(uv.X), 1.0/(1 << MAX_WALK_LEVEL)), 0);
-                assertDoubleNear(Math.IEEERemainder(
+                this.assertDoubleNear(Math.IEEERemainder(
                     S2Projections.UvToSt(uv.Y), 1.0/(1 << MAX_WALK_LEVEL)), 0);
             }
         }
@@ -236,7 +236,7 @@ namespace S2Geometry.Tests
         public void testNeighborLevel29()
         {
             // Note: These parameters fail on the Java version too. Not sure if this is a valid Cell anyway
-            testAllNeighbors(new S2CellId(0x6000000000000004UL), 29);
+            this.testAllNeighbors(new S2CellId(0x6000000000000004UL), 29);
         }
 
         [TestMethod]
@@ -279,7 +279,7 @@ namespace S2Geometry.Tests
             // with GetVertexNeighbors for a bunch of random cells.
             for (var i = 0; i < 1000; ++i)
             {
-                var id1 = getRandomCellId();
+                var id1 = this.getRandomCellId();
                 var toTest = id1;
                 if (id1.IsLeaf)
                 {
@@ -289,8 +289,8 @@ namespace S2Geometry.Tests
                 // TestAllNeighbors computes approximately 2**(2*(diff+1)) cell id1s,
                 // so it's not reasonable to use large values of "diff".
                 var maxDiff = Math.Min(6, S2CellId.MaxLevel - toTest.Level - 1);
-                var level = toTest.Level + random(maxDiff);
-                testAllNeighbors(toTest, level);
+                var level = toTest.Level + this.random(maxDiff);
+                this.testAllNeighbors(toTest, level);
             }
         }
 
@@ -309,7 +309,7 @@ namespace S2Geometry.Tests
             // Test random cell ids at all levels.
             for (var i = 0; i < 10000; ++i)
             {
-                var id = getRandomCellId();
+                var id = this.getRandomCellId();
                 if (!id.IsValid)
                 {
                     continue;
