@@ -59,7 +59,7 @@ namespace OpenSky.S2Geometry.Tests
             }
 
             var end = DateTime.Now;
-            Assert.IsTrue((end - start).TotalSeconds < 0.001);
+            Assert.IsTrue((end - start).TotalSeconds < 0.1);
 
 #if DEBUG
             Debug.WriteLine($"Calculated {cellIDs.Count} cell IDs in {(end - start).TotalSeconds} seconds.");
