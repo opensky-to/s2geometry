@@ -73,125 +73,6 @@ namespace OpenSky.S2Geometry.Tests
 
         /// -------------------------------------------------------------------------------------------------
         /// <summary>
-        /// Test doughnut coverage and its performance.
-        /// </summary>
-        /// <remarks>
-        /// sushi.at, 08/12/2021.
-        /// </remarks>
-        /// -------------------------------------------------------------------------------------------------
-        [TestMethod]
-        public void DoughnutCoverageTests()
-        {
-            var loww = new GeoCoordinate(48.11027908325195, 16.569721221923828);
-
-            var start = DateTime.Now;
-            var doughnutCoverage = loww.DoughnutCoverage(600, 30);
-            var end = DateTime.Now;
-            Assert.IsTrue(doughnutCoverage.IncludeLevel is >= 3 and <= 9);
-            Assert.IsTrue(doughnutCoverage.IncludeCells?.Count is > 0 and <= 500);
-            Assert.IsTrue(doughnutCoverage.ExcludeLevel is >= 3 and <= 9);
-            Assert.IsTrue(doughnutCoverage.ExcludeCells?.Count is > 0 and <= 500);
-            Assert.IsTrue((end - start).TotalSeconds < 0.1);
-
-#if DEBUG
-            Debug.WriteLine($"MEP LOWW 30-600nm, level include {doughnutCoverage.IncludeLevel} ==> {doughnutCoverage.IncludeCells.Count} cells, level exclude {doughnutCoverage.ExcludeLevel} ==> {doughnutCoverage.ExcludeCells.Count} cells, {(end - start).TotalSeconds} seconds.");
-            PrintCellIds(doughnutCoverage.IncludeCells);
-            PrintCellIds(doughnutCoverage.ExcludeCells);
-#endif
-
-            start = DateTime.Now;
-            doughnutCoverage = loww.DoughnutCoverage(800, 50);
-            end = DateTime.Now;
-            Assert.IsTrue(doughnutCoverage.IncludeLevel is >= 3 and <= 9);
-            Assert.IsTrue(doughnutCoverage.IncludeCells?.Count is > 0 and <= 500);
-            Assert.IsTrue(doughnutCoverage.ExcludeLevel is >= 3 and <= 9);
-            Assert.IsTrue(doughnutCoverage.ExcludeCells?.Count is > 0 and <= 500);
-            Assert.IsTrue((end - start).TotalSeconds < 0.1);
-
-#if DEBUG
-            Debug.WriteLine($"SET LOWW 50-800nm, level include {doughnutCoverage.IncludeLevel} ==> {doughnutCoverage.IncludeCells.Count} cells, level exclude {doughnutCoverage.ExcludeLevel} ==> {doughnutCoverage.ExcludeCells.Count} cells, {(end - start).TotalSeconds} seconds.");
-            PrintCellIds(doughnutCoverage.IncludeCells);
-            PrintCellIds(doughnutCoverage.ExcludeCells);
-#endif
-
-            start = DateTime.Now;
-            doughnutCoverage = loww.DoughnutCoverage(1100, 50);
-            end = DateTime.Now;
-            Assert.IsTrue(doughnutCoverage.IncludeLevel is >= 3 and <= 9);
-            Assert.IsTrue(doughnutCoverage.IncludeCells?.Count is > 0 and <= 500);
-            Assert.IsTrue(doughnutCoverage.ExcludeLevel is >= 3 and <= 9);
-            Assert.IsTrue(doughnutCoverage.ExcludeCells?.Count is > 0 and <= 500);
-            Assert.IsTrue((end - start).TotalSeconds < 0.1);
-
-#if DEBUG
-            Debug.WriteLine($"MET LOWW 50-1100nm, level include {doughnutCoverage.IncludeLevel} ==> {doughnutCoverage.IncludeCells.Count} cells, level exclude {doughnutCoverage.ExcludeLevel} ==> {doughnutCoverage.ExcludeCells.Count} cells, {(end - start).TotalSeconds} seconds.");
-            PrintCellIds(doughnutCoverage.IncludeCells);
-            PrintCellIds(doughnutCoverage.ExcludeCells);
-#endif
-
-            start = DateTime.Now;
-            doughnutCoverage = loww.DoughnutCoverage(1800, 150);
-            end = DateTime.Now;
-            Assert.IsTrue(doughnutCoverage.IncludeLevel is >= 3 and <= 9);
-            Assert.IsTrue(doughnutCoverage.IncludeCells?.Count is > 0 and <= 500);
-            Assert.IsTrue(doughnutCoverage.ExcludeLevel is >= 3 and <= 9);
-            Assert.IsTrue(doughnutCoverage.ExcludeCells?.Count is > 0 and <= 500);
-            Assert.IsTrue((end - start).TotalSeconds < 0.1);
-
-#if DEBUG
-            Debug.WriteLine($"JET LOWW 150-1800nm, level include {doughnutCoverage.IncludeLevel} ==> {doughnutCoverage.IncludeCells.Count} cells, level exclude {doughnutCoverage.ExcludeLevel} ==> {doughnutCoverage.ExcludeCells.Count} cells, {(end - start).TotalSeconds} seconds.");
-            PrintCellIds(doughnutCoverage.IncludeCells);
-            PrintCellIds(doughnutCoverage.ExcludeCells);
-#endif
-
-            start = DateTime.Now;
-            doughnutCoverage = loww.DoughnutCoverage(1200, 150);
-            end = DateTime.Now;
-            Assert.IsTrue(doughnutCoverage.IncludeLevel is >= 3 and <= 9);
-            Assert.IsTrue(doughnutCoverage.IncludeCells?.Count is > 0 and <= 500);
-            Assert.IsTrue(doughnutCoverage.ExcludeLevel is >= 3 and <= 9);
-            Assert.IsTrue(doughnutCoverage.ExcludeCells?.Count is > 0 and <= 500);
-            Assert.IsTrue((end - start).TotalSeconds < 0.1);
-
-#if DEBUG
-            Debug.WriteLine($"REG LOWW 150-1200nm, level include {doughnutCoverage.IncludeLevel} ==> {doughnutCoverage.IncludeCells.Count} cells, level exclude {doughnutCoverage.ExcludeLevel} ==> {doughnutCoverage.ExcludeCells.Count} cells, {(end - start).TotalSeconds} seconds.");
-            PrintCellIds(doughnutCoverage.IncludeCells);
-            PrintCellIds(doughnutCoverage.ExcludeCells);
-#endif
-
-            start = DateTime.Now;
-            doughnutCoverage = loww.DoughnutCoverage(2000, 150);
-            end = DateTime.Now;
-            Assert.IsTrue(doughnutCoverage.IncludeLevel is >= 3 and <= 9);
-            Assert.IsTrue(doughnutCoverage.IncludeCells?.Count is > 0 and <= 500);
-            Assert.IsTrue(doughnutCoverage.ExcludeLevel is >= 3 and <= 9);
-            Assert.IsTrue(doughnutCoverage.ExcludeCells?.Count is > 0 and <= 500);
-            Assert.IsTrue((end - start).TotalSeconds < 0.1);
-
-#if DEBUG
-            Debug.WriteLine($"NBA LOWW 150-2000nm, level include {doughnutCoverage.IncludeLevel} ==> {doughnutCoverage.IncludeCells.Count} cells, level exclude {doughnutCoverage.ExcludeLevel} ==> {doughnutCoverage.ExcludeCells.Count} cells, {(end - start).TotalSeconds} seconds.");
-            PrintCellIds(doughnutCoverage.IncludeCells);
-            PrintCellIds(doughnutCoverage.ExcludeCells);
-#endif
-
-            start = DateTime.Now;
-            doughnutCoverage = loww.DoughnutCoverage(7000, 1000);
-            end = DateTime.Now;
-            Assert.IsTrue(doughnutCoverage.IncludeLevel is >= 3 and <= 9);
-            Assert.IsTrue(doughnutCoverage.IncludeCells?.Count is > 0 and <= 500);
-            Assert.IsTrue(doughnutCoverage.ExcludeLevel is >= 3 and <= 9);
-            Assert.IsTrue(doughnutCoverage.ExcludeCells?.Count is > 0 and <= 500);
-            Assert.IsTrue((end - start).TotalSeconds < 0.1);
-
-#if DEBUG
-            Debug.WriteLine($"WBA LOWW 1000-7000nm, level include {doughnutCoverage.IncludeLevel} ==> {doughnutCoverage.IncludeCells.Count} cells, level exclude {doughnutCoverage.ExcludeLevel} ==> {doughnutCoverage.ExcludeCells.Count} cells, {(end - start).TotalSeconds} seconds.");
-            PrintCellIds(doughnutCoverage.IncludeCells);
-            PrintCellIds(doughnutCoverage.ExcludeCells);
-#endif
-        }
-
-        /// -------------------------------------------------------------------------------------------------
-        /// <summary>
         /// Test circular coverage and its performance.
         /// </summary>
         /// <remarks>
@@ -217,6 +98,186 @@ namespace OpenSky.S2Geometry.Tests
 
         /// -------------------------------------------------------------------------------------------------
         /// <summary>
+        /// Test doughnut coverage and its performance.
+        /// </summary>
+        /// <remarks>
+        /// sushi.at, 08/12/2021.
+        /// </remarks>
+        /// -------------------------------------------------------------------------------------------------
+        [TestMethod]
+        public void DoughnutCoverageTests()
+        {
+            var loww = new GeoCoordinate(48.11027908325195, 16.569721221923828);
+
+            var start = DateTime.Now;
+            var doughnutCoverage = loww.DoughnutCoverage(600, 30);
+            var end = DateTime.Now;
+            Assert.IsTrue(doughnutCoverage.IncludeLevel is >= 3 and <= 9);
+            Assert.IsTrue(doughnutCoverage.IncludeCells?.Count is > 0 and <= 500);
+            Assert.IsTrue(doughnutCoverage.ExcludeLevel is >= 3 and <= 9);
+            Assert.IsTrue(doughnutCoverage.ExcludeCells?.Count is > 0 and <= 500);
+            Assert.IsTrue((end - start).TotalSeconds < 0.1);
+
+#if DEBUG
+            Debug.WriteLine(
+                $"MEP LOWW 30-600nm, level include {doughnutCoverage.IncludeLevel} ==> {doughnutCoverage.IncludeCells.Count} cells, level exclude {doughnutCoverage.ExcludeLevel} ==> {doughnutCoverage.ExcludeCells.Count} cells, {(end - start).TotalSeconds} seconds.");
+            PrintCellIds(doughnutCoverage.IncludeCells);
+            PrintCellIds(doughnutCoverage.ExcludeCells);
+#endif
+
+            start = DateTime.Now;
+            doughnutCoverage = loww.DoughnutCoverage(800, 50);
+            end = DateTime.Now;
+            Assert.IsTrue(doughnutCoverage.IncludeLevel is >= 3 and <= 9);
+            Assert.IsTrue(doughnutCoverage.IncludeCells?.Count is > 0 and <= 500);
+            Assert.IsTrue(doughnutCoverage.ExcludeLevel is >= 3 and <= 9);
+            Assert.IsTrue(doughnutCoverage.ExcludeCells?.Count is > 0 and <= 500);
+            Assert.IsTrue((end - start).TotalSeconds < 0.1);
+
+#if DEBUG
+            Debug.WriteLine(
+                $"SET LOWW 50-800nm, level include {doughnutCoverage.IncludeLevel} ==> {doughnutCoverage.IncludeCells.Count} cells, level exclude {doughnutCoverage.ExcludeLevel} ==> {doughnutCoverage.ExcludeCells.Count} cells, {(end - start).TotalSeconds} seconds.");
+            PrintCellIds(doughnutCoverage.IncludeCells);
+            PrintCellIds(doughnutCoverage.ExcludeCells);
+#endif
+
+            start = DateTime.Now;
+            doughnutCoverage = loww.DoughnutCoverage(1100, 50);
+            end = DateTime.Now;
+            Assert.IsTrue(doughnutCoverage.IncludeLevel is >= 3 and <= 9);
+            Assert.IsTrue(doughnutCoverage.IncludeCells?.Count is > 0 and <= 500);
+            Assert.IsTrue(doughnutCoverage.ExcludeLevel is >= 3 and <= 9);
+            Assert.IsTrue(doughnutCoverage.ExcludeCells?.Count is > 0 and <= 500);
+            Assert.IsTrue((end - start).TotalSeconds < 0.1);
+
+#if DEBUG
+            Debug.WriteLine(
+                $"MET LOWW 50-1100nm, level include {doughnutCoverage.IncludeLevel} ==> {doughnutCoverage.IncludeCells.Count} cells, level exclude {doughnutCoverage.ExcludeLevel} ==> {doughnutCoverage.ExcludeCells.Count} cells, {(end - start).TotalSeconds} seconds.");
+            PrintCellIds(doughnutCoverage.IncludeCells);
+            PrintCellIds(doughnutCoverage.ExcludeCells);
+#endif
+
+            start = DateTime.Now;
+            doughnutCoverage = loww.DoughnutCoverage(1800, 150);
+            end = DateTime.Now;
+            Assert.IsTrue(doughnutCoverage.IncludeLevel is >= 3 and <= 9);
+            Assert.IsTrue(doughnutCoverage.IncludeCells?.Count is > 0 and <= 500);
+            Assert.IsTrue(doughnutCoverage.ExcludeLevel is >= 3 and <= 9);
+            Assert.IsTrue(doughnutCoverage.ExcludeCells?.Count is > 0 and <= 500);
+            Assert.IsTrue((end - start).TotalSeconds < 0.1);
+
+#if DEBUG
+            Debug.WriteLine(
+                $"JET LOWW 150-1800nm, level include {doughnutCoverage.IncludeLevel} ==> {doughnutCoverage.IncludeCells.Count} cells, level exclude {doughnutCoverage.ExcludeLevel} ==> {doughnutCoverage.ExcludeCells.Count} cells, {(end - start).TotalSeconds} seconds.");
+            PrintCellIds(doughnutCoverage.IncludeCells);
+            PrintCellIds(doughnutCoverage.ExcludeCells);
+#endif
+
+            start = DateTime.Now;
+            doughnutCoverage = loww.DoughnutCoverage(1200, 150);
+            end = DateTime.Now;
+            Assert.IsTrue(doughnutCoverage.IncludeLevel is >= 3 and <= 9);
+            Assert.IsTrue(doughnutCoverage.IncludeCells?.Count is > 0 and <= 500);
+            Assert.IsTrue(doughnutCoverage.ExcludeLevel is >= 3 and <= 9);
+            Assert.IsTrue(doughnutCoverage.ExcludeCells?.Count is > 0 and <= 500);
+            Assert.IsTrue((end - start).TotalSeconds < 0.1);
+
+#if DEBUG
+            Debug.WriteLine(
+                $"REG LOWW 150-1200nm, level include {doughnutCoverage.IncludeLevel} ==> {doughnutCoverage.IncludeCells.Count} cells, level exclude {doughnutCoverage.ExcludeLevel} ==> {doughnutCoverage.ExcludeCells.Count} cells, {(end - start).TotalSeconds} seconds.");
+            PrintCellIds(doughnutCoverage.IncludeCells);
+            PrintCellIds(doughnutCoverage.ExcludeCells);
+#endif
+
+            start = DateTime.Now;
+            doughnutCoverage = loww.DoughnutCoverage(2000, 150);
+            end = DateTime.Now;
+            Assert.IsTrue(doughnutCoverage.IncludeLevel is >= 3 and <= 9);
+            Assert.IsTrue(doughnutCoverage.IncludeCells?.Count is > 0 and <= 500);
+            Assert.IsTrue(doughnutCoverage.ExcludeLevel is >= 3 and <= 9);
+            Assert.IsTrue(doughnutCoverage.ExcludeCells?.Count is > 0 and <= 500);
+            Assert.IsTrue((end - start).TotalSeconds < 0.1);
+
+#if DEBUG
+            Debug.WriteLine(
+                $"NBA LOWW 150-2000nm, level include {doughnutCoverage.IncludeLevel} ==> {doughnutCoverage.IncludeCells.Count} cells, level exclude {doughnutCoverage.ExcludeLevel} ==> {doughnutCoverage.ExcludeCells.Count} cells, {(end - start).TotalSeconds} seconds.");
+            PrintCellIds(doughnutCoverage.IncludeCells);
+            PrintCellIds(doughnutCoverage.ExcludeCells);
+#endif
+
+            start = DateTime.Now;
+            doughnutCoverage = loww.DoughnutCoverage(7000, 1000);
+            end = DateTime.Now;
+            Assert.IsTrue(doughnutCoverage.IncludeLevel is >= 3 and <= 9);
+            Assert.IsTrue(doughnutCoverage.IncludeCells?.Count is > 0 and <= 500);
+            Assert.IsTrue(doughnutCoverage.ExcludeLevel is >= 3 and <= 9);
+            Assert.IsTrue(doughnutCoverage.ExcludeCells?.Count is > 0 and <= 500);
+            Assert.IsTrue((end - start).TotalSeconds < 0.1);
+
+#if DEBUG
+            Debug.WriteLine(
+                $"WBA LOWW 1000-7000nm, level include {doughnutCoverage.IncludeLevel} ==> {doughnutCoverage.IncludeCells.Count} cells, level exclude {doughnutCoverage.ExcludeLevel} ==> {doughnutCoverage.ExcludeCells.Count} cells, {(end - start).TotalSeconds} seconds.");
+            PrintCellIds(doughnutCoverage.IncludeCells);
+            PrintCellIds(doughnutCoverage.ExcludeCells);
+#endif
+        }
+
+        /// -------------------------------------------------------------------------------------------------
+        /// <summary>
+        /// Test rectangle coverage and its performance.
+        /// </summary>
+        /// <remarks>
+        /// sushi.at, 08/12/2021.
+        /// </remarks>
+        /// -------------------------------------------------------------------------------------------------
+        [TestMethod]
+        public void RectangleCoverageTests()
+        {
+            var from = new GeoCoordinate(48.56608, 15.27136);
+            var to = new GeoCoordinate(47.79067, 17.33036);
+            var start = DateTime.Now;
+            var rectangleCoverage = OpenSkyS2.RectangleCoverage(from, to);
+            var end = DateTime.Now;
+            Assert.IsTrue(rectangleCoverage.Level is >= 3 and <= 9);
+            Assert.IsTrue(rectangleCoverage.Cells?.Count is > 0 and <= 300);
+            Assert.IsTrue((end - start).TotalSeconds < 0.1);
+
+#if DEBUG
+            Debug.WriteLine($"Vienna and surroundings rectangle, level {rectangleCoverage.Level} ==> {rectangleCoverage.Cells.Count} cells, {(end - start).TotalSeconds} seconds.");
+            PrintCellIds(rectangleCoverage.Cells);
+#endif
+
+            from = new GeoCoordinate(49.79277, 6.39395);
+            to = new GeoCoordinate(45.31743, 18.00222);
+            start = DateTime.Now;
+            rectangleCoverage = OpenSkyS2.RectangleCoverage(from, to);
+            end = DateTime.Now;
+            Assert.IsTrue(rectangleCoverage.Level is >= 3 and <= 9);
+            Assert.IsTrue(rectangleCoverage.Cells?.Count is > 0 and <= 300);
+            Assert.IsTrue((end - start).TotalSeconds < 0.1);
+
+#if DEBUG
+            Debug.WriteLine($"AT+CH rectangle, level {rectangleCoverage.Level} ==> {rectangleCoverage.Cells.Count} cells, {(end - start).TotalSeconds} seconds.");
+            PrintCellIds(rectangleCoverage.Cells);
+#endif
+
+            from = new GeoCoordinate(53.28258, -130.87951);
+            to = new GeoCoordinate(23.25297, -62.58953);
+            start = DateTime.Now;
+            rectangleCoverage = OpenSkyS2.RectangleCoverage(from, to);
+            end = DateTime.Now;
+            Assert.IsTrue(rectangleCoverage.Level is >= 3 and <= 9);
+            Assert.IsTrue(rectangleCoverage.Cells?.Count is > 0 and <= 300);
+            Assert.IsTrue((end - start).TotalSeconds < 0.1);
+
+#if DEBUG
+            Debug.WriteLine($"US rectangle, level {rectangleCoverage.Level} ==> {rectangleCoverage.Cells.Count} cells, {(end - start).TotalSeconds} seconds.");
+            PrintCellIds(rectangleCoverage.Cells);
+#endif
+        }
+
+        /// -------------------------------------------------------------------------------------------------
+        /// <summary>
         /// Print cell ID tokens.
         /// </summary>
         /// <remarks>
@@ -233,6 +294,7 @@ namespace OpenSky.S2Geometry.Tests
             {
                 ids += $"{id.ToToken()},";
             }
+
             Debug.WriteLine(ids);
         }
     }
