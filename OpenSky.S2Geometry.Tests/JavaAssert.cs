@@ -1,7 +1,7 @@
-﻿using System.Diagnostics;
-
-namespace S2Geometry.Tests
+﻿namespace OpenSky.S2Geometry.Tests
 {
+    using System.Diagnostics;
+
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     public static class JavaAssert

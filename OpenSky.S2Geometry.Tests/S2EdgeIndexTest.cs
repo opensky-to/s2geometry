@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace S2Geometry.Tests
+﻿namespace OpenSky.S2Geometry.Tests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     using OpenSky.S2Geometry;
@@ -23,19 +23,19 @@ namespace S2Geometry.Tests
 
             protected override int NumEdges
             {
-                get { return edges.Count; }
+                get { return this.edges.Count; }
             }
 
 
             protected override S2Point EdgeFrom(int index)
             {
-                return edges[index].Start;
+                return this.edges[index].Start;
             }
 
 
             protected override S2Point EdgeTo(int index)
             {
-                return edges[index].End;
+                return this.edges[index].End;
             }
         }
 
@@ -46,12 +46,12 @@ namespace S2Geometry.Tests
         private S2Edge randomEdgeCrossingCap(double maxLengthMeters, S2Cap cap)
         {
             // Pick the edge center at random.
-            var edgeCenter = samplePoint(cap);
+            var edgeCenter = this.samplePoint(cap);
             // Pick two random points in a suitably sized cap about the edge center.
             var edgeCap = S2Cap.FromAxisAngle(
                 edgeCenter, S1Angle.FromRadians(maxLengthMeters/S2LatLng.EarthRadiusMeters/2));
-            var p1 = samplePoint(edgeCap);
-            var p2 = samplePoint(edgeCap);
+            var p1 = this.samplePoint(edgeCap);
+            var p2 = this.samplePoint(edgeCap);
             return new S2Edge(p1, p2);
         }
 
@@ -65,10 +65,10 @@ namespace S2Geometry.Tests
             double edgeLengthMetersMax, double capSpanMeters, int numEdges, List<S2Edge> edges)
         {
             var cap = S2Cap.FromAxisAngle(
-                randomPoint(), S1Angle.FromRadians(capSpanMeters/S2LatLng.EarthRadiusMeters));
+                this.randomPoint(), S1Angle.FromRadians(capSpanMeters/S2LatLng.EarthRadiusMeters));
             for (var i = 0; i < numEdges; ++i)
             {
-                edges.Add(randomEdgeCrossingCap(edgeLengthMetersMax, cap));
+                edges.Add(this.randomEdgeCrossingCap(edgeLengthMetersMax, cap));
             }
         }
 
@@ -142,8 +142,8 @@ namespace S2Geometry.Tests
                                              int minCrossings, int maxChecksCrossingsRatio)
         {
             var allEdges = new List<S2Edge>();
-            generateRandomEarthEdges(edgeLengthMax, capSpanMeters, numEdges, allEdges);
-            checkAllCrossings(allEdges, minCrossings, maxChecksCrossingsRatio);
+            this.generateRandomEarthEdges(edgeLengthMax, capSpanMeters, numEdges, allEdges);
+            this.checkAllCrossings(allEdges, minCrossings, maxChecksCrossingsRatio);
         }
 
         [TestMethod]
@@ -159,16 +159,16 @@ namespace S2Geometry.Tests
             {
                 allEdges.Add(new S2Edge(ps[i], ps[(i + 1)%4]));
             }
-            checkAllCrossings(allEdges, 0, 16);
+            this.checkAllCrossings(allEdges, 0, 16);
         }
 
         [TestMethod]
         public void testRandomEdgeCrossings()
         {
-            tryCrossingsRandomInCap(2000, 30, 5000, 500, 2);
-            tryCrossingsRandomInCap(1000, 100, 5000, 500, 3);
-            tryCrossingsRandomInCap(1000, 1000, 5000, 1000, 40);
-            tryCrossingsRandomInCap(500, 5000, 5000, 5000, 20);
+            this.tryCrossingsRandomInCap(2000, 30, 5000, 500, 2);
+            this.tryCrossingsRandomInCap(1000, 100, 5000, 500, 3);
+            this.tryCrossingsRandomInCap(1000, 1000, 5000, 1000, 40);
+            this.tryCrossingsRandomInCap(500, 5000, 5000, 5000, 20);
         }
 
         [TestMethod]
@@ -176,8 +176,8 @@ namespace S2Geometry.Tests
         {
             for (var i = 0; i < 5; ++i)
             {
-                tryCrossingsRandomInCap(2000, 100, 5000, 500, 8);
-                tryCrossingsRandomInCap(2000, 300, 50000, 1000, 10);
+                this.tryCrossingsRandomInCap(2000, 100, 5000, 500, 8);
+                this.tryCrossingsRandomInCap(2000, 300, 50000, 1000, 10);
             }
         }
 
@@ -192,7 +192,7 @@ namespace S2Geometry.Tests
             var allEdges = new List<S2Edge>();
             allEdges.Add(new S2Edge(ps[0], ps[1]));
             allEdges.Add(new S2Edge(ps[2], ps[3]));
-            checkAllCrossings(allEdges, 0, 16);
+            this.checkAllCrossings(allEdges, 0, 16);
         }
     }
 }

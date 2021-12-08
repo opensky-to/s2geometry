@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;netstandard2.1;net45;net46;net47;net48;net5.0</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;netstandard2.1;net47;net48;net5.0</TargetFrameworks>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
@@ -17,6 +17,8 @@
 		<PackageIcon>OpenSkyLogo128.png</PackageIcon>
 		<PackageIconUrl />
 		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<AssemblyVersion>0.2.0.0</AssemblyVersion>
+		<FileVersion>0.2.0.0</FileVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -36,6 +38,36 @@
 
 	<ItemGroup>
 	  <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+	  <PackageReference Include="GeoCoordinate.NetCore">
+	    <Version>1.0.0.1</Version>
+	  </PackageReference>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
+	  <PackageReference Include="GeoCoordinate.NetCore">
+	    <Version>1.0.0.1</Version>
+	  </PackageReference>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net47'">
+	  <PackageReference Include="GeoCoordinate.NetCore">
+	    <Version>1.0.0.1</Version>
+	  </PackageReference>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+	  <PackageReference Include="GeoCoordinate.NetCore">
+	    <Version>1.0.0.1</Version>
+	  </PackageReference>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
+	  <PackageReference Include="GeoCoordinate.NetCore">
+	    <Version>1.0.0.1</Version>
+	  </PackageReference>
 	</ItemGroup>
 
 </Project>
