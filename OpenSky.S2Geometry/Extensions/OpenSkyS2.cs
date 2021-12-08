@@ -230,5 +230,95 @@ namespace OpenSky.S2Geometry.Extensions
         {
             return DoughnutCoverage(geoCoordinate.Latitude, geoCoordinate.Longitude, outerRadius, innerRadius, minLevel, maxLevel, maxCells);
         }
+
+        /// -------------------------------------------------------------------------------------------------
+        /// <summary>
+        /// Calculate rectangle coverage between two corner locations.
+        /// </summary>
+        /// <remarks>
+        /// sushi.at, 08/12/2021.
+        /// </remarks>
+        /// <param name="from">
+        /// The from location.
+        /// </param>
+        /// <param name="to">
+        /// The to location.
+        /// </param>
+        /// <param name="minLevel">
+        /// (Optional) The minimum S2 cell level, default=3.
+        /// </param>
+        /// <param name="maxLevel">
+        /// (Optional) The maximum S2 cell level, default=9.
+        /// </param>
+        /// <param name="maxCells">
+        /// (Optional) The maximum S2 cells, default=300.
+        /// </param>
+        /// <returns>
+        /// A RectangleCoverage object containing the chosen level and cell IDs.
+        /// </returns>
+        /// -------------------------------------------------------------------------------------------------
+        public static RectangleCoverage RectangleCoverage(GeoCoordinate from, GeoCoordinate to, int minLevel = 3, int maxLevel = 9, int maxCells = 300)
+        {
+            return RectangleCoverage(from.Latitude, from.Longitude, to.Latitude, to.Longitude, minLevel, maxLevel, maxCells);
+        }
+
+        /// -------------------------------------------------------------------------------------------------
+        /// <summary>
+        /// Calculate rectangle coverage between two corner locations.
+        /// </summary>
+        /// <remarks>
+        /// sushi.at, 08/12/2021.
+        /// </remarks>
+        /// <param name="fromLatitude">
+        /// The from latitude.
+        /// </param>
+        /// <param name="fromLongitude">
+        /// The from longitude.
+        /// </param>
+        /// <param name="toLatitude">
+        /// The to latitude.
+        /// </param>
+        /// <param name="toLongitude">
+        /// The to longitude.
+        /// </param>
+        /// <param name="minLevel">
+        /// (Optional) The minimum S2 cell level, default=3.
+        /// </param>
+        /// <param name="maxLevel">
+        /// (Optional) The maximum S2 cell level, default=9.
+        /// </param>
+        /// <param name="maxCells">
+        /// (Optional) The maximum S2 cells, default=300.
+        /// </param>
+        /// <returns>
+        /// A RectangleCoverage object containing the chosen level and cell IDs.
+        /// </returns>
+        /// -------------------------------------------------------------------------------------------------
+        public static RectangleCoverage RectangleCoverage(double fromLatitude, double fromLongitude, double toLatitude, double toLongitude, int minLevel = 3, int maxLevel = 9, int maxCells = 300)
+        {
+            var fromS2 = S2LatLng.FromDegrees(fromLatitude, fromLongitude);
+            var toS2 = S2LatLng.FromDegrees(toLatitude, toLongitude);
+            var rect = S2LatLngRect.FromPointPair(fromS2, toS2);
+
+            var cells = new List<S2CellId>();
+            var selectedLevel = minLevel;
+            for (var level = minLevel; level <= maxLevel; level++)
+            {
+                var levelCells = new List<S2CellId>();
+                S2RegionCoverer.GetSimpleCovering(rect, fromS2.ToPoint(), level, levelCells);
+                if (levelCells.Count < maxCells)
+                {
+                    cells.Clear();
+                    cells.AddRange(levelCells);
+                    selectedLevel = level;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return new RectangleCoverage { Level = selectedLevel, Cells = cells };
+        }
     }
 }
