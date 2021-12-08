@@ -9,7 +9,7 @@
 		<Authors>OpenSky project</Authors>
 		<Company>OpenSky project</Company>
 		<Product>OpenSky</Product>
-		<Version>0.1.0</Version>
+		<Version>0.2.0</Version>
 		<Copyright>OpenSky project 2021</Copyright>
 		<RepositoryUrl>https://github.com/opensky-to/s2geometry</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
